@@ -28,3 +28,8 @@ def update(name):
     if age:
         employee_service.update(name, age)
     return redirect(url_for('employee.list_employees'))
+
+@employee_controller.route('/delete/<string:name>', methods = ['POST'])
+def delete(name):
+    employee_service.delete(name)
+    return redirect(url_for('employee.list_employees'))

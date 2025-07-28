@@ -12,6 +12,10 @@
                 <li>
                     <strong>{{ employee.name }}</strong>: {{ employee.age }}
                     <a href="{{ url_for('employee.edit_employee', name=employee.name) }}">Edit</a>
+
+                    <form action="{{ url_for('employee.delete', name=employee.name) }}" method="POST" style="display: inline;">
+                    <button type="submit">Delete</button>
+                    </form>
                 </li>
             {% endfor %}
         </ul>

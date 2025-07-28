@@ -24,3 +24,10 @@ class EmployeeService:
             employee.age = age
             return True
         return False
+
+    def delete(self, name):
+        employee = self.get_by_name(name)
+        if employee:
+            self._employees.remove(employee)
+            return True
+        return False
