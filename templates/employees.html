@@ -11,6 +11,7 @@
             {% for employee in employees %}
                 <li>
                     <strong>{{ employee.name }}</strong>: {{ employee.age }}
+                    <a href="{{ url_for('employee.edit_employee', name=employee.name) }}">Edit</a>
                 </li>
             {% endfor %}
         </ul>
