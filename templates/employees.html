@@ -3,26 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Employees</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <h1>Employee List</h1>
 
-        <ul>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Position</th>
+                <th>Salary</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
             {% for employee in employees %}
-                <li>
-                    <strong>{{ employee.id }}</strong>: {{ employee.full_name }}
-                    <strong>Position: </strong> {{ employee.position }}
-                    <strong>Salary: </strong> {{ employee.salary }}
-                    <strong>Phone number: </strong> {{ employee.phone_number }}
-                    <strong>Email: </strong> {{ employee.email }}
+            <tr>
+                <td>{{ employee.id }}</td>
+                <td>{{ employee.full_name }}</td>
+                <td>{{ employee.position }}</td>
+                <td>{{ employee.salary }}</td>
+                <td>{{ employee.phone_number }}</td>
+                <td>{{ employee.email }}</td>
+                <td>
                     <a href="{{ url_for('employee.edit_employee', id=employee.id) }}">Edit</a>
-
-                    <form action="{{ url_for('employee.delete', id=employee.id) }}" method="POST" style="display: inline;">
-                    <button type="submit">Delete</button>
+                    <form action="{{ url_for('employee.delete', id=employee.id) }}" method="POST" style="display:inline;">
+                        <button type="submit">Delete</button>
                     </form>
-                </li>
+                </td>
+            </tr>
             {% endfor %}
-        </ul>
+        </table>
 
         <h2>Add New Employee</h2>
         <form action="{{ url_for('employee.add') }}" method="POST">
