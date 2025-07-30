@@ -7,28 +7,32 @@ class EmployeeService:
         return Employee.query.all()
 
     @staticmethod
-    def get_by_name(name):
-        return Employee.query.get(name)
+    def get_by_id(id):
+        return Employee.query.get(id)
 
     @staticmethod
-    def add(name, age):
-        new_employee = Employee(name, age)
+    def add(full_name, position, salary, phone_number, email):
+        new_employee = Employee(full_name, position, salary, phone_number, email)
         db.session.add(new_employee)
         db.session.commit()
         return new_employee
 
     @staticmethod
-    def update(name, age):
-        employee = EmployeeService.get_by_name(name)
+    def update(id, full_name, position, salary, phone_number, email):
+        employee = EmployeeService.get_by_id(id)
         if employee:
-            employee.age = age
+            employee.full_name = full_name
+            employee.position = position
+            employee.salary = salary
+            employee.phone_number = phone_number
+            employee.email = email
             db.session.commit()
             return True
         return False
 
     @staticmethod
-    def delete(name):
-        employee = EmployeeService.get_by_name(name)
+    def delete(id):
+        employee = EmployeeService.get_by_id(id)
         if employee:
             db.session.delete(employee)
             db.session.commit()

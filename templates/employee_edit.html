@@ -7,9 +7,21 @@
 <body>
     <h1>Edit Employee</h1>
 
-    <form action="{{ url_for('employee.update', name=employee.name) }}" method="POST">
-        <label for="age">Age:</label>
-        <input type="number" id="age" name="age" value="{{ employee.age }}" required><br><br>
+    <form action="{{ url_for('employee.update', id=employee.id) }}" method="POST">
+        <label for="full_name">Full name:</label>
+        <input type="text" id="full_name" name="full_name" value="{{ employee.full_name }}" required><br><br>
+
+        <label for="position">Position:</label>
+        <input type="text" id="position" name="position" value="{{ employee.position }}" required><br><br>
+
+        <label for="salary">Salary:</label>
+        <input type="number" id="salary" name="salary" value="{{ employee.salary }}" required><br><br>
+
+        <label for="phone_number">Phone number:</label>
+        <input type="text" id="phone_number" name="phone_number" value="{{ employee.phone_number }}" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" value="{{ employee.email }}" required><br><br>
 
         <button type="submit">Update</button>
     </form>
