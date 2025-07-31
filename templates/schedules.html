@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Schedules</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('employee.list_employees') }}">View Employees</a>
+    <h1>Schedules</h1>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Employee's id</th>
+                <th>Work date</th>
+                <th>Shift start</th>
+                <th>Shift end</th>
+                <th>Actions</th>
+            </tr>
+            {% for schedule in schedules %}
+            <tr>
+                <td>{{ schedule.id }}</td>
+                <td>{{ schedule.employee_id }}</td>
+                <td>{{ schedule.work_date }}</td>
+                <td>{{ schedule.shift_start }}</td>
+                <td>{{ schedule.shift_end }}</td>
+                <td>
+                    <a href="{{ url_for('schedule.edit_schedule', id=schedule.id) }}">Edit</a>
+                    <form action="{{ url_for('schedule.delete', id=schedule.id) }}" method="POST" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h2>Add New Schedule</h2>
+        <form action="{{ url_for('schedule.add') }}" method="POST">
+            <label for="employee_id">Employee's id:</label>
+            <input type="number" id="employee_id" name="employee_id" required><br><br>
+
+            <label for="work_date">Work date:</label>
+            <input type="date" id="work_date" name="work_date" required><br><br>
+
+            <label for="shift_start">Shift start:</label>
+            <input type="time" id="shift_start" name="shift_start" required><br><br>
+
+            <label for="shift_end">Shift end:</label>
+            <input type="time" id="shift_end" name="shift_end" required><br><br>
+
+            <button type="submit">Add Schedule</button>
+        </form>
+</body>
+</html>
