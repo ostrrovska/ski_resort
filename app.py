@@ -1,6 +1,7 @@
 from flask import Flask
 from controllers.employee_controller import employee_controller
 from controllers.schedule_controller import schedule_controller
+from controllers.client_controller import client_controller
 from models import db
 from config import Config
 
@@ -15,6 +16,8 @@ with app.app_context():
 
 app.register_blueprint(employee_controller)
 app.register_blueprint(schedule_controller, url_prefix='/schedules')
+
+app.register_blueprint(client_controller, url_prefix='/clients')
 
 if __name__ == '__main__':
     # Quick test: print all schedules for the first employee

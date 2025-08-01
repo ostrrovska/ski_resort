@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Client_edit</title>
+</head>
+<body>
+    <h1>Edit Client</h1>
+
+    <form action="{{ url_for('client.update', id=client.id) }}" method="POST">
+        <label for="full_name">Full name:</label>
+        <input type="text" id="full_name" name="full_name" value="{{ client.full_name }}" required><br><br>
+
+        <label for="document_id">Document id:</label>
+        <input type="text" id="document_id" name="document_id" value="{{ client.document_id }}" required><br><br>
+
+        <label for="date_of_birth">Date of birth:</label>
+        <input type="date" id="date_of_birth" name="date_of_birth" value="{{ client.date_of_birth }}" required><br><br>
+
+        <label for="phone_number">Phone number:</label>
+        <input type="text" id="phone_number" name="phone_number" value="{{ client.phone_number }}" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" value="{{ client.email }}" required><br><br>
+
+        <button type="submit">Update</button>
+    </form>
+
+    <a href="{{ url_for('client.list_clients') }}">Back to List</a>
+
+</body>
+</html>
