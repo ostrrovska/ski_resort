@@ -1,9 +1,48 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from services.client_service import ClientService
 
 client_service = ClientService()
 
 client_controller = Blueprint('client', __name__)
+
+@client_controller.route('/auth', methods = ['GET'])
+def auth_page():
+    return render_template('auth.html')
+
+@client_controller.route('/register', methods = ['POST'])
+def register():
+    full_name = request.form['full_name']
+    document_id = request.form['document_id']
+    date_of_birth = request.form['date_of_birth']
+    phone_number = request.form['phone_number']
+    email = request.form['email']
+    username = request.form['username']
+    password = request.form['password']
+    client = client_service.register(full_name, document_id, date_of_birth, phone_number, email, username, password)
+    if client:
+        flash('Account created successfully. Please login.')
+        return redirect(url_for('client.auth_page'))
+    else:
+        flash('Account already exists')
+        return redirect(url_for('client.auth_page'))
+
+@client_controller.route('/login', methods = ['POST'])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+    client = client_service.login(username, password)
+    if client:
+        session['user_id'] = client.id
+        return redirect(url_for('client.list_clients'))
+    else:
+        flash('Invalid username or password')
+        return redirect(url_for('client.auth_page'))
+
+@client_controller.route('/logout', methods = ['POST'])
+def logout():
+    session.pop('user_id', None)
+    return redirect(url_for('client.auth_page'))
+
 
 @client_controller.route('/', methods = ['GET'])
 def list_clients():
