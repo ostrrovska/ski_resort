@@ -13,14 +13,13 @@ class Client(db.Model):
     username = db.Column(db.String(150), nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
 
-    def __init__(self, full_name, document_id, date_of_birth, phone_number, email, username, password_hash):
+    def __init__(self, full_name, document_id, date_of_birth, phone_number, email, username):
         self.full_name = full_name
         self.document_id = document_id
         self.date_of_birth = date_of_birth
         self.phone_number = phone_number
         self.email = email
         self.username = username
-        self.password_hash = password_hash
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

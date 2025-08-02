@@ -3,6 +3,27 @@ from models.client import Client, db
 class ClientService:
 
     @staticmethod
+    def register(full_name, document_id, date_of_birth, phone_number, email, username, password):
+        existing_client = Client.query.filter_by(username=username).first()
+        if existing_client:
+            return None
+        new_client = Client(full_name=full_name, document_id=document_id, date_of_birth=date_of_birth,
+                            phone_number=phone_number, email=email, username=username
+                            )
+        new_client.set_password(password)
+        db.session.add(new_client)
+        db.session.commit()
+        return new_client
+
+    @staticmethod
+    def login(username, password):
+        user = Client.query.filter_by(username=username).first()
+        if user and user.check_password(password):
+            return user
+        return None
+
+
+    @staticmethod
     def get_all():
         return Client.query.all()
 
