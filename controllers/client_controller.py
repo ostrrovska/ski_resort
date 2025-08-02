@@ -32,7 +32,7 @@ def login():
     password = request.form['password']
     client = client_service.login(username, password)
     if client:
-        session['user_id'] = client.id
+        session['client_id'] = client.id
         return redirect(url_for('client.list_clients'))
     else:
         flash('Invalid username or password')
@@ -40,7 +40,7 @@ def login():
 
 @client_controller.route('/logout', methods = ['POST'])
 def logout():
-    session.pop('user_id', None)
+    session.pop('client_id', None)
     return redirect(url_for('client.auth_page'))
 
 
