@@ -9,7 +9,7 @@ class Client(db.Model):
     document_id = db.Column(db.String(100), nullable=False)
     date_of_birth = db.Column(db.Date, nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), nullable=False),
+    email = db.Column(db.String(100), nullable=False)
     username = db.Column(db.String(150), nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
 

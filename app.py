@@ -2,21 +2,29 @@ from flask import Flask
 from controllers.employee_controller import employee_controller
 from controllers.schedule_controller import schedule_controller
 from controllers.client_controller import client_controller
+from middlewares.authentication_middleware import require_login_middleware
 from models import db
 from config import Config
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
 
 app = Flask(__name__)
 
 app.config.from_object(Config)
+
+app.secret_key = os.getenv('SESSION_SECRET_KEY')
 
 db.init_app(app)
 
 with app.app_context():
     db.create_all()
 
+require_login_middleware(app)
+
 app.register_blueprint(employee_controller)
 app.register_blueprint(schedule_controller, url_prefix='/schedules')
-
 app.register_blueprint(client_controller, url_prefix='/clients')
 
 if __name__ == '__main__':
