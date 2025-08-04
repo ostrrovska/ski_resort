@@ -42,8 +42,17 @@
         <input type="email" id="email" name="email" required><br><br>
 
         <!-- Buttons to either register or login -->
-        <button type="submit" formaction="{{ url_for('client.login') }}">Login</button>
         <button type="submit" formaction="{{ url_for('client.register') }}">Register</button>
+    </form>
+
+    <form method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <button type="submit" formaction="{{ url_for('client.login') }}">Login</button>
     </form>
 </body>
 </html>
