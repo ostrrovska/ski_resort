@@ -10,6 +10,27 @@
     <a href="{{ url_for('client.list_clients') }}">View Clients</a>
     <h1>Schedules</h1>
 
+    <!-- Form for sorting employees -->
+    <form action="{{ url_for('schedule.list_schedules') }}" method="GET">
+        <div class="form-group">
+            <label for="sort_by">Sort by:</label>
+            <select id="sort_by" name="sort_by">
+                <option value="" selected>None</option>
+                <option value="id">ID</option>
+                <option value="employee_id">Employee's id</option>
+                <option value="work_date">Work date</option>
+                <option value="shift_start">Shift start</option>
+                <option value="shift_end">Shift end</option>
+            </select>
+            <label for="sort_order">Order:</label>
+            <select id="sort_order" name="sort_order">
+                <option value="asc" selected>Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </div>
+        <button type="submit">Apply</button>
+    </form>
+
         <table>
             <tr>
                 <th>ID</th>

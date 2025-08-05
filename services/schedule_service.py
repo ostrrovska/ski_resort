@@ -3,8 +3,21 @@ from models.schedule import Schedule, db
 class ScheduleService:
 
     @staticmethod
-    def get_all():
-        return Schedule.query.all()
+    def get_all(sort_by = None, sort_order = 'asc'):
+        query = Schedule.query
+        sort_options = {
+            'id': Schedule.id,
+            'employee_id': Schedule.employee_id,
+            'work_date': Schedule.work_date,
+            'shift_start': Schedule.shift_start,
+            'shift_end': Schedule.shift_end
+        }
+        if sort_by in sort_options:
+            if sort_order == 'desc':
+                query = query.order_by(sort_options[sort_by].desc())
+            else:
+                query = query.order_by(sort_options[sort_by])
+        return query.all()
 
     @staticmethod
     def get_by_id(id):

@@ -7,7 +7,9 @@ schedule_controller = Blueprint('schedule', __name__)
 
 @schedule_controller.route('/', methods = ['GET'])
 def list_schedules():
-    schedules = schedule_service.get_all()
+    sort_by = request.args.get('sort_by')
+    sort_order = request.args.get('sort_order')
+    schedules = schedule_service.get_all(sort_by = sort_by, sort_order = sort_order)
     return render_template('schedules.html', schedules = schedules)
 
 @schedule_controller.route('/add', methods = ['POST'])
