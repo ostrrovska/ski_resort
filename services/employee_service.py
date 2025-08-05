@@ -3,8 +3,22 @@ from models.employee import Employee, db
 class EmployeeService:
 
     @staticmethod
-    def get_all():
-        return Employee.query.all()
+    def get_all(sort_by = None, sort_order = 'asc'):
+        query = Employee.query
+        sort_options = {
+            'id': Employee.id,
+            'full_name': Employee.full_name,
+            'position': Employee.position,
+            'salary': Employee.salary,
+            'phone_number': Employee.phone_number,
+            'email': Employee.email
+        }
+        if sort_by in sort_options:
+            if sort_order == 'desc':
+                query = query.order_by(sort_options[sort_by].desc())
+            else:
+                query = query.order_by(sort_options[sort_by])
+        return query.all()
 
     @staticmethod
     def get_by_id(id):

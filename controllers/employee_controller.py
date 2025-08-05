@@ -7,7 +7,9 @@ employee_controller = Blueprint('employee', __name__)
 
 @employee_controller.route('/', methods = ['GET'])
 def list_employees():
-    employees = employee_service.get_all()
+    sort_by = request.args.get('sort_by')
+    sort_order = request.args.get('sort_order')
+    employees = employee_service.get_all(sort_by = sort_by, sort_order = sort_order)
     return render_template('employees.html', employees = employees)
 
 @employee_controller.route('/add', methods = ['POST'])
