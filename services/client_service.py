@@ -22,10 +22,23 @@ class ClientService:
             return user
         return None
 
-
     @staticmethod
-    def get_all():
-        return Client.query.all()
+    def get_all(sort_by = None, sort_order = 'asc'):
+        query = Client.query
+        sort_options = {
+            'id': Client.id,
+            'full_name': Client.full_name,
+            'document_id': Client.document_id,
+            'date_of_birth': Client.date_of_birth,
+            'phone_number': Client.phone_number,
+            'email': Client.email
+        }
+        if sort_by in sort_options:
+            if sort_order == 'desc':
+                query = query.order_by(sort_options[sort_by].desc())
+            else:
+                query = query.order_by(sort_options[sort_by])
+        return query.all()
 
     @staticmethod
     def get_by_id(id):

@@ -46,7 +46,9 @@ def logout():
 
 @client_controller.route('/', methods = ['GET'])
 def list_clients():
-    clients = client_service.get_all()
+    sort_by = request.args.get('sort_by')
+    sort_order = request.args.get('sort_order')
+    clients = client_service.get_all(sort_by = sort_by, sort_order = sort_order)
     return render_template('clients.html', clients = clients)
 
 @client_controller.route('/add', methods = ['POST'])
