@@ -1,4 +1,7 @@
+import datetime
+
 from models.client import Client, db
+
 
 class ClientService:
 
@@ -23,9 +26,9 @@ class ClientService:
         return None
 
     @staticmethod
-    def get_all(sort_by = None, sort_order = 'asc'):
+    def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None):
         query = Client.query
-        sort_options = {
+        sort_filter_options = {
             'id': Client.id,
             'full_name': Client.full_name,
             'document_id': Client.document_id,
@@ -33,11 +36,26 @@ class ClientService:
             'phone_number': Client.phone_number,
             'email': Client.email
         }
-        if sort_by in sort_options:
+        if sort_by in sort_filter_options:
             if sort_order == 'desc':
-                query = query.order_by(sort_options[sort_by].desc())
+                query = query.order_by(sort_filter_options[sort_by].desc())
             else:
-                query = query.order_by(sort_options[sort_by])
+                query = query.order_by(sort_filter_options[sort_by])
+
+        if filter_by in sort_filter_options and filter_value:
+            column = sort_filter_options[filter_by]
+            if isinstance(column.type, db.Integer):
+                query = query.filter(column == int(filter_value))
+            elif isinstance(column.type, db.Date):
+                # Parse filter_value to a date object
+                date_value = datetime.datetime.strptime(filter_value, "%Y-%m-%d").date()
+                query = query.filter(column == date_value)
+            elif isinstance(column.type, db.Time):
+                # Parse filter_value to a time object
+                time_value = datetime.datetime.strptime(filter_value, "%H:%M:%S").time()
+                query = query.filter(column == time_value)
+            else:
+                query = query.filter(column.ilike(f'%{filter_value}%'))
         return query.all()
 
     @staticmethod

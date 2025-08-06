@@ -6,82 +6,95 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('employee.list_employees') }}">View Employees</a>
-    <a href="{{ url_for('schedule.list_schedules') }}">View Schedules</a>
-    <h1>Client List</h1>
+<a href="{{ url_for('employee.list_employees') }}">View Employees</a>
+<a href="{{ url_for('schedule.list_schedules') }}">View Schedules</a>
+<h1>Client List</h1>
 
-    <form action="{{ url_for('client.list_clients') }}" method="GET">
-        <div class="form-group">
-            <label for="sort_by">Sort by:</label>
-            <select id="sort_by" name="sort_by">
-                <option value="" selected>None</option>
-                <option value="id">ID</option>
-                <option value="full_name">Full Name</option>
-                <option value="document_id">Document id</option>
-                <option value="date_of_birth">Date of birth</option>
-                <option value="phone_number">Phone Number</option>
-                <option value="email">Email</option>
-            </select>
-            <label for="sort_order">Order:</label>
-            <select id="sort_order" name="sort_order">
-                <option value="asc" selected>Ascending</option>
-                <option value="desc">Descending</option>
-            </select>
-        </div>
-        <button type="submit">Apply</button>
-    </form>
+<form action="{{ url_for('client.list_clients') }}" method="GET">
+    <div class="form-group">
+        <label for="sort_by">Sort by:</label>
+        <select id="sort_by" name="sort_by">
+            <option value="" selected>None</option>
+            <option value="id">ID</option>
+            <option value="full_name">Full Name</option>
+            <option value="document_id">Document id</option>
+            <option value="date_of_birth">Date of birth</option>
+            <option value="phone_number">Phone Number</option>
+            <option value="email">Email</option>
+        </select>
+        <label for="sort_order">Order:</label>
+        <select id="sort_order" name="sort_order">
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="filter_by">Filter by:</label>
+        <select id="filter_by" name="filter_by">
+            <option value="" selected>None</option>
+            <option value="full_name">Full Name</option>
+            <option value="date_of_birth">Date of birth</option>
+            <option value="phone_number">Phone Number</option>
+            <option value="email">Email</option>
+        </select>
+        <label for="filter_value">Value:</label>
+        <input type="text" id="filter_value" name="filter_value"><br><br>
+    </div>
+    <button type="submit">Apply</button>
+    <a href="{{ url_for('client.list_clients') }}">Clear</a>
+</form>
 
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Full Name</th>
-                <th>Document id</th>
-                <th>Date of birth</th>
-                <th>Phone Number</th>
-                <th>Email</th>
-                <th>Actions</th>
-            </tr>
-            {% for client in clients %}
-            <tr>
-                <td>{{ client.id }}</td>
-                <td>{{ client.full_name }}</td>
-                <td>{{ client.document_id }}</td>
-                <td>{{ client.date_of_birth }}</td>
-                <td>{{ client.phone_number }}</td>
-                <td>{{ client.email }}</td>
-                <td>
-                    <a href="{{ url_for('client.edit_client', id=client.id) }}">Edit</a>
-                    <form action="{{ url_for('client.delete', id=client.id) }}" method="POST" style="display:inline;">
-                        <button type="submit">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Full Name</th>
+        <th>Document id</th>
+        <th>Date of birth</th>
+        <th>Phone Number</th>
+        <th>Email</th>
+        <th>Actions</th>
+    </tr>
+    {% for client in clients %}
+        <tr>
+            <td>{{ client.id }}</td>
+            <td>{{ client.full_name }}</td>
+            <td>{{ client.document_id }}</td>
+            <td>{{ client.date_of_birth }}</td>
+            <td>{{ client.phone_number }}</td>
+            <td>{{ client.email }}</td>
+            <td>
+                <a href="{{ url_for('client.edit_client', id=client.id) }}">Edit</a>
+                <form action="{{ url_for('client.delete', id=client.id) }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
 
-        <h2>Add New Client</h2>
-        <form action="{{ url_for('client.add') }}" method="POST">
-            <label for="full_name">Full Name:</label>
-            <input type="text" id="full_name" name="full_name" required><br><br>
+<h2>Add New Client</h2>
+<form action="{{ url_for('client.add') }}" method="POST">
+    <label for="full_name">Full Name:</label>
+    <input type="text" id="full_name" name="full_name" required><br><br>
 
-            <label for="document_id">Document id:</label>
-            <input type="text" id="document_id" name="document_id" required><br><br>
+    <label for="document_id">Document id:</label>
+    <input type="text" id="document_id" name="document_id" required><br><br>
 
-            <label for="date_of_birth">Date of birth:</label>
-            <input type="date" id="date_of_birth" name="date_of_birth" required><br><br>
+    <label for="date_of_birth">Date of birth:</label>
+    <input type="date" id="date_of_birth" name="date_of_birth" required><br><br>
 
-            <label for="phone_number">Phone Number:</label>
-            <input type="tel" id="phone_number" name="phone_number" required><br><br>
+    <label for="phone_number">Phone Number:</label>
+    <input type="tel" id="phone_number" name="phone_number" required><br><br>
 
-            <label for="email">Email:</label>
-            <input type="text" id="email" name="email" required><br><br>
+    <label for="email">Email:</label>
+    <input type="text" id="email" name="email" required><br><br>
 
-            <button type="submit">Add Client</button>
-        </form>
+    <button type="submit">Add Client</button>
+</form>
 
-            <!-- Logout button -->
-        <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
-            <button type="submit">Logout</button>
-        </form>
+<!-- Logout button -->
+<form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+    <button type="submit">Logout</button>
+</form>
 </body>
 </html>

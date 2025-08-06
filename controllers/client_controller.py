@@ -5,11 +5,13 @@ client_service = ClientService()
 
 client_controller = Blueprint('client', __name__)
 
-@client_controller.route('/auth', methods = ['GET'])
+
+@client_controller.route('/auth', methods=['GET'])
 def auth_page():
     return render_template('auth.html')
 
-@client_controller.route('/register', methods = ['POST'])
+
+@client_controller.route('/register', methods=['POST'])
 def register():
     full_name = request.form['full_name']
     document_id = request.form['document_id']
@@ -26,7 +28,8 @@ def register():
         flash('Account already exists')
         return redirect(url_for('client.auth_page'))
 
-@client_controller.route('/login', methods = ['POST'])
+
+@client_controller.route('/login', methods=['POST'])
 def login():
     username = request.form['username']
     password = request.form['password']
@@ -38,20 +41,25 @@ def login():
         flash('Invalid username or password')
         return redirect(url_for('client.auth_page'))
 
-@client_controller.route('/logout', methods = ['POST'])
+
+@client_controller.route('/logout', methods=['POST'])
 def logout():
     session.pop('client_id', None)
     return redirect(url_for('client.auth_page'))
 
 
-@client_controller.route('/', methods = ['GET'])
+@client_controller.route('/', methods=['GET'])
 def list_clients():
     sort_by = request.args.get('sort_by')
     sort_order = request.args.get('sort_order')
-    clients = client_service.get_all(sort_by = sort_by, sort_order = sort_order)
-    return render_template('clients.html', clients = clients)
+    filter_by = request.args.get('filter_by')
+    filter_value = request.args.get('filter_value')
+    clients = client_service.get_all(sort_by=sort_by, sort_order=sort_order,
+                                     filter_by=filter_by, filter_value=filter_value)
+    return render_template('clients.html', clients=clients)
 
-@client_controller.route('/add', methods = ['POST'])
+
+@client_controller.route('/add', methods=['POST'])
 def add():
     full_name = request.form['full_name']
     document_id = request.form['document_id']
@@ -61,14 +69,16 @@ def add():
     client_service.add(full_name, document_id, date_of_birth, phone_number, email)
     return redirect(url_for('client.list_clients'))
 
-@client_controller.route('/edit/<int:id>', methods = ['GET'])
+
+@client_controller.route('/edit/<int:id>', methods=['GET'])
 def edit_client(id):
     client = client_service.get_by_id(id)
     if not client:
         return redirect(url_for('client.list_clients'))
-    return render_template('client_edit.html', client = client)
+    return render_template('client_edit.html', client=client)
 
-@client_controller.route('/update/<int:id>', methods = ['POST'])
+
+@client_controller.route('/update/<int:id>', methods=['POST'])
 def update(id):
     full_name = request.form['full_name']
     document_id = request.form['document_id']
@@ -81,7 +91,8 @@ def update(id):
 
     return redirect(url_for('client.list_clients'))
 
-@client_controller.route('/delete/<int:id>', methods = ['POST'])
+
+@client_controller.route('/delete/<int:id>', methods=['POST'])
 def delete(id):
     client_service.delete(id)
     return redirect(url_for('client.list_clients'))
