@@ -3,9 +3,9 @@ from models.employee import Employee, db
 class EmployeeService:
 
     @staticmethod
-    def get_all(sort_by = None, sort_order = 'asc'):
+    def get_all(sort_by = None, sort_order = 'asc', filter_by = None, filter_value = None):
         query = Employee.query
-        sort_options = {
+        sort_filter_options = {
             'id': Employee.id,
             'full_name': Employee.full_name,
             'position': Employee.position,
@@ -13,11 +13,19 @@ class EmployeeService:
             'phone_number': Employee.phone_number,
             'email': Employee.email
         }
-        if sort_by in sort_options:
+        if sort_by in sort_filter_options:
             if sort_order == 'desc':
-                query = query.order_by(sort_options[sort_by].desc())
+                query = query.order_by(sort_filter_options[sort_by].desc())
             else:
-                query = query.order_by(sort_options[sort_by])
+                query = query.order_by(sort_filter_options[sort_by])
+
+        if filter_by in sort_filter_options and filter_value:
+            column = sort_filter_options[filter_by]
+            if isinstance(column.type, db.Integer):
+                query = query.filter(column == int(filter_value))
+            else:
+                query = query.filter(column.ilike(f'%{filter_value}%'))
+
         return query.all()
 
     @staticmethod

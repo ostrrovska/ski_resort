@@ -5,14 +5,19 @@ employee_service = EmployeeService()
 
 employee_controller = Blueprint('employee', __name__)
 
-@employee_controller.route('/', methods = ['GET'])
+
+@employee_controller.route('/', methods=['GET'])
 def list_employees():
     sort_by = request.args.get('sort_by')
     sort_order = request.args.get('sort_order')
-    employees = employee_service.get_all(sort_by = sort_by, sort_order = sort_order)
-    return render_template('employees.html', employees = employees)
+    filter_by = request.args.get('filter_by')
+    filter_value = request.args.get('filter_value')
+    employees = employee_service.get_all(sort_by=sort_by, sort_order=sort_order,
+                                         filter_by=filter_by, filter_value=filter_value)
+    return render_template('employees.html', employees=employees)
 
-@employee_controller.route('/add', methods = ['POST'])
+
+@employee_controller.route('/add', methods=['POST'])
 def add():
     full_name = request.form['full_name']
     position = request.form['position']
@@ -22,14 +27,16 @@ def add():
     employee_service.add(full_name, position, salary, phone_number, email)
     return redirect(url_for('employee.list_employees'))
 
-@employee_controller.route('/edit/<int:id>', methods = ['GET'])
+
+@employee_controller.route('/edit/<int:id>', methods=['GET'])
 def edit_employee(id):
     employee = employee_service.get_by_id(id)
     if not employee:
         return redirect(url_for('employee.list_employees'))
-    return render_template('employee_edit.html', employee = employee)
+    return render_template('employee_edit.html', employee=employee)
 
-@employee_controller.route('/update/<int:id>', methods = ['POST'])
+
+@employee_controller.route('/update/<int:id>', methods=['POST'])
 def update(id):
     full_name = request.form['full_name']
     position = request.form['position']
@@ -42,7 +49,8 @@ def update(id):
 
     return redirect(url_for('employee.list_employees'))
 
-@employee_controller.route('/delete/<int:id>', methods = ['POST'])
+
+@employee_controller.route('/delete/<int:id>', methods=['POST'])
 def delete(id):
     employee_service.delete(id)
     return redirect(url_for('employee.list_employees'))
