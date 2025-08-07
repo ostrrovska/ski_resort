@@ -44,6 +44,17 @@
     <a href="{{ url_for('client.list_clients') }}">Clear</a>
 </form>
 
+<script>
+    document.getElementById('filter_by').addEventListener('change', function() {
+        var filterValueInput = document.getElementById('filter_value');
+        if (this.value === 'date_of_birth') {
+            filterValueInput.type = 'date';
+        } else {
+            filterValueInput.type = 'text';
+        }
+    });
+</script>
+
 <table>
     <tr>
         <th>ID</th>

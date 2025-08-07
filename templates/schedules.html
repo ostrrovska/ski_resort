@@ -6,90 +6,105 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('employee.list_employees') }}">View Employees</a>
-    <a href="{{ url_for('client.list_clients') }}">View Clients</a>
-    <h1>Schedules</h1>
+<a href="{{ url_for('employee.list_employees') }}">View Employees</a>
+<a href="{{ url_for('client.list_clients') }}">View Clients</a>
+<h1>Schedules</h1>
 
-    <form action="{{ url_for('schedule.list_schedules') }}" method="GET">
-        <div class="form-group">
-            <label for="sort_by">Sort by:</label>
-            <select id="sort_by" name="sort_by">
-                <option value="" selected>None</option>
-                <option value="id">ID</option>
-                <option value="employee_id">Employee's id</option>
-                <option value="work_date">Work date</option>
-                <option value="shift_start">Shift start</option>
-                <option value="shift_end">Shift end</option>
-            </select>
-            <label for="sort_order">Order:</label>
-            <select id="sort_order" name="sort_order">
-                <option value="asc" selected>Ascending</option>
-                <option value="desc">Descending</option>
-            </select>
-        </div>
+<form action="{{ url_for('schedule.list_schedules') }}" method="GET">
+    <div class="form-group">
+        <label for="sort_by">Sort by:</label>
+        <select id="sort_by" name="sort_by">
+            <option value="" selected>None</option>
+            <option value="id">ID</option>
+            <option value="employee_id">Employee's id</option>
+            <option value="work_date">Work date</option>
+            <option value="shift_start">Shift start</option>
+            <option value="shift_end">Shift end</option>
+        </select>
+        <label for="sort_order">Order:</label>
+        <select id="sort_order" name="sort_order">
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </div>
 
-        <div class="form-group">
-            <label for="filter_by">Filter by:</label>
-            <select id="filter_by" name="filter_by">
-                <option value="" selected>None</option>
-                <option value="employee_id">Employee's id</option>
-                <option value="work_date">Work date</option>
-                <option value="shift_start">Shift start</option>
-                <option value="shift_end">Shift end</option>
-            </select>
-            <label for="filter_value">Value:</label>
-            <input type="text" id="filter_value" name="filter_value"><br><br>
-        </div>
-        <button type="submit">Apply</button>
-        <a href="{{ url_for('schedule.list_schedules') }}">Clear</a>
-    </form>
+    <div class="form-group">
+        <label for="filter_by">Filter by:</label>
+        <select id="filter_by" name="filter_by">
+            <option value="" selected>None</option>
+            <option value="employee_id">Employee's id</option>
+            <option value="work_date">Work date</option>
+            <option value="shift_start">Shift start</option>
+            <option value="shift_end">Shift end</option>
+        </select>
+        <label for="filter_value">Value:</label>
+        <input type="text" id="filter_value" name="filter_value"><br><br>
+    </div>
+    <button type="submit">Apply</button>
+    <a href="{{ url_for('schedule.list_schedules') }}">Clear</a>
+</form>
 
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Employee's id</th>
-                <th>Work date</th>
-                <th>Shift start</th>
-                <th>Shift end</th>
-                <th>Actions</th>
-            </tr>
-            {% for schedule in schedules %}
-            <tr>
-                <td>{{ schedule.id }}</td>
-                <td>{{ schedule.employee_id }}</td>
-                <td>{{ schedule.work_date }}</td>
-                <td>{{ schedule.shift_start }}</td>
-                <td>{{ schedule.shift_end }}</td>
-                <td>
-                    <a href="{{ url_for('schedule.edit_schedule', id=schedule.id) }}">Edit</a>
-                    <form action="{{ url_for('schedule.delete', id=schedule.id) }}" method="POST" style="display:inline;">
-                        <button type="submit">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+<script>
+    document.getElementById('filter_by').addEventListener('change', function () {
+        var filterValueInput = document.getElementById('filter_value');
+        if (this.value === 'employee_id') {
+            filterValueInput.type = 'number';
+        } else if (this.value === 'work_date') {
+            filterValueInput.type = 'date';
+        } else if (this.value === 'shift_start' || this.value === 'shift_end') {
+            filterValueInput.type = 'time';
+        } else {
+            filterValueInput.type = 'text';
+        }
+    });
+</script>
 
-        <h2>Add New Schedule</h2>
-        <form action="{{ url_for('schedule.add') }}" method="POST">
-            <label for="employee_id">Employee's id:</label>
-            <input type="number" id="employee_id" name="employee_id" required><br><br>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Employee's id</th>
+        <th>Work date</th>
+        <th>Shift start</th>
+        <th>Shift end</th>
+        <th>Actions</th>
+    </tr>
+    {% for schedule in schedules %}
+        <tr>
+            <td>{{ schedule.id }}</td>
+            <td>{{ schedule.employee_id }}</td>
+            <td>{{ schedule.work_date }}</td>
+            <td>{{ schedule.shift_start }}</td>
+            <td>{{ schedule.shift_end }}</td>
+            <td>
+                <a href="{{ url_for('schedule.edit_schedule', id=schedule.id) }}">Edit</a>
+                <form action="{{ url_for('schedule.delete', id=schedule.id) }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
 
-            <label for="work_date">Work date:</label>
-            <input type="date" id="work_date" name="work_date" required><br><br>
+<h2>Add New Schedule</h2>
+<form action="{{ url_for('schedule.add') }}" method="POST">
+    <label for="employee_id">Employee's id:</label>
+    <input type="number" id="employee_id" name="employee_id" required><br><br>
 
-            <label for="shift_start">Shift start:</label>
-            <input type="time" id="shift_start" name="shift_start" required><br><br>
+    <label for="work_date">Work date:</label>
+    <input type="date" id="work_date" name="work_date" required><br><br>
 
-            <label for="shift_end">Shift end:</label>
-            <input type="time" id="shift_end" name="shift_end" required><br><br>
+    <label for="shift_start">Shift start:</label>
+    <input type="time" id="shift_start" name="shift_start" required><br><br>
 
-            <button type="submit">Add Schedule</button>
-        </form>
+    <label for="shift_end">Shift end:</label>
+    <input type="time" id="shift_end" name="shift_end" required><br><br>
 
-        <!-- Logout button -->
-        <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
-            <button type="submit">Logout</button>
-        </form>
+    <button type="submit">Add Schedule</button>
+</form>
+
+<!-- Logout button -->
+<form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+    <button type="submit">Logout</button>
+</form>
 </body>
 </html>

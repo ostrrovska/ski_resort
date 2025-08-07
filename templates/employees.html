@@ -48,6 +48,7 @@
     </div>
 </form>
 
+
 <table>
     <tr>
         <th>ID</th>
@@ -100,5 +101,17 @@
 <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
     <button type="submit">Logout</button>
 </form>
+
+<script>
+    document.getElementById('filter_by').addEventListener('change', function() {
+        var filterValueInput = document.getElementById('filter_value');
+        if (this.value === 'salary') {
+            filterValueInput.type = 'number';
+        } else {
+            filterValueInput.type = 'text';
+        }
+    });
+</script>
+
 </body>
 </html>
