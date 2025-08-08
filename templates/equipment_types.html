@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Equipment types</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<a href="{{ url_for('schedule.list_schedules') }}">View Schedules</a>
+<a href="{{ url_for('client.list_clients') }}">View Clients</a>
+<a href="{{ url_for('employee.list_employees') }}">View Employees</a>
+
+<h1>Equipment type list</h1>
+
+<!-- Form for sorting and filtering equipment types -->
+<form action="{{ url_for('equipment_type.list_equipment_types') }}" method="GET">
+    <div class="form-group">
+        <label for="sort_by">Sort by:</label>
+        <select id="sort_by" name="sort_by">
+            <option value="" selected>None</option>
+            <option value="id">ID</option>
+            <option value="name">Name</option>
+        </select>
+        <label for="sort_order">Order:</label>
+        <select id="sort_order" name="sort_order">
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="filter_by">Filter by:</label>
+        <select id="filter_by" name="filter_by">
+            <option value="" selected>None</option>
+            <option value="name">Name</option>
+            <option value="description">Description</option>
+        </select>
+        <label for="filter_value">Value:</label>
+        <input type="text" id="filter_value" name="filter_value"><br><br>
+        <button type="submit">Apply</button>
+        <a href="{{ url_for('equipment_type.list_equipment_types') }}">Clear</a>
+    </div>
+</form>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Actions</th>
+    </tr>
+    {% for equipment_type in equipment_types %}
+        <tr>
+            <td>{{ equipment_type.id }}</td>
+            <td>{{ equipment_type.name }}</td>
+            <td>{{ equipment_type.description }}</td>
+            <td>
+                <a href="{{ url_for('equipment_type.edit_equipment_type', id=equipment_type.id) }}">Edit</a>
+                <form action="{{ url_for('equipment_type.delete', id=equipment_type.id) }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h2>Add New Equipment Type</h2>
+<form action="{{ url_for('equipment_type.add') }}" method="POST">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br><br>
+
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description" required><br><br>
+
+    <button type="submit">Add Equipment Type</button>
+</form>
+
+<!-- Logout button -->
+<form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+    <button type="submit">Logout</button>
+</form>
+
+
+</body>
+</html>
