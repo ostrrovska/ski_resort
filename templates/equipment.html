@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Equipment list</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<a href="{{ url_for('employee.list_employees') }}">View Employees</a>
+<a href="{{ url_for('schedule.list_schedules') }}">View Schedules</a>
+<a href="{{ url_for('client.list_clients') }}">View Clients</a>
+<a href="{{ url_for('equipment_type.list_equipment_types') }}">View Equipment Types</a>
+
+<h1>Equipment list</h1>
+
+<form action="{{ url_for('equipment.list_equipment') }}" method="GET">
+    <div class="form-group">
+        <label for="sort_by">Sort by:</label>
+        <select id="sort_by" name="sort_by">
+            <option value="" selected>None</option>
+            <option value="id">ID</option>
+            <option value="type_id">Equipment type's id</option>
+            <option value="model">Model</option>
+            <option value="is_available">Is Available</option>
+        </select>
+        <label for="sort_order">Order:</label>
+        <select id="sort_order" name="sort_order">
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="filter_by">Filter by:</label>
+        <select id="filter_by" name="filter_by">
+            <option value="" selected>None</option>
+            <option value="type_id">Equipment type's id</option>
+            <option value="model">Model</option>
+            <option value="is_available">Is Available</option>
+        </select>
+        <label for="filter_value">Value:</label>
+        <input type="text" id="filter_value" name="filter_value"><br><br>
+    </div>
+    <button type="submit">Apply</button>
+    <a href="{{ url_for('equipment.list_equipment') }}">Clear</a>
+</form>
+
+<script>
+    document.getElementById('filter_by').addEventListener('change', function () {
+        var filterValueInput = document.getElementById('filter_value');
+        if (this.value === 'type_id') {
+            filterValueInput.type = 'number';
+        } else if (this.value === 'is_available') {
+            filterValueInput.type = 'checkbox';
+        } else {
+            filterValueInput.type = 'text';
+        }
+    });
+</script>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Equipment type's id</th>
+        <th>Model</th>
+        <th>Is Available</th>
+        <th>Actions</th>
+    </tr>
+    {% for equipment in equipment %}
+        <tr>
+            <td>{{ equipment.id }}</td>
+            <td>{{ equipment.type_id }}</td>
+            <td>{{ equipment.model }}</td>
+            <td>{{ equipment.is_available }}</td>
+            <td>
+                <a href="{{ url_for('equipment.edit_equipment', id=equipment.id) }}">Edit</a>
+                <form action="{{ url_for('equipment.delete', id=equipment.id) }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h2>Add New Equipment</h2>
+<form action="{{ url_for('equipment.add') }}" method="POST">
+    <label for="type_id">Equipment type's id:</label>
+    <input type="number" id="type_id" name="type_id" required><br><br>
+
+    <label for="model">Model:</label>
+    <input type="text" id="model" name="model" required><br><br>
+
+    <label for="is_available">Is Available:</label>
+    <input type="checkbox" id="is_available" name="is_available"><br><br>
+
+    <button type="submit">Add Equipment</button>
+</form>
+
+<!-- Logout button -->
+<form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+    <button type="submit">Logout</button>
+</form>
+</body>
+</html>

@@ -3,6 +3,7 @@ from controllers.employee_controller import employee_controller
 from controllers.schedule_controller import schedule_controller
 from controllers.client_controller import client_controller
 from controllers.equipment_type_controller import equipment_type_controller
+from controllers.equipment_controller import equipment_controller
 from middlewares.authentication_middleware import require_login_middleware
 from models import db
 from config import Config
@@ -29,6 +30,8 @@ app.register_blueprint(schedule_controller, url_prefix='/schedules')
 app.register_blueprint(client_controller, url_prefix='/clients')
 
 app.register_blueprint(equipment_type_controller, url_prefix='/equipment_types')
+
+app.register_blueprint(equipment_controller, url_prefix='/equipment')
 
 if __name__ == '__main__':
     # Quick test: print all schedules for the first employee
