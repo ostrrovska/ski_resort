@@ -1,28 +1,38 @@
 import datetime
 
 from models.client import Client, db
+from models.key import Key
 
 
 class ClientService:
 
     @staticmethod
-    def register(full_name, document_id, date_of_birth, phone_number, email, username, password):
-        existing_client = Client.query.filter_by(username=username).first()
-        if existing_client:
+    def register(full_name, document_id, date_of_birth, phone_number, email, login, password):
+        if Key.query.filter_by(login=login).first():
             return None
-        new_client = Client(full_name=full_name, document_id=document_id, date_of_birth=date_of_birth,
-                            phone_number=phone_number, email=email, username=username
-                            )
-        new_client.set_password(password)
+
+        new_key = Key(login=login, password=password, access_right='authorized')
+        db.session.add(new_key)
+        db.session.commit()
+
+        new_client = Client(
+            full_name=full_name,
+            document_id=document_id,
+            date_of_birth=date_of_birth,
+            phone_number=phone_number,
+            email=email,
+            authorization_fkey=new_key.id
+        )
         db.session.add(new_client)
         db.session.commit()
+
         return new_client
 
     @staticmethod
-    def login(username, password):
-        user = Client.query.filter_by(username=username).first()
-        if user and user.check_password(password):
-            return user
+    def login(login, password):
+        key = Key.query.filter_by(login=login).first()
+        if key and key.check_password(password):
+            return key.client
         return None
 
     @staticmethod
@@ -63,13 +73,6 @@ class ClientService:
         return Client.query.get(id)
 
     @staticmethod
-    def add(full_name, document_id, date_of_birth, phone_number, email):
-        new_client = Client(full_name, document_id, date_of_birth, phone_number, email)
-        db.session.add(new_client)
-        db.session.commit()
-        return new_client
-
-    @staticmethod
     def update(id, full_name, document_id, date_of_birth, phone_number, email):
         client = ClientService.get_by_id(id)
         if client:
@@ -86,6 +89,9 @@ class ClientService:
     def delete(id):
         client = ClientService.get_by_id(id)
         if client:
+            key = Key.query.get(client.authorization_fkey)
+            if key:
+                db.session.delete(key)
             db.session.delete(client)
             db.session.commit()
             return True
