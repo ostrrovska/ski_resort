@@ -1,4 +1,5 @@
 from models import db
+from sqlalchemy.orm import backref
 
 class Client(db.Model):
     __tablename__ = 'client'
@@ -10,7 +11,7 @@ class Client(db.Model):
     phone_number = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
     authorization_fkey = db.Column(db.Integer, db.ForeignKey('keys.id'), nullable=False)
-    key = db.relationship('Key', backref='client')
+    key = db.relationship('Key', backref=backref('client', uselist=False))
 
 
     def __init__(self, full_name, document_id, date_of_birth, phone_number, email, authorization_fkey):

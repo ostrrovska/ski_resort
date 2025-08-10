@@ -10,8 +10,9 @@ class ClientService:
     def register(full_name, document_id, date_of_birth, phone_number, email, login, password):
         if Key.query.filter_by(login=login).first():
             return None
+        new_key = Key(login=login, access_right='authorized')
+        new_key.set_password(password)
 
-        new_key = Key(login=login, password=password, access_right='authorized')
         db.session.add(new_key)
         db.session.commit()
 

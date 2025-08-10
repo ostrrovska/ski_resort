@@ -18,27 +18,27 @@ def register():
     date_of_birth = request.form['date_of_birth']
     phone_number = request.form['phone_number']
     email = request.form['email']
-    username = request.form['username']
+    login = request.form['login']
     password = request.form['password']
-    client = client_service.register(full_name, document_id, date_of_birth, phone_number, email, username, password)
+    client = client_service.register(full_name, document_id, date_of_birth, phone_number, email, login, password)
     if client:
         flash('Account created successfully. Please login.')
         return redirect(url_for('client.auth_page'))
     else:
-        flash('Account already exists')
+        flash('A user with this login already exists.')
         return redirect(url_for('client.auth_page'))
 
 
 @client_controller.route('/login', methods=['POST'])
 def login():
-    username = request.form['username']
+    login = request.form['login']
     password = request.form['password']
-    client = client_service.login(username, password)
+    client = client_service.login(login, password)
     if client:
         session['client_id'] = client.id
         return redirect(url_for('client.list_clients'))
     else:
-        flash('Invalid username or password')
+        flash('Invalid login or password')
         return redirect(url_for('client.auth_page'))
 
 
@@ -58,16 +58,6 @@ def list_clients():
                                      filter_by=filter_by, filter_value=filter_value)
     return render_template('clients.html', clients=clients)
 
-
-@client_controller.route('/add', methods=['POST'])
-def add():
-    full_name = request.form['full_name']
-    document_id = request.form['document_id']
-    date_of_birth = request.form['date_of_birth']
-    phone_number = request.form['phone_number']
-    email = request.form['email']
-    client_service.add(full_name, document_id, date_of_birth, phone_number, email)
-    return redirect(url_for('client.list_clients'))
 
 
 @client_controller.route('/edit/<int:id>', methods=['GET'])
