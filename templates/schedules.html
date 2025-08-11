@@ -10,7 +10,18 @@
 <a href="{{ url_for('client.list_clients') }}">View Clients</a>
 <a href="{{ url_for('equipment_type.list_equipment_types') }}">View Equipment Types</a>
 <a href="{{ url_for('equipment.list_equipment') }}">View Equipment</a>
+
 <h1>Schedules</h1>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
 
 <form action="{{ url_for('schedule.list_schedules') }}" method="GET">
     <div class="form-group">

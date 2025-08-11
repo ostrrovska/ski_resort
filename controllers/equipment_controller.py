@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from services.equipment_service import EquipmentService
 
 equipment_service = EquipmentService()
@@ -26,7 +26,12 @@ def add():
     type_id = request.form['type_id']
     model = request.form['model']
     is_available = 'is_available' in request.form
-    equipment_service.add(type_id, model, is_available)
+    try:
+        equipment_service.add(type_id, model, is_available)
+        flash('Equipment added', 'success')
+    except ValueError as e:
+        flash(f'Error: {e}', 'danger')
+
     return redirect(url_for('equipment.list_equipment'))
 
 
@@ -44,10 +49,18 @@ def update(id):
     model = request.form['model']
     is_available = 'is_available' in request.form
 
-    if type_id and model:
-        equipment_service.update(id, type_id, model, is_available)
+    if not type_id or not model:
+        flash('Type and model are required', 'warning')
+        return redirect(url_for('equipment.edit_equipment', id=id))
 
-    return redirect(url_for('equipment.list_equipment'))
+    try:
+        equipment_service.update(id, type_id, model, is_available)
+        flash('Equipment updated.', 'success')
+        return redirect(url_for('equipment.list_equipment'))
+    except ValueError as e:
+        flash(f'Error: {e}', 'danger')
+        return redirect(url_for('equipment.edit_equipment', id=id))
+
 
 @equipment_controller.route('/delete/<int:id>', methods=['POST'])
 def delete(id):

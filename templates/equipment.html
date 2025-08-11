@@ -13,6 +13,16 @@
 
 <h1>Equipment list</h1>
 
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
 <form action="{{ url_for('equipment.list_equipment') }}" method="GET">
     <div class="form-group">
         <label for="sort_by">Sort by:</label>

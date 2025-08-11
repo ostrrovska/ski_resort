@@ -1,4 +1,5 @@
 from models.equipment import Equipment, db
+from services.equipment_type_service import EquipmentTypeService
 
 
 class EquipmentService:
@@ -36,6 +37,10 @@ class EquipmentService:
 
     @staticmethod
     def add(type_id, model, is_available):
+        equipment_type = EquipmentTypeService.get_by_id(type_id)
+        if not equipment_type:
+            raise ValueError(f"Type of equipment with ID {type_id} is not found.")
+
         new_equipment = Equipment(type_id, model, is_available)
         db.session.add(new_equipment)
         db.session.commit()
@@ -44,13 +49,18 @@ class EquipmentService:
     @staticmethod
     def update(id, type_id, model, is_available):
         equipment = EquipmentService.get_by_id(id)
-        if equipment:
-            equipment.type_id = type_id
-            equipment.model = model
-            equipment.is_available = is_available
-            db.session.commit()
-            return True
-        return False
+        if not equipment:
+            return None
+
+        equipment_type = EquipmentTypeService.get_by_id(type_id)
+        if not equipment_type:
+            raise ValueError(f"Type of equipment with ID {type_id} is not found.")
+
+        equipment.type_id = type_id
+        equipment.model = model
+        equipment.is_available = is_available
+        db.session.commit()
+        return equipment
 
     @staticmethod
     def delete(id):

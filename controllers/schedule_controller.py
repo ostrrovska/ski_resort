@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from services.schedule_service import ScheduleService
 
 schedule_service = ScheduleService()
@@ -21,7 +21,12 @@ def add():
     work_date = request.form['work_date']
     shift_start = request.form['shift_start']
     shift_end = request.form['shift_end']
-    schedule_service.add(employee_id, work_date, shift_start, shift_end)
+    try:
+        schedule_service.add(employee_id, work_date, shift_start, shift_end)
+        flash('Schedule added successfully.', 'success')
+    except ValueError as e:
+        flash(f'Error: {e}', 'danger')
+
     return redirect(url_for('schedule.list_schedules'))
 
 @schedule_controller.route('/edit/<int:id>', methods = ['GET'])
@@ -38,10 +43,17 @@ def update(id):
     shift_start = request.form['shift_start']
     shift_end = request.form['shift_end']
 
-    if employee_id and work_date and shift_start and shift_end:
-        schedule_service.update(id, employee_id, work_date, shift_start, shift_end)
+    if not employee_id or not work_date or not shift_start or not shift_end:
+        flash('All fields are required.', 'warning')
+        return redirect(url_for('schedule.edit_schedule', id=id))
 
-    return redirect(url_for('schedule.list_schedules'))
+    try:
+        schedule_service.update(id, employee_id, work_date, shift_start, shift_end)
+        flash('Schedule updated successfully.', 'success')
+        return redirect(url_for('schedule.list_schedules'))
+    except ValueError as e:
+        flash(f'Error: {e}', 'danger')
+        return redirect(url_for('schedule.edit_schedule', id=id))
 
 @schedule_controller.route('/delete/<int:id>', methods = ['POST'])
 def delete(id):

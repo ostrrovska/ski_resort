@@ -1,6 +1,7 @@
 import datetime
 
 from models.schedule import Schedule, db
+from services.employee_service import EmployeeService
 
 
 class ScheduleService:
@@ -43,6 +44,9 @@ class ScheduleService:
 
     @staticmethod
     def add(employee_id, work_date, shift_start, shift_end):
+        id = EmployeeService.get_by_id(employee_id)
+        if not id:
+            raise ValueError(f"Employee with ID {employee_id} is not found.")
         new_schedule = Schedule(employee_id, work_date, shift_start, shift_end)
         db.session.add(new_schedule)
         db.session.commit()
@@ -51,14 +55,19 @@ class ScheduleService:
     @staticmethod
     def update(id, employee_id, work_date, shift_start, shift_end):
         schedule = ScheduleService.get_by_id(id)
-        if schedule:
-            schedule.employee_id = employee_id
-            schedule.work_date = work_date
-            schedule.shift_start = shift_start
-            schedule.shift_end = shift_end
-            db.session.commit()
-            return True
-        return False
+        if not schedule:
+            return None
+
+        id = EmployeeService.get_by_id(employee_id)
+        if not id:
+            raise ValueError(f"Employee with ID {employee_id} is not found.")
+
+        schedule.employee_id = employee_id
+        schedule.work_date = work_date
+        schedule.shift_start = shift_start
+        schedule.shift_end = shift_end
+        db.session.commit()
+        return schedule
 
     @staticmethod
     def delete(id):
