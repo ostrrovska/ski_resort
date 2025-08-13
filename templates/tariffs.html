@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tariffs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<a href="{{ url_for('employee.list_employees') }}">View Employees</a>
+<a href="{{ url_for('client.list_clients') }}">View Clients</a>
+<a href="{{ url_for('equipment_type.list_equipment_types') }}">View Equipment Types</a>
+<a href="{{ url_for('equipment.list_equipment') }}">View Equipment</a>
+<a href="{{ url_for('schedule.list_schedules') }}">View schedules</a>
+
+<h1>Tariffs</h1>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<form action="{{ url_for('tariff.list_tariffs') }}" method="GET">
+    <div class="form-group">
+        <label for="sort_by">Sort by:</label>
+        <select id="sort_by" name="sort_by">
+            <option value="" selected>None</option>
+            <option value="id">ID</option>
+            <option value="equipment_type_id">Equipment type's id</option>
+            <option value="price_per_hour">Price per hour</option>
+            <option value="price_per_day">Price per day</option>
+            <option value="weekday_discount">Weekday discount</option>
+        </select>
+        <label for="sort_order">Order:</label>
+        <select id="sort_order" name="sort_order">
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="filter_by">Filter by:</label>
+        <select id="filter_by" name="filter_by">
+            <option value="" selected>None</option>
+            <option value="equipment_type_id">Equipment type's id</option>
+            <option value="price_per_hour">Price per hour</option>
+            <option value="price_per_day">Price per day</option>
+            <option value="weekday_discount">Weekday discount</option>
+        </select>
+        <label for="filter_value">Value:</label>
+        <input type="number" id="filter_value" name="filter_value"><br><br>
+    </div>
+    <button type="submit">Apply</button>
+    <a href="{{ url_for('tariff.list_tariffs') }}">Clear</a>
+</form>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Equipment type's id</th>
+        <th>Price per hour</th>
+        <th>Price per day</th>
+        <th>Weekday discount</th>
+        <th>Actions</th>
+    </tr>
+    {% for tariff in tariffs %}
+        <tr>
+            <td>{{ tariff.id }}</td>
+            <td>{{ tariff.equipment_type_id }}</td>
+            <td>{{ tariff.price_per_hour }}</td>
+            <td>{{ tariff.price_per_day }}</td>
+            <td>{{ tariff.weekday_discount }}</td>
+            <td>
+                <a href="{{ url_for('tariff.edit_tariff', id=tariff.id) }}">Edit</a>
+                <form action="{{ url_for('tariff.delete', id=tariff.id) }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h2>Add New Tariff</h2>
+<form action="{{ url_for('tariff.add') }}" method="POST">
+    <label for="equipment_type_id">Equipment type's id:</label>
+    <input type="number" id="equipment_type_id" name="equipment_type_id" required><br><br>
+
+    <label for ="price_per_hour">Price per hour:</label>
+    <input type="number" id="price_per_hour" name="price_per_hour" required><br><br>
+
+    <label for ="price_per_day">Price per day:</label>
+    <input type="number" id="price_per_day" name="price_per_day" required><br><br>
+
+    <label for ="weekday_discount">Weekday discount:</label>
+    <input type="number" id="weekday_discount" name="weekday_discount" required><br><br>
+
+    <button type="submit">Add Tariff</button>
+</form>
+<!-- Logout button -->
+<form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+    <button type="submit">Logout</button>
+</form>
+</body>
+</html>
