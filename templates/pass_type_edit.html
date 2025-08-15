@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit pass type</title>
+</head>
+<body>
+
+<h1>Edit pass type</h1>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<form action="{{ url_for('pass_type.update', id=pass_type.id) }}" method="POST">
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" value="{{ pass_type.name }}" required><br><br>
+
+    <label for="limit_lifts">Limit lifts</label>
+    <input type="number" id="limit_lifts" name="limit_lifts" value="{{ pass_type.limit_lifts }}" required><br><br>
+
+    <label for="limit_hours">Limit hours</label>
+    <input type="number" id="limit_hours" name="limit_hours" value="{{ pass_type.limit_hours }}" required><br><br>
+
+    <label for="price">Price</label>
+    <input type="number" id="price" name="price" value="{{ pass_type.price }}" required><br><br>
+
+    <button type="submit">Update</button>
+</form>
+
+<a href="{{ url_for('pass_type.list_pass_types') }}">Back to List</a>
+
+</body>
+</html>
