@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Passes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<a href="{{ url_for('employee.list_employees') }}">View Employees</a>
+<a href="{{ url_for('schedule.list_schedules') }}">View Schedules</a>
+<a href="{{ url_for('client.list_clients') }}">View Clients</a>
+<a href="{{ url_for('equipment_type.list_equipment_types') }}">View Equipment Types</a>
+<a href="{{ url_for('tariff.list_tariffs') }}">View Tariffs</a>
+
+<h1>Passes list</h1>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<form action="{{ url_for('passes.list_passes') }}" method="GET">
+    <div class="form-group">
+        <label for="sort_by">Sort by:</label>
+        <select id="sort_by" name="sort_by">
+            <option value="" selected>None</option>
+            <option value="id">ID</option>
+            <option value="client_id">Client id</option>
+            <option value="pass_type_id">Pass type</option>
+            <option value="purchase_date">Purchase date</option>
+            <option value="valid_from">Valid from</option>
+            <option value="valid_to">Valid to</option>
+            <option value="remaining_lifts">Remaining lifts</option>
+            <option value="remaining_hours">Remaining hours</option>
+        </select>
+        <label for="sort_order">Order:</label>
+        <select id="sort_order" name="sort_order">
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="filter_by">Filter by:</label>
+        <select id="filter_by" name="filter_by">
+            <option value="" selected>None</option>
+            <option value="client_id">Client id</option>
+            <option value="pass_type_id">Pass type</option>
+            <option value="purchase_date">Purchase date</option>
+            <option value="valid_from">Valid from</option>
+            <option value="valid_to">Valid to</option>
+            <option value="remaining_lifts">Remaining lifts</option>
+            <option value="remaining_hours">Remaining hours</option>
+        </select>
+        <label for="filter_value">Value:</label>
+        <input type="number" id="filter_value" name="filter_value"><br><br>
+    </div>
+    <button type="submit">Apply</button>
+    <a href="{{ url_for('equipment.list_equipment') }}">Clear</a>
+</form>
+
+<script>
+    document.getElementById('filter_by').addEventListener('change', function () {
+        var filterValueInput = document.getElementById('filter_value');
+        if (this.value === 'purchase_date' || this.value === 'valid_from' || this.value === 'valid_to') {
+            filterValueInput.type = 'date';
+        } else {
+            filterValueInput.type = 'number';
+        }
+    });
+</script>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Client id</th>
+        <th>Pass type id</th>
+        <th>Purchase date</th>
+        <th>Valid from</th>
+        <th>Valid to</th>
+        <th>Remaining lifts</th>
+        <th>Remaining hours</th>
+        <th>Actions</th>
+    </tr>
+    {% for pass in passes %}
+        <tr>
+            <td>{{ pass.id }}</td>
+            <td>{{ pass.client_id }}</td>
+            <td>{{ pass.pass_type_id }}</td>
+            <td>{{ pass.purchase_date }}</td>
+            <td>{{ pass.valid_from }}</td>
+            <td>{{ pass.valid_to }}</td>
+            <td>{{ pass.remaining_lifts }}</td>
+            <td>{{ pass.remaining_hours }}</td>
+            <td>
+                <a href="{{ url_for('passes.edit_pass', id=pass.id) }}">Edit</a>
+                <form action="{{ url_for('passes.delete', id=pass.id) }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h2>Add New Pass</h2>
+<form action="{{ url_for('passes.add') }}" method="POST">
+    <label for="client_id">Client id:</label>
+    <input type="number" id="client_id" name="client_id" required><br><br>
+
+    <label for="pass_type_id">Pass type id:</label>
+    <input type="number" id="pass_type_id" name="pass_type_id" required><br><br>
+
+    <label for="purchase_date">Purchase date:</label>
+    <input type="date" id="purchase_date" name="purchase_date" required><br><br>
+
+    <label for="valid_from">Valid from:</label>
+    <input type="date" id="valid_from" name="valid_from" required><br><br>
+
+    <label for="valid_to">Valid to:</label>
+    <input type="date" id="valid_to" name="valid_to" required><br><br>
+
+    <label for="remaining_lifts">Remaining lifts:</label>
+    <input type="number" id="remaining_lifts" name="remaining_lifts" required><br><br>
+
+    <label for="remaining_hours">Remaining hours:</label>
+    <input type="number" id="remaining_hours" name="remaining_hours" required><br><br>
+
+    <button type="submit">Add Pass</button>
+</form>
+
+<!-- Logout button -->
+<form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+    <button type="submit">Logout</button>
+</form>
+
+</body>
+</html>
