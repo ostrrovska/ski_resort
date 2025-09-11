@@ -67,8 +67,8 @@ class PassService:
         if not client:
             raise ValueError(f"Client with ID {client_id} is not found.")
 
-        pass_type_id = PassTypeService.get_by_id(pass_type_id)
-        if not pass_type_id:
+        pass_type = PassTypeService.get_by_id(pass_type_id)
+        if not pass_type:
             raise ValueError(f"Pass type with ID {pass_type_id} is not found.")
 
         pass_.client_id = client_id
@@ -89,4 +89,3 @@ class PassService:
             db.session.commit()
             return True
         return False
-

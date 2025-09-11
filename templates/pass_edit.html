@@ -2,9 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Pass edit</title>
 </head>
 <body>
+
+<h1>Edit pass</h1>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<form action="{{ url_for('pass.update', id=pass_.id) }}" method="POST">
+    <label for="client_id">Client`s id:</label>
+    <input type="number" name="client_id" id="client_id" value="{{ pass_.client_id }}" required> <br><br>
+
+    <label for="pass_type_id">Pass type id:</label>
+    <input type="number" name="pass_type_id" id="pass_type_id" value="{{ pass_.pass_type_id }}" required> <br><br>
+
+    <label for="purchase_date">Purchase date:</label>
+    <input type="date" name="purchase_date" id="purchase_date" value="{{ pass_.purchase_date }}" required> <br><br>
+
+    <label for="valid_from">Valid from:</label>
+    <input type="date" name="valid_from" id="valid_from" value="{{ pass_.valid_from }}" required> <br><br>
+
+    <label for="valid_to">Valid to:</label>
+    <input type="date" name="valid_to" id="valid_to" value="{{ pass_.valid_to }}"><br><br>
+
+    <label for="remaining_lifts">Remaining lifts:</label>
+    <input type="number" name="remaining_lifts" id="remaining_lifts" value="{{ pass_.remaining_lifts }}" required> <br><br>
+
+    <label for="remaining_hours">Remaining hours:</label>
+    <input type="number" name="remaining_hours" id="remaining_hours" value="{{ pass_.remaining_hours }}" required> <br><br>
+
+    <button type="submit">Update</button>
+</form>
+
+<a href="{{ url_for('pass.list_passes') }}">Back to list</a>
 
 </body>
 </html>

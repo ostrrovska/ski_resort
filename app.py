@@ -6,6 +6,7 @@ from controllers.equipment_type_controller import equipment_type_controller
 from controllers.equipment_controller import equipment_controller
 from controllers.tariff_controller import tariff_controller
 from controllers.pass_type_controller import pass_type_controller
+from controllers.pass_controller import pass_controller
 from middlewares.authentication_middleware import require_login_middleware
 from models import db
 from config import Config
@@ -38,6 +39,8 @@ app.register_blueprint(equipment_controller, url_prefix='/equipment')
 app.register_blueprint(tariff_controller, url_prefix='/tariffs')
 
 app.register_blueprint(pass_type_controller, url_prefix='/pass_types')
+
+app.register_blueprint(pass_controller, url_prefix='/pass')
 
 if __name__ == '__main__':
     # Quick test: print all schedules for the first employee

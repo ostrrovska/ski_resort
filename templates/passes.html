@@ -24,7 +24,7 @@
     {% endif %}
 {% endwith %}
 
-<form action="{{ url_for('passes.list_passes') }}" method="GET">
+<form action="{{ url_for('pass.list_passes') }}" method="GET">
     <div class="form-group">
         <label for="sort_by">Sort by:</label>
         <select id="sort_by" name="sort_by">
@@ -61,7 +61,7 @@
         <input type="number" id="filter_value" name="filter_value"><br><br>
     </div>
     <button type="submit">Apply</button>
-    <a href="{{ url_for('equipment.list_equipment') }}">Clear</a>
+    <a href="{{ url_for('pass.list_passes') }}">Clear</a>
 </form>
 
 <script>
@@ -98,8 +98,8 @@
             <td>{{ pass.remaining_lifts }}</td>
             <td>{{ pass.remaining_hours }}</td>
             <td>
-                <a href="{{ url_for('passes.edit_pass', id=pass.id) }}">Edit</a>
-                <form action="{{ url_for('passes.delete', id=pass.id) }}" method="POST" style="display:inline;">
+                <a href="{{ url_for('pass.edit_pass', id=pass.id) }}">Edit</a>
+                <form action="{{ url_for('pass.delete', id=pass.id) }}" method="POST" style="display:inline;">
                     <button type="submit">Delete</button>
                 </form>
             </td>
@@ -108,7 +108,7 @@
 </table>
 
 <h2>Add New Pass</h2>
-<form action="{{ url_for('passes.add') }}" method="POST">
+<form action="{{ url_for('pass.add') }}" method="POST">
     <label for="client_id">Client id:</label>
     <input type="number" id="client_id" name="client_id" required><br><br>
 

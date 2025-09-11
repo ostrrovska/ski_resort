@@ -45,8 +45,8 @@ def update(id):
     purchase_date = request.form['purchase_date']
     valid_from = request.form['valid_from']
     valid_to = request.form['valid_to']
-    remaining_lifts = request.form['remainting_lifts']
-    remaining_hours = request.form['remainting_hours']
+    remaining_lifts = request.form['remaining_lifts']
+    remaining_hours = request.form['remaining_hours']
 
     if (not client_id or not pass_type_id or not purchase_date or not valid_from or not valid_to
             or not remaining_lifts or not remaining_hours):
