@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lifts</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<a href="{{ url_for('schedule.list_schedules') }}">View Schedules</a>
+<a href="{{ url_for('client.list_clients') }}">View Clients</a>
+<a href="{{ url_for('employee.list_employees') }}">View Employees</a>
+<a href="{{ url_for('equipment.list_equipment') }}">View Equipment</a>
+<a href="{{ url_for('tariff.list_tariffs') }}">View Tariffs</a>
+<a href="{{ url_for('pass_type.list_pass_types') }}">View Pass Types</a>
+
+<h1>Lifts list</h1>
+
+<form action="{{ url_for('lift.list_lifts') }}" method="GET">
+    <div class="form-group">
+        <label for="sort_by">Sort by:</label>
+        <select id="sort_by" name="sort_by">
+            <option value="" selected>None</option>
+            <option value="id">ID</option>
+            <option value="name">Name</option>
+            <option value="height">Height</option>
+        </select>
+        <label for="sort_order">Order:</label>
+        <select id="sort_order" name="sort_order">
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="filter_by">Filter by:</label>
+        <select id="filter_by" name="filter_by">
+            <option value="" selected>None</option>
+            <option value="name">Name</option>
+            <option value="height">Height</option>
+        </select>
+        <label for="filter_value">Value:</label>
+        <input type="text" id="filter_value" name="filter_value"><br><br>
+        <button type="submit">Apply</button>
+        <a href="{{ url_for('lift.list_lifts') }}">Clear</a>
+    </div>
+</form>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Height</th>
+        <th>Actions</th>
+    </tr>
+    {% for lift in lifts %}
+        <tr>
+            <td>{{ lift.id }}</td>
+            <td>{{ lift.name }}</td>
+            <td>{{ lift.height }}</td>
+            <td>
+                <a href="{{ url_for('lift.edit_lift', id=lift.id) }}">Edit</a>
+                <form action="{{ url_for('lift.delete', id=lift.id) }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h2>Add New Lift</h2>
+<form action="{{ url_for('lift.add') }}" method="POST">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br><br>
+
+    <label for="height">Height:</label>
+    <input type="number" id="height" name="height" required><br><br>
+
+    <button type="submit">Add Lift</button>
+</form>
+
+<!-- Logout button -->
+<form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+    <button type="submit">Logout</button>
+</form>
+
+<script>
+    document.getElementById('filter_by').addEventListener('change', function() {
+        var filterValueInput = document.getElementById('filter_value');
+        if (this.value === 'height') {
+            filterValueInput.type = 'number';
+        } else {
+            filterValueInput.type = 'text';
+        }
+    });
+</script>
+
+</body>
+</html>
