@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lift_usage</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<a href="{{ url_for('employee.list_employees') }}">View Employees</a>
+<a href="{{ url_for('client.list_clients') }}">View Clients</a>
+<a href="{{ url_for('equipment_type.list_equipment_types') }}">View Equipment Types</a>
+<a href="{{ url_for('equipment.list_equipment') }}">View Equipment</a>
+<a href="{{ url_for('tariff.list_tariffs') }}">View Tariffs</a>
+
+<h1>Lift usage list</h1>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<form action="{{ url_for('lift_usage.list_lift_usages') }}" method="GET">
+    <div class="form-group">
+        <label for="sort_by">Sort by:</label>
+        <select id="sort_by" name="sort_by">
+            <option value="" selected>None</option>
+            <option value="id">ID</option>
+            <option value="client_id">Client id</option>
+            <option value="lift_id">Lift id</option>
+            <option value="usage_date">Usage date</option>
+            <option value="usage_time_start">Usage time start</option>
+            <option value="usage_time_end">Usage time end</option>
+        </select>
+        <label for="sort_order">Order:</label>
+        <select id="sort_order" name="sort_order">
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="filter_by">Filter by:</label>
+        <select id="filter_by" name="filter_by">
+            <option value="" selected>None</option>
+            <option value="client_id">Client id</option>
+            <option value="lift_id">Lift id</option>
+            <option value="usage_date">Usage date</option>
+            <option value="usage_time_start">Usage time start</option>
+            <option value="usage_time_end">Usage time end</option>
+        </select>
+        <label for="filter_value">Value:</label>
+        <input type="text" id="filter_value" name="filter_value"><br><br>
+    </div>
+    <button type="submit">Apply</button>
+    <a href="{{ url_for('lift_usage.list_lift_usages') }}">Clear</a>
+</form>
+
+<script>
+    document.getElementById('filter_by').addEventListener('change', function () {
+        var filterValueInput = document.getElementById('filter_value');
+        if (this.value === 'usage_date') {
+            filterValueInput.type = 'date';
+        } else if (this.value === 'usage_time_start' || this.value === 'usage_time_end') {
+            filterValueInput.type = 'time';
+        } else {
+            filterValueInput.type = 'number';
+        }
+    });
+</script>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Client id</th>
+        <th>Lift id</th>
+        <th>Usage date</th>
+        <th>Usage time start</th>
+        <th>Usage time end</th>
+        <th>Actions</th>
+    </tr>
+    {% for lift_usage in lift_usages %}
+        <tr>
+            <td>{{ lift_usage.id }}</td>
+            <td>{{ lift_usage.client_id }}</td>
+            <td>{{ lift_usage.lift_id }}</td>
+            <td>{{ lift_usage.usage_date }}</td>
+            <td>{{ lift_usage.usage_time_start }}</td>
+            <td>{{ lift_usage.usage_time_end }}</td>
+            <td>
+                <a href="{{ url_for('lift_usage.edit_lift_usage', id=lift_usage.id) }}">Edit</a>
+                <form action="{{ url_for('lift_usage.delete', id=lift_usage.id) }}" method="POST"
+                      style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h2>Add New Lift Usage</h2>
+<form action="{{ url_for('lift_usage.add') }}" method="POST">
+    <label for="client_id">Client id:</label>
+    <input type="number" id="client_id" name="client_id" required><br><br>
+
+    <label for="lift_id">Lift id:</label>
+    <input type="number" id="lift_id" name="lift_id" required><br><br>
+
+    <label for="usage_date">Usage date:</label>
+    <input type="date" id="usage_date" name="usage_date" required><br><br>
+
+    <label for="usage_time_start">Usage time start:</label>
+    <input type="time" id="usage_time_start" name="usage_time_start" required><br><br>
+
+    <label for="usage_time_end">Usage time end:</label>
+    <input type="time" id="usage_time_end" name="usage_time_end" required><br><br>
+
+    <button type="submit">Add Lift Usage</button>
+</form>
+<!-- Logout button -->
+<form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+    <button type="submit">Logout</button>
+</form>
+</body>
+</html>
