@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pass Lift Usages</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+<a href="{{ url_for('employee.list_employees') }}">View Employees</a>
+<a href="{{ url_for('client.list_clients') }}">View Clients</a>
+<a href="{{ url_for('equipment_type.list_equipment_types') }}">View Equipment Types</a>
+<a href="{{ url_for('equipment.list_equipment') }}">View Equipment</a>
+<a href="{{ url_for('tariff.list_tariffs') }}">View Tariffs</a>
+<a href="{{ url_for('lift_usage.list_lift_usages') }}">View Lift Usages</a>
+
+<h1>Pass Lift Usage List</h1>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<form action="{{ url_for('pass_lift_usage.list_pass_lift_usages') }}" method="GET">
+    <div class="form-group">
+        <label for="sort_by">Sort by:</label>
+        <select id="sort_by" name="sort_by">
+            <option value="" selected>None</option>
+            <option value="pass_id">Pass ID</option>
+            <option value="lift_usage_id">Lift Usage ID</option>
+        </select>
+        <label for="sort_order">Order:</label>
+        <select id="sort_order" name="sort_order">
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="filter_by">Filter by:</label>
+        <select id="filter_by" name="filter_by">
+            <option value="" selected>None</option>
+            <option value="pass_id">Pass ID</option>
+            <option value="lift_usage_id">Lift Usage ID</option>
+        </select>
+        <label for="filter_value">Value:</label>
+        <input type="number" id="filter_value" name="filter_value"><br><br>
+    </div>
+    <button type="submit">Apply</button>
+    <a href="{{ url_for('pass_lift_usage.list_pass_lift_usages') }}">Clear</a>
+</form>
+
+<table>
+    <tr>
+        <th>Pass ID</th>
+        <th>Lift Usage ID</th>
+        <th>Actions</th>
+    </tr>
+    {% for plu in pass_lift_usages %}
+        <tr>
+            <td>{{ plu.pass_id }}</td>
+            <td>{{ plu.lift_usage_id }}</td>
+            <td>
+                <a href="{{ url_for('pass_lift_usage.edit_pass_lift_usage', pass_id=plu.pass_id, lift_usage_id=plu.lift_usage_id) }}">Edit</a>
+                <form action="{{ url_for('pass_lift_usage.delete', pass_id=plu.pass_id, lift_usage_id=plu.lift_usage_id) }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h2>Add New Pass Lift Usage</h2>
+<form action="{{ url_for('pass_lift_usage.add') }}" method="POST">
+    <label for="pass_id">Pass ID:</label>
+    <input type="number" id="pass_id" name="pass_id" required><br><br>
+
+    <label for="lift_usage_id">Lift Usage ID:</label>
+    <input type="number" id="lift_usage_id" name="lift_usage_id" required><br><br>
+
+    <button type="submit">Add</button>
+</form>
+
+<!-- Logout button -->
+<form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+    <button type="submit">Logout</button>
+</form>
+
+</body>
+</html>
