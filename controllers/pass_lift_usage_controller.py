@@ -37,7 +37,7 @@ def edit_pass_lift_usage(pass_id, lift_usage_id):
     return render_template('pass_lift_usage_edit.html', pass_lift_usage = pass_lift_usage)
 
 @pass_lift_usage_controller.route('/update/<int:old_pass_id>/<int:old_lift_usage_id>', methods=['POST'])
-def update_pass_lift_usage(old_pass_id, old_lift_usage_id):
+def update(old_pass_id, old_lift_usage_id):
     new_pass_id = request.form['pass_id']
     new_lift_usage_id = request.form['lift_usage_id']
 
@@ -54,6 +54,6 @@ def update_pass_lift_usage(old_pass_id, old_lift_usage_id):
     return redirect(url_for('pass_lift_usage.list_pass_lift_usages'))
 
 @pass_lift_usage_controller.route('/delete/<int:pass_id>/<int:lift_usage_id>', methods=['POST'])
-def delete_pass_lift_usage(pass_id, lift_usage_id):
+def delete(pass_id, lift_usage_id):
     pass_lift_usage_service.delete(pass_id, lift_usage_id)
     return redirect(url_for('pass_lift_usage.list_pass_lift_usages'))

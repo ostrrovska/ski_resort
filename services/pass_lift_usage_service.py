@@ -40,6 +40,12 @@ class PassLiftUsageService:
 
     @staticmethod
     def update(old_pass_id, old_lift_usage_id, new_pass_id, new_lift_usage_id):
+
+        if not PassService.get_by_id(new_pass_id):
+            raise ValueError(f"Pass with id={new_pass_id} is not found.")
+        if not LiftUsageService.get_by_id(new_lift_usage_id):
+            raise ValueError(f"LiftUsage with id={new_lift_usage_id} is not found.")
+
         entry = PassLiftUsageService.get_by_id(old_pass_id, old_lift_usage_id)
         if not entry:
             return None
