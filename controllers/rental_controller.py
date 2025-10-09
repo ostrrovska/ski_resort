@@ -62,7 +62,7 @@ def update(id):
         flash(f'Error: {e}', category='danger')
         return redirect(url_for('rental.edit_rental', id=id))
 
-@rental_controller.route('/delete/<int:id>', methods=['GET'])
+@rental_controller.route('/delete/<int:id>', methods=['POST'])
 def delete(id):
     rental_service.delete(id)
     return redirect(url_for('rental.list_rentals'))

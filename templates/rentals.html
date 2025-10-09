@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rentals</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<a href="{{ url_for('employee.list_employees') }}">View Employees</a>
+<a href="{{ url_for('client.list_clients') }}">View Clients</a>
+<a href="{{ url_for('equipment_type.list_equipment_types') }}">View Equipment Types</a>
+<a href="{{ url_for('equipment.list_equipment') }}">View Equipment</a>
+<a href="{{ url_for('tariff.list_tariffs') }}">View Tariffs</a>
+
+<h1>Rentals</h1>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<form action="{{ url_for('rental.list_rentals') }}" method="GET">
+    <div class="form-group">
+        <label for="sort_by">Sort by:</label>
+        <select id="sort_by" name="sort_by">
+            <option value="" selected>None</option>
+            <option value="id">ID</option>
+            <option value="client_id">Client ID</option>
+            <option value="employee_id">Employee ID</option>
+            <option value="rental_date">Rental date</option>
+            <option value="start_time">Start time</option>
+            <option value="end_time">End time</option>
+            <option value="rental_type">Rental type</option>
+            <option value="total_price">Total price</option>
+        </select>
+        <label for="sort_order">Order:</label>
+        <select id="sort_order" name="sort_order">
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="filter_by">Filter by:</label>
+        <select id="filter_by" name="filter_by">
+            <option value="" selected>None</option>
+            <option value="client_id">Client ID</option>
+            <option value="employee_id">Employee ID</option>
+            <option value="rental_date">Rental date</option>
+            <option value="start_time">Start time</option>
+            <option value="end_time">End time</option>
+            <option value="rental_type">Rental type</option>
+        </select>
+        <label for="filter_value">Value:</label>
+        <input type="text" id="filter_value" name="filter_value"><br><br>
+    </div>
+    <button type="submit">Apply</button>
+    <a href="{{ url_for('rental.list_rentals') }}">Clear</a>
+</form>
+
+<script>
+    document.getElementById('filter_by').addEventListener('change', function () {
+        var filterValueInput = document.getElementById('filter_value');
+        if (this.value === 'employee_id') {
+            filterValueInput.type = 'number';
+        } else if (this.value === 'work_date') {
+            filterValueInput.type = 'date';
+        } else if (this.value === 'shift_start' || this.value === 'shift_end') {
+            filterValueInput.type = 'time';
+        } else {
+            filterValueInput.type = 'text';
+        }
+    });
+</script>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Client ID</th>
+        <th>Employee ID</th>
+        <th>Rental date</th>
+        <th>Start time</th>
+        <th>End time</th>
+        <th>Rental type</th>
+        <th>Total price</th>
+        <th>Actions</th>
+    </tr>
+    {% for rental in rentals %}
+        <tr>
+            <td>{{ rental.id }}</td>
+            <td>{{ rental.client_id }}</td>
+            <td>{{ rental.employee_id }}</td>
+            <td>{{ rental.rental_date }}</td>
+            <td>{{ rental.start_time }}</td>
+            <td>{{ rental.end_time }}</td>
+            <td>{{ rental.rental_type }}</td>
+            <td>{{ rental.total_price }}</td>
+            <td>
+                <a href="{{ url_for('rental.edit_rental', id=rental.id) }}">Edit</a>
+                <form action="{{ url_for('rental.delete', id=rental.id) }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h2>Add New Rental</h2>
+<form action="{{ url_for('rental.add') }}" method="POST">
+    <label for="client_id">Client ID:</label>
+    <input type="number" id="client_id" name="client_id" required><br><br>
+
+    <label for="employee_id">Employee ID:</label>
+    <input type="number" id="employee_id" name="employee_id" required><br><br>
+
+    <label for="rental_date">Rental date:</label>
+    <input type="date" id="rental_date" name="rental_date" required><br><br>
+
+    <label for="start_time">Start time:</label>
+    <input type="time" id="start_time" name="start_time" required><br><br>
+
+    <label for="end_time">End time:</label>
+    <input type="time" id="end_time" name="end_time" required><br><br>
+
+    <label for="rental_type">Rental type:</label>
+    <input type="text" id="rental_type" name="rental_type" required><br><br>
+
+    <label for="total_price">Total price:</label>
+    <input type="number" id="total_price" name="total_price" required><br><br>
+
+    <button type="submit">Add Rental</button>
+</form>
+
+<!-- Logout button -->
+<form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+    <button type="submit">Logout</button>
+</form>
+
+</body>
+</html>

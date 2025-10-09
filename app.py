@@ -10,6 +10,7 @@ from controllers.pass_controller import pass_controller
 from controllers.lift_controller import lift_controller
 from controllers.lift_usage_controller import lift_usage_controller
 from controllers.pass_lift_usage_controller import pass_lift_usage_controller
+from controllers.rental_controller import rental_controller
 from middlewares.authentication_middleware import require_login_middleware
 from models import db
 from config import Config
@@ -50,6 +51,8 @@ app.register_blueprint(lift_controller, url_prefix='/lifts')
 app.register_blueprint(lift_usage_controller, url_prefix='/lift_usages')
 
 app.register_blueprint(pass_lift_usage_controller, url_prefix='/pass_lift_usages')
+
+app.register_blueprint(rental_controller, url_prefix='/rentals')
 
 if __name__ == '__main__':
     # Quick test: print all schedules for the first employee
