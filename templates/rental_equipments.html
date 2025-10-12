@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rental Equipments</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+<a href="{{ url_for('employee.list_employees') }}">View Employees</a>
+<a href="{{ url_for('client.list_clients') }}">View Clients</a>
+<a href="{{ url_for('equipment_type.list_equipment_types') }}">View Equipment Types</a>
+<a href="{{ url_for('equipment.list_equipment') }}">View Equipment</a>
+<a href="{{ url_for('tariff.list_tariffs') }}">View Tariffs</a>
+<a href="{{ url_for('lift_usage.list_lift_usages') }}">View Lift Usages</a>
+
+<h1>Rental Equipments</h1>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<form action="{{ url_for('rental_equipment.list_rental_equipments') }}" method="GET">
+    <div class="form-group">
+        <label for="sort_by">Sort by:</label>
+        <select id="sort_by" name="sort_by">
+            <option value="" selected>None</option>
+            <option value="rental_id">Rental ID</option>
+            <option value="equipment_id">Equipment ID</option>
+        </select>
+        <label for="sort_order">Order:</label>
+        <select id="sort_order" name="sort_order">
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="filter_by">Filter by:</label>
+        <select id="filter_by" name="filter_by">
+            <option value="" selected>None</option>
+            <option value="rental_id">Rental ID</option>
+            <option value="equipment_id">Equipment ID</option>
+        </select>
+        <label for="filter_value">Value:</label>
+        <input type="number" id="filter_value" name="filter_value"><br><br>
+    </div>
+    <button type="submit">Apply</button>
+    <a href="{{ url_for('rental_equipment.list_rental_equipments') }}">Clear</a>
+</form>
+
+<table>
+    <tr>
+        <th>Rental ID</th>
+        <th>Equipment ID</th>
+        <th>Actions</th>
+    </tr>
+    {% for rental_equipment in rental_equipments %}
+        <tr>
+            <td>{{ rental_equipment.rental_id }}</td>
+            <td>{{ rental_equipment.equipment_id }}</td>
+            <td>
+                <a href="{{ url_for('rental_equipment.edit_rental_equipment', rental_id=rental_equipment.rental_id, equipment_id=rental_equipment.equipment_id) }}">Edit</a>
+                <form action="{{ url_for('rental_equipment.delete', rental_id=rental_equipment.rental_id, equipment_id=rental_equipment.equipment_id) }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h2>Add New Rental Equipment</h2>
+<form action="{{ url_for('rental_equipment.add') }}" method="POST">
+    <label for="rental_id">Rental ID:</label>
+    <input type="number" id="rental_id" name="rental_id" required><br><br>
+
+    <label for="equipment_id">Equipment ID:</label>
+    <input type="number" id="equipment_id" name="equipment_id" required><br><br>
+
+    <button type="submit">Add</button>
+</form>
+
+<!-- Logout button -->
+<form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+    <button type="submit">Logout</button>
+</form>
+
+</body>
+</html>
