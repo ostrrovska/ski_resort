@@ -17,6 +17,11 @@ def list_tariffs():
                                     filter_by=filter_by, filter_value=filter_value)
     return render_template('tariffs.html', tariffs = tariffs)
 
+@tariff_controller.route('/view', methods=['GET'])
+def view_tariffs():
+    tariffs = tariff_service.get_all()
+    return render_template('guest_tariffs.html', tariffs=tariffs)
+
 @tariff_controller.route('/add', methods = ['POST'])
 def add():
     equipment_type_id = request.form['equipment_type_id']

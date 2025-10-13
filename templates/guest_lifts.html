@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Our Lifts</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+    <h1>Our Lifts</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Height (m)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lift in lifts %}
+            <tr>
+                <td>{{ lift.name }}</td>
+                <td>{{ lift.height }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

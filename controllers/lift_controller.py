@@ -17,6 +17,11 @@ def list_lifts():
 
     return render_template('lifts.html', lifts=lifts)
 
+@lift_controller.route('/view', methods=['GET'])
+def view_lifts():
+    lifts = lift_service.get_all()
+    return render_template('guest_lifts.html', lifts=lifts)
+
 @lift_controller.route('/add', methods=['POST'])
 def add():
     name = request.form['name']

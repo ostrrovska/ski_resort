@@ -15,6 +15,11 @@ def list_pass_types():
                                            filter_by=filter_by, filter_value=filter_value)
     return render_template('pass_types.html', pass_types = pass_types)
 
+@pass_type_controller.route('/view', methods=['GET'])
+def view_pass_types():
+    pass_types = pass_type_service.get_all()
+    return render_template('guest_pass_types.html', pass_types=pass_types)
+
 @pass_type_controller.route('/add', methods = ['POST'])
 def add():
     name = request.form['name']

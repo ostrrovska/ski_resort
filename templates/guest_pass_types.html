@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Our Pass Types</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+    <h1>Pass Types and Prices</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Lifts Limit</th>
+                <th>Hours Limit</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pass_type in pass_types %}
+            <tr>
+                <td>{{ pass_type.name }}</td>
+                <td>{{ pass_type.limit_lifts }}</td>
+                <td>{{ pass_type.limit_hours }}</td>
+                <td>{{ pass_type.price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

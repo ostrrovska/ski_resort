@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Equipment Tariffs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+    <h1>Equipment Tariffs</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Equipment Type ID</th>
+                <th>Price per Hour</th>
+                <th>Price per Day</th>
+                <th>Weekday Discount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tariff in tariffs %}
+            <tr>
+                <td>{{ tariff.equipment_type_id }}</td>
+                <td>{{ tariff.price_per_hour }}</td>
+                <td>{{ tariff.price_per_day }}</td>
+                <td>{{ tariff.weekday_discount }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
