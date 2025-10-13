@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session, redirect, url_for
 from controllers.employee_controller import employee_controller
 from controllers.schedule_controller import schedule_controller
 from controllers.client_controller import client_controller
@@ -14,6 +14,7 @@ from controllers.rental_controller import rental_controller
 from controllers.rental_equipment_controller import rental_equipment_controller
 from middlewares.authentication_middleware import require_login_middleware
 from models import db
+from models.saved_view import SavedView
 from config import Config
 from dotenv import load_dotenv
 import os
@@ -33,6 +34,8 @@ with app.app_context():
 
 @app.route('/')
 def index():
+    if 'client_id' in session:
+        return redirect(url_for('client.dashboard'))
     return render_template('index.html')
 
 require_login_middleware(app)

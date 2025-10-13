@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Saved Reports</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
+    <h1>Your Saved Reports</h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    {% if saved_views %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Report Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for view in saved_views %}
+                <tr>
+                    <td><a href="{{ view.url }}">{{ view.name }}</a></td>
+                    <td>
+                        <form action="{{ url_for('client.delete_view', view_id=view.id) }}" method="POST" style="display:inline;">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>You have no saved reports yet.</p>
+    {% endif %}
+</body>
+</html>

@@ -16,6 +16,16 @@ def list_employees():
                                          filter_by=filter_by, filter_value=filter_value)
     return render_template('employees.html', employees=employees)
 
+@employee_controller.route('/browse', methods=['GET'])
+def browse_employees():
+    sort_by = request.args.get('sort_by')
+    sort_order = request.args.get('sort_order')
+    filter_by = request.args.get('filter_by')
+    filter_value = request.args.get('filter_value')
+    employees = employee_service.get_all(sort_by=sort_by, sort_order=sort_order,
+                                         filter_by=filter_by, filter_value=filter_value)
+    return render_template('authorized_employees.html', employees=employees)
+
 
 @employee_controller.route('/add', methods=['POST'])
 def add():

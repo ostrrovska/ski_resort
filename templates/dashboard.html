@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Welcome, Authorized User!</h1>
+    <p>From here you can browse resort data or view your saved reports.</p>
+
+    <h2>Browse Data</h2>
+    <ul>
+        <li><a href="{{ url_for('employee.browse_employees') }}">Browse Employees</a></li>
+
+    </ul>
+
+    <h2>Your Reports</h2>
+    <ul>
+        <li><a href="{{ url_for('client.saved_views') }}">View Saved Reports</a></li>
+    </ul>
+
+    <br>
+    <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+        <button type="submit">Logout</button>
+    </form>
+</body>
+</html>
