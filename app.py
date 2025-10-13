@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from controllers.employee_controller import employee_controller
 from controllers.schedule_controller import schedule_controller
 from controllers.client_controller import client_controller
@@ -31,9 +31,13 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 require_login_middleware(app)
 
-app.register_blueprint(employee_controller)
+app.register_blueprint(employee_controller, url_prefix='/employees')
 app.register_blueprint(schedule_controller, url_prefix='/schedules')
 app.register_blueprint(client_controller, url_prefix='/clients')
 

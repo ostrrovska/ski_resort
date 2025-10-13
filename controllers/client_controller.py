@@ -4,13 +4,6 @@ from services.client_service import ClientService
 client_service = ClientService()
 
 client_controller = Blueprint('client', __name__)
-
-
-@client_controller.route('/auth', methods=['GET'])
-def auth_page():
-    return render_template('auth.html')
-
-
 @client_controller.route('/register', methods=['POST'])
 def register():
     full_name = request.form['full_name']
@@ -23,10 +16,10 @@ def register():
     client = client_service.register(full_name, document_id, date_of_birth, phone_number, email, login, password)
     if client:
         flash('Account created successfully. Please login.')
-        return redirect(url_for('client.auth_page'))
+        return redirect(url_for('index'))
     else:
         flash('A user with this login already exists.')
-        return redirect(url_for('client.auth_page'))
+        return redirect(url_for('index'))
 
 
 @client_controller.route('/login', methods=['POST'])
@@ -39,13 +32,13 @@ def login():
         return redirect(url_for('client.list_clients'))
     else:
         flash('Invalid login or password')
-        return redirect(url_for('client.auth_page'))
+        return redirect(url_for('index'))
 
 
 @client_controller.route('/logout', methods=['POST'])
 def logout():
     session.pop('client_id', None)
-    return redirect(url_for('client.auth_page'))
+    return redirect(url_for('index'))
 
 
 @client_controller.route('/', methods=['GET'])
