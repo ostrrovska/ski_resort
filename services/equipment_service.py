@@ -1,4 +1,5 @@
 from models.equipment import Equipment, db
+from models.equipment_type import EquipmentType
 from services.equipment_type_service import EquipmentTypeService
 
 
@@ -29,6 +30,44 @@ class EquipmentService:
                 query = query.filter(column == processed_value)
             else:
                 query = query.filter(column.ilike(f'%{filter_value}%'))
+        return query.all()
+
+    @staticmethod
+    def get_all_joined(sort_by=None, sort_order='asc', filter_by=None, filter_value=None):
+        """
+        Повертає список обладнання з об'єднаною інформацією про його тип.
+        """
+        query = db.session.query(Equipment, EquipmentType).join(EquipmentType, Equipment.type_id == EquipmentType.id)
+
+        sort_filter_options = {
+            'id': Equipment.id,
+            'model': Equipment.model,
+            'is_available': Equipment.is_available,
+            'description': EquipmentType.description,
+            'type_name': EquipmentType.name,
+            'type_description': EquipmentType.description
+        }
+
+        if filter_by in sort_filter_options and filter_value is not None:
+            column = sort_filter_options[filter_by]
+            if isinstance(column.type, db.Boolean):
+                processed_value = str(filter_value).lower() in ('true', 'on', '1', 'yes')
+                query = query.filter(column == processed_value)
+            elif isinstance(column.type, db.Integer):
+                try:
+                    query = query.filter(column == int(filter_value))
+                except ValueError:
+                    pass
+            else:
+                query = query.filter(column.ilike(f'%{filter_value}%'))
+
+        if sort_by in sort_filter_options:
+            column = sort_filter_options[sort_by]
+            if sort_order == 'desc':
+                query = query.order_by(column.desc())
+            else:
+                query = query.order_by(column.asc())
+
         return query.all()
 
     @staticmethod
