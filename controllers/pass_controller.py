@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
+
+from middlewares.authorization import roles_required
 from services.pass_service import PassService
 
 pass_service = PassService()
@@ -17,6 +19,7 @@ def list_passes():
     return render_template('passes.html', passes=passes)
 
 @pass_controller.route('/add', methods=['POST'])
+@roles_required('admin', 'moderator')
 def add():
     client_id = request.form['client_id']
     pass_type_id = request.form['pass_type_id']
@@ -32,6 +35,7 @@ def add():
     return redirect(url_for('pass.list_passes'))
 
 @pass_controller.route('/edit/<int:id>', methods=['GET'])
+@roles_required('admin', 'moderator')
 def edit_pass(id):
     pass_ = pass_service.get_by_id(id)
     if not pass_:
@@ -39,6 +43,7 @@ def edit_pass(id):
     return render_template('pass_edit.html', pass_=pass_)
 
 @pass_controller.route('/update/<int:id>', methods=['POST'])
+@roles_required('admin', 'moderator')
 def update(id):
     client_id = request.form['client_id']
     pass_type_id = request.form['pass_type_id']
@@ -62,6 +67,7 @@ def update(id):
         return redirect(url_for('pass.edit_pass', id=id))
 
 @pass_controller.route('/delete/<int:id>', methods=['POST'])
+@roles_required('admin', 'moderator')
 def delete(id):
     pass_service.delete(id)
     return redirect(url_for('pass.list_passes'))

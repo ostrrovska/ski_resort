@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
+
+from middlewares.authorization import roles_required
 from services.lift_usage_service import LiftUsageService
 
 lift_usage_service = LiftUsageService()
@@ -17,6 +19,7 @@ def list_lift_usages():
     return render_template('lift_usages.html', lift_usages=lift_usages)
 
 @lift_usage_controller.route('/add', methods=['POST'])
+@roles_required('admin', 'moderator')
 def add():
     client_id = request.form['client_id']
     lift_id = request.form['lift_id']
@@ -32,6 +35,7 @@ def add():
     return redirect(url_for('lift_usage.list_lift_usages'))
 
 @lift_usage_controller.route('/edit/<int:id>', methods=['GET'])
+@roles_required('admin', 'moderator')
 def edit_lift_usage(id):
     lift_usage = lift_usage_service.get_by_id(id)
     if not lift_usage:
@@ -39,6 +43,7 @@ def edit_lift_usage(id):
     return render_template('lift_usage_edit.html', lift_usage=lift_usage)
 
 @lift_usage_controller.route('/update/<int:id>', methods=['POST'])
+@roles_required('admin', 'moderator')
 def update(id):
     client_id = request.form['client_id']
     lift_id = request.form['lift_id']
@@ -58,6 +63,7 @@ def update(id):
         return redirect(url_for('lift_usage.edit_lift_usage', id=id))
 
 @lift_usage_controller.route('/delete/<int:id>', methods=['POST'])
+@roles_required('admin', 'moderator')
 def delete(id):
     lift_usage_service.delete(id)
     return redirect(url_for('lift_usage.list_lift_usages'))

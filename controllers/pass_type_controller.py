@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
+
+from middlewares.authorization import roles_required
 from services.pass_type_service import PassTypeService
 
 pass_type_service = PassTypeService()
@@ -21,6 +23,7 @@ def view_pass_types():
     return render_template('guest_pass_types.html', pass_types=pass_types)
 
 @pass_type_controller.route('/add', methods = ['POST'])
+@roles_required('admin', 'moderator')
 def add():
     name = request.form['name']
     limit_lifts = request.form['limit_lifts']
@@ -30,6 +33,7 @@ def add():
     return redirect(url_for('pass_type.list_pass_types'))
 
 @pass_type_controller.route('/edit/<int:id>', methods = ['GET'])
+@roles_required('admin', 'moderator')
 def edit_pass_type(id):
     pass_type = pass_type_service.get_by_id(id)
     if not pass_type:
@@ -37,6 +41,7 @@ def edit_pass_type(id):
     return render_template('pass_type_edit.html', pass_type = pass_type)
 
 @pass_type_controller.route('/update/<int:id>', methods = ['POST'])
+@roles_required('admin', 'moderator')
 def update(id):
     name = request.form['name']
     limit_lifts = request.form['limit_lifts']
@@ -49,6 +54,7 @@ def update(id):
     return redirect(url_for('pass_type.list_pass_types'))
 
 @pass_type_controller.route('/delete/<int:id>', methods = ['POST'])
+@roles_required('admin', 'moderator')
 def delete(id):
     pass_type_service.delete(id)
     return redirect(url_for('pass_type.list_pass_types'))

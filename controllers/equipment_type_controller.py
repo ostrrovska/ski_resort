@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
+
+from middlewares.authorization import roles_required
 from services.equipment_type_service import EquipmentTypeService
 
 equipment_type_service = EquipmentTypeService()
@@ -16,6 +18,7 @@ def list_equipment_types():
     return render_template('equipment_types.html', equipment_types = equipment_types)
 
 @equipment_type_controller.route('/add', methods = ['POST'])
+@roles_required('admin', 'moderator')
 def add():
     name = request.form['name']
     description = request.form['description']
@@ -23,6 +26,7 @@ def add():
     return redirect(url_for('equipment_type.list_equipment_types'))
 
 @equipment_type_controller.route('/edit/<int:id>', methods = ['GET'])
+@roles_required('admin', 'moderator')
 def edit_equipment_type(id):
     equipment_type = equipment_type_service.get_by_id(id)
     if not equipment_type:
@@ -30,6 +34,7 @@ def edit_equipment_type(id):
     return render_template('equipment_type_edit.html', equipment_type = equipment_type)
 
 @equipment_type_controller.route('/update/<int:id>', methods = ['POST'])
+@roles_required('admin', 'moderator')
 def update(id):
     name = request.form['name']
     description = request.form['description']
@@ -40,6 +45,7 @@ def update(id):
     return redirect(url_for('equipment_type.list_equipment_types'))
 
 @equipment_type_controller.route('/delete/<int:id>', methods = ['POST'])
+@roles_required('admin', 'moderator')
 def delete(id):
     equipment_type_service.delete(id)
     return redirect(url_for('equipment_type.list_equipment_types'))

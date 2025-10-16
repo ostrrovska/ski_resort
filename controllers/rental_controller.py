@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
+
+from middlewares.authorization import roles_required
 from services.rental_service import RentalService
 
 rental_service = RentalService()
@@ -16,6 +18,7 @@ def list_rentals():
     return render_template('rentals.html', rentals=rentals)
 
 @rental_controller.route('/add', methods=['POST'])
+@roles_required('admin', 'moderator')
 def add():
     client_id = request.form.get('client_id')
     employee_id = request.form.get('employee_id')
@@ -33,6 +36,7 @@ def add():
     return redirect(url_for('rental.list_rentals'))
 
 @rental_controller.route('/edit/<int:id>', methods=['GET'])
+@roles_required('admin', 'moderator')
 def edit_rental(id):
     rental = rental_service.get_by_id(id)
     if not rental:
@@ -40,6 +44,7 @@ def edit_rental(id):
     return render_template('rental_edit.html', rental=rental)
 
 @rental_controller.route('/update/<int:id>', methods=['POST'])
+@roles_required('admin', 'moderator')
 def update(id):
     client_id = request.form.get('client_id')
     employee_id = request.form.get('employee_id')
@@ -63,6 +68,7 @@ def update(id):
         return redirect(url_for('rental.edit_rental', id=id))
 
 @rental_controller.route('/delete/<int:id>', methods=['POST'])
+@roles_required('admin', 'moderator')
 def delete(id):
     rental_service.delete(id)
     return redirect(url_for('rental.list_rentals'))

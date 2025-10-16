@@ -28,9 +28,10 @@ def register():
 def login():
     login = request.form['login']
     password = request.form['password']
-    client = client_service.login(login, password)
-    if client:
-        session['client_id'] = client.id
+    key = client_service.login(login, password)  # Тепер отримуємо об'єкт key
+    if key:
+        session['client_id'] = key.client.id
+        session['access_right'] = key.access_right.value
         return redirect(url_for('client.dashboard'))
     else:
         flash('Invalid login or password')

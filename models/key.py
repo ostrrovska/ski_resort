@@ -1,5 +1,12 @@
+import enum
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
+
+class AccessRight(str, enum.Enum):
+    AUTHORIZED = 'authorized'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
 
 class Key(db.Model):
     __tablename__ = 'keys'
@@ -8,7 +15,7 @@ class Key(db.Model):
     login = db.Column(db.String(100), unique=True, nullable=False)
 
     password_hash = db.Column(db.String(256), nullable=False)
-    access_right = db.Column(db.String(50), nullable=False)
+    access_right = db.Column(db.Enum(AccessRight), nullable=False, default=AccessRight.AUTHORIZED)
 
     def __init__(self, login, access_right):
         self.login = login

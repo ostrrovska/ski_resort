@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
+
+from middlewares.authorization import roles_required
 from services.employee_service import EmployeeService
 
 employee_service = EmployeeService()
@@ -28,6 +30,7 @@ def browse_employees():
 
 
 @employee_controller.route('/add', methods=['POST'])
+@roles_required('admin', 'moderator')
 def add():
     full_name = request.form['full_name']
     position = request.form['position']
@@ -39,6 +42,7 @@ def add():
 
 
 @employee_controller.route('/edit/<int:id>', methods=['GET'])
+@roles_required('admin', 'moderator')
 def edit_employee(id):
     employee = employee_service.get_by_id(id)
     if not employee:
@@ -47,6 +51,7 @@ def edit_employee(id):
 
 
 @employee_controller.route('/update/<int:id>', methods=['POST'])
+@roles_required('admin', 'moderator')
 def update(id):
     full_name = request.form['full_name']
     position = request.form['position']
@@ -61,6 +66,7 @@ def update(id):
 
 
 @employee_controller.route('/delete/<int:id>', methods=['POST'])
+@roles_required('admin', 'moderator')
 def delete(id):
     employee_service.delete(id)
     return redirect(url_for('employee.list_employees'))

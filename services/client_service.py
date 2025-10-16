@@ -1,7 +1,7 @@
 import datetime
 
 from models.client import Client, db
-from models.key import Key
+from models.key import Key, AccessRight
 
 
 class ClientService:
@@ -10,7 +10,7 @@ class ClientService:
     def register(full_name, document_id, date_of_birth, phone_number, email, login, password):
         if Key.query.filter_by(login=login).first():
             return None
-        new_key = Key(login=login, access_right='authorized')
+        new_key = Key(login=login, access_right=AccessRight.AUTHORIZED)
         new_key.set_password(password)
 
         db.session.add(new_key)
@@ -33,7 +33,7 @@ class ClientService:
     def login(login, password):
         key = Key.query.filter_by(login=login).first()
         if key and key.check_password(password):
-            return key.client
+            return key
         return None
 
     @staticmethod

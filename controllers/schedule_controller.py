@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
+
+from middlewares.authorization import roles_required
 from services.schedule_service import ScheduleService
 
 schedule_service = ScheduleService()
@@ -16,6 +18,7 @@ def list_schedules():
     return render_template('schedules.html', schedules = schedules)
 
 @schedule_controller.route('/add', methods = ['POST'])
+@roles_required('admin', 'moderator')
 def add():
     employee_id = request.form['employee_id']
     work_date = request.form['work_date']
@@ -30,6 +33,7 @@ def add():
     return redirect(url_for('schedule.list_schedules'))
 
 @schedule_controller.route('/edit/<int:id>', methods = ['GET'])
+@roles_required('admin', 'moderator')
 def edit_schedule(id):
     schedule = schedule_service.get_by_id(id)
     if not schedule:
@@ -37,6 +41,7 @@ def edit_schedule(id):
     return render_template('schedule_edit.html', schedule = schedule)
 
 @schedule_controller.route('/update/<int:id>', methods = ['POST'])
+@roles_required('admin', 'moderator')
 def update(id):
     employee_id = request.form['employee_id']
     work_date = request.form['work_date']
@@ -56,6 +61,7 @@ def update(id):
         return redirect(url_for('schedule.edit_schedule', id=id))
 
 @schedule_controller.route('/delete/<int:id>', methods = ['POST'])
+@roles_required('admin', 'moderator')
 def delete(id):
     schedule_service.delete(id)
     return redirect(url_for('schedule.list_schedules'))

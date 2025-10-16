@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
+
+from middlewares.authorization import roles_required
 from services.rental_equipment_service import RentalEquipmentService
 
 rental_equipment_service = RentalEquipmentService()
@@ -18,6 +20,7 @@ def list_rental_equipments():
     return render_template('rental_equipments.html', rental_equipments=rental_equipments)
 
 @rental_equipment_controller.route('/add', methods=['POST'])
+@roles_required('admin', 'moderator')
 def add():
     rental_id = request.form['rental_id']
     equipment_id = request.form['equipment_id']
@@ -31,6 +34,7 @@ def add():
     return redirect(url_for('rental_equipment.list_rental_equipments'))
 
 @rental_equipment_controller.route('/edit/<int:rental_id>/<int:equipment_id>', methods=['GET'])
+@roles_required('admin', 'moderator')
 def edit_rental_equipment(rental_id, equipment_id):
     rental_equipment = rental_equipment_service.get_by_id(rental_id, equipment_id)
     if not rental_equipment:
@@ -38,6 +42,7 @@ def edit_rental_equipment(rental_id, equipment_id):
     return render_template('rental_equipment_edit.html', rental_equipment = rental_equipment)
 
 @rental_equipment_controller.route('/update/<int:old_rental_id>/<int:old_equipment_id>', methods=['POST'])
+@roles_required('admin', 'moderator')
 def update(old_rental_id, old_equipment_id):
     new_rental_id = request.form['rental_id']
     new_equipment_id = request.form['equipment_id']
@@ -55,6 +60,7 @@ def update(old_rental_id, old_equipment_id):
     return redirect(url_for('rental_equipment.list_rental_equipments'))
 
 @rental_equipment_controller.route('/delete/<int:rental_id>/<int:equipment_id>', methods=['POST'])
+@roles_required('admin', 'moderator')
 def delete(rental_id, equipment_id):
     rental_equipment_service.delete(rental_id, equipment_id)
     return redirect(url_for('rental_equipment.list_rental_equipments'))

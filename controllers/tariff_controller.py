@@ -1,6 +1,8 @@
 from calendar import weekday
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
+
+from middlewares.authorization import roles_required
 from services.tariff_service import TariffService
 
 tariff_service = TariffService()
@@ -23,6 +25,7 @@ def view_tariffs():
     return render_template('guest_tariffs.html', tariffs=tariffs)
 
 @tariff_controller.route('/add', methods = ['POST'])
+@roles_required('admin', 'moderator')
 def add():
     equipment_type_id = request.form['equipment_type_id']
     price_per_hour = request.form['price_per_hour']
@@ -37,6 +40,7 @@ def add():
     return redirect(url_for('tariff.list_tariffs'))
 
 @tariff_controller.route('/edit/<int:id>', methods = ['GET'])
+@roles_required('admin', 'moderator')
 def edit_tariff(id):
     tariff = tariff_service.get_by_id(id)
     if not tariff:
@@ -44,6 +48,7 @@ def edit_tariff(id):
     return render_template('tariff_edit.html', tariff = tariff)
 
 @tariff_controller.route('/update/<int:id>', methods = ['POST'])
+@roles_required('admin', 'moderator')
 def update(id):
     equipment_type_id = request.form['equipment_type_id']
     price_per_hour = request.form['price_per_hour']
@@ -63,6 +68,7 @@ def update(id):
         return redirect(url_for('tariff.edit_tariff', id=id))
 
 @tariff_controller.route('/delete/<int:id>', methods = ['POST'])
+@roles_required('admin', 'moderator')
 def delete(id):
     tariff_service.delete(id)
     return redirect(url_for('tariff.list_tariffs'))

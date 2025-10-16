@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
+
+from middlewares.authorization import roles_required
 from services.pass_lift_usage_service import PassLiftUsageService
 
 pass_lift_usage_service = PassLiftUsageService()
@@ -18,6 +20,7 @@ def list_pass_lift_usages():
     return render_template('pass_lift_usages.html', pass_lift_usages=pass_lift_usages)
 
 @pass_lift_usage_controller.route('/add', methods = ['POST'])
+@roles_required('admin', 'moderator')
 def add():
     pass_id = request.form['pass_id']
     lift_usage_id = request.form['lift_usage_id']
@@ -30,6 +33,7 @@ def add():
     return redirect(url_for('pass_lift_usage.list_pass_lift_usages'))
 
 @pass_lift_usage_controller.route('/edit/<int:pass_id>/<int:lift_usage_id>', methods=['GET'])
+@roles_required('admin', 'moderator')
 def edit_pass_lift_usage(pass_id, lift_usage_id):
     pass_lift_usage = pass_lift_usage_service.get_by_id(pass_id, lift_usage_id)
     if not pass_lift_usage:
@@ -37,6 +41,7 @@ def edit_pass_lift_usage(pass_id, lift_usage_id):
     return render_template('pass_lift_usage_edit.html', pass_lift_usage = pass_lift_usage)
 
 @pass_lift_usage_controller.route('/update/<int:old_pass_id>/<int:old_lift_usage_id>', methods=['POST'])
+@roles_required('admin', 'moderator')
 def update(old_pass_id, old_lift_usage_id):
     new_pass_id = request.form['pass_id']
     new_lift_usage_id = request.form['lift_usage_id']
@@ -54,6 +59,7 @@ def update(old_pass_id, old_lift_usage_id):
     return redirect(url_for('pass_lift_usage.list_pass_lift_usages'))
 
 @pass_lift_usage_controller.route('/delete/<int:pass_id>/<int:lift_usage_id>', methods=['POST'])
+@roles_required('admin', 'moderator')
 def delete(pass_id, lift_usage_id):
     pass_lift_usage_service.delete(pass_id, lift_usage_id)
     return redirect(url_for('pass_lift_usage.list_pass_lift_usages'))
