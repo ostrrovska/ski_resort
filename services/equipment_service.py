@@ -1,5 +1,6 @@
 from models.equipment import Equipment, db
 from models.equipment_type import EquipmentType
+from models.tariff import Tariff
 from services.equipment_type_service import EquipmentTypeService
 
 
@@ -37,7 +38,10 @@ class EquipmentService:
         """
         Повертає список обладнання з об'єднаною інформацією про його тип.
         """
-        query = db.session.query(Equipment, EquipmentType).join(EquipmentType, Equipment.type_id == EquipmentType.id)
+        query = ((db.session.query(Equipment, EquipmentType, Tariff)
+                .join(EquipmentType, Equipment.type_id == EquipmentType.id))
+                .join(Tariff, EquipmentType.id == Tariff.equipment_type_id
+        ))
 
         sort_filter_options = {
             'id': Equipment.id,
@@ -45,7 +49,10 @@ class EquipmentService:
             'is_available': Equipment.is_available,
             'description': EquipmentType.description,
             'type_name': EquipmentType.name,
-            'type_description': EquipmentType.description
+            'type_description': EquipmentType.description,
+            'price_per_hour': Tariff.price_per_hour,
+            'price_per_day': Tariff.price_per_day,
+            'weekday_discount': Tariff.weekday_discount
         }
 
         if filter_by in sort_filter_options and filter_value is not None:

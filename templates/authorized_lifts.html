@@ -47,6 +47,17 @@
     <button type="submit">Save this View</button>
 </form>
 
+<script>
+    document.getElementById('filter_by').addEventListener('change', function() {
+        var filterValueInput = document.getElementById('filter_value');
+        if (this.value === 'height') {
+            filterValueInput.type = 'number';
+        } else {
+            filterValueInput.type = 'text';
+        }
+    });
+</script>
+
 <table>
     <thead>
     <tr>

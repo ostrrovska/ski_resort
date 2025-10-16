@@ -42,6 +42,17 @@
     </div>
 </form>
 
+<script>
+    document.getElementById('filter_by').addEventListener('change', function() {
+        var filterValueInput = document.getElementById('filter_value');
+        if (this.value === 'salary') {
+            filterValueInput.type = 'number';
+        } else {
+            filterValueInput.type = 'text';
+        }
+    });
+</script>
+
 <form action="{{ url_for('client.save_view') }}" method="POST">
     <input type="hidden" name="view_url" value="{{ request.full_path }}">
     <label for="view_name">Report Name:</label>
