@@ -22,7 +22,7 @@
 
 
 <!-- Form for sorting anf filtering employees -->
-<form action="{{ url_for('employee.list_employees') }}" method="GET">
+<form action="{{ url_for('employee.browse_employees') }}" method="GET">
     <div class="form-group">
         <label for="sort_by">Sort by:</label>
         <select id="sort_by" name="sort_by">
@@ -54,7 +54,7 @@
         <label for="filter_value">Value:</label>
         <input type="text" id="filter_value" name="filter_value"><br><br>
         <button type="submit">Apply</button>
-        <a href="{{ url_for('employee.list_employees') }}">Clear</a>
+        <a href="{{ url_for('employee.browse_employees') }}">Clear</a>
     </div>
 </form>
 
@@ -67,7 +67,9 @@
         <th>Salary</th>
         <th>Phone Number</th>
         <th>Email</th>
-        <th>Actions</th>
+        {% if session.access_right in ['admin', 'moderator'] %}
+            <th>Actions</th>
+        {% endif %}
     </tr>
     {% for employee in employees %}
         <tr>
@@ -77,16 +79,19 @@
             <td>{{ employee.salary }}</td>
             <td>{{ employee.phone_number }}</td>
             <td>{{ employee.email }}</td>
-            <td>
-                <a href="{{ url_for('employee.edit_employee', id=employee.id) }}">Edit</a>
-                <form action="{{ url_for('employee.delete', id=employee.id) }}" method="POST" style="display:inline;">
-                    <button type="submit">Delete</button>
-                </form>
-            </td>
+            {% if session.access_right in ['admin', 'moderator'] %}
+                <td>
+                    <a href="{{ url_for('employee.edit_employee', id=employee.id) }}">Edit</a>
+                    <form action="{{ url_for('employee.delete', id=employee.id) }}" method="POST" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            {% endif %}
         </tr>
     {% endfor %}
 </table>
 
+{% if session.access_right in ['admin', 'moderator'] %}
 <h2>Add New Employee</h2>
 <form action="{{ url_for('employee.add') }}" method="POST">
     <label for="full_name">Full Name:</label>
@@ -106,6 +111,7 @@
 
     <button type="submit">Add Employee</button>
 </form>
+{% endif %}
 
 <!-- Logout button -->
 <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">

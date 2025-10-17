@@ -7,17 +7,6 @@ employee_service = EmployeeService()
 
 employee_controller = Blueprint('employee', __name__)
 
-
-@employee_controller.route('/', methods=['GET'])
-def list_employees():
-    sort_by = request.args.get('sort_by')
-    sort_order = request.args.get('sort_order')
-    filter_by = request.args.get('filter_by')
-    filter_value = request.args.get('filter_value')
-    employees = employee_service.get_all(sort_by=sort_by, sort_order=sort_order,
-                                         filter_by=filter_by, filter_value=filter_value)
-    return render_template('employees.html', employees=employees)
-
 @employee_controller.route('/browse', methods=['GET'])
 def browse_employees():
     sort_by = request.args.get('sort_by')
@@ -26,7 +15,7 @@ def browse_employees():
     filter_value = request.args.get('filter_value')
     employees = employee_service.get_all(sort_by=sort_by, sort_order=sort_order,
                                          filter_by=filter_by, filter_value=filter_value)
-    return render_template('authorized_employees.html', employees=employees)
+    return render_template('employees.html', employees=employees)
 
 
 @employee_controller.route('/add', methods=['POST'])
@@ -38,7 +27,7 @@ def add():
     phone_number = request.form['phone_number']
     email = request.form['email']
     employee_service.add(full_name, position, salary, phone_number, email)
-    return redirect(url_for('employee.list_employees'))
+    return redirect(url_for('employee.browse_employees'))
 
 
 @employee_controller.route('/edit/<int:id>', methods=['GET'])
@@ -46,7 +35,7 @@ def add():
 def edit_employee(id):
     employee = employee_service.get_by_id(id)
     if not employee:
-        return redirect(url_for('employee.list_employees'))
+        return redirect(url_for('employee.browse_employees'))
     return render_template('employee_edit.html', employee=employee)
 
 
@@ -62,11 +51,11 @@ def update(id):
     if full_name and position and salary and phone_number and email:
         employee_service.update(id, full_name, position, salary, phone_number, email)
 
-    return redirect(url_for('employee.list_employees'))
+    return redirect(url_for('employee.browse_employees'))
 
 
 @employee_controller.route('/delete/<int:id>', methods=['POST'])
 @roles_required('admin', 'moderator')
 def delete(id):
     employee_service.delete(id)
-    return redirect(url_for('employee.list_employees'))
+    return redirect(url_for('employee.browse_employees'))
