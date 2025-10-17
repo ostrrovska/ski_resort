@@ -6,11 +6,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-<a href="{{ url_for('employee.list_employees') }}">View Employees</a>
-<a href="{{ url_for('schedule.list_schedules') }}">View Schedules</a>
-<a href="{{ url_for('client.list_clients') }}">View Clients</a>
-<a href="{{ url_for('equipment_type.list_equipment_types') }}">View Equipment Types</a>
-<a href="{{ url_for('tariff.list_tariffs') }}">View Tariffs</a>
+
+<a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
 
 <h1>Equipment list</h1>
 
@@ -75,7 +72,9 @@
         <th>Equipment type's id</th>
         <th>Model</th>
         <th>Is Available</th>
-        <th>Actions</th>
+        {% if session.access_right in ['admin', 'moderator'] %}
+            <th>Actions</th>
+        {% endif %}
     </tr>
     {% for equipment in equipment %}
         <tr>
@@ -83,16 +82,19 @@
             <td>{{ equipment.type_id }}</td>
             <td>{{ equipment.model }}</td>
             <td>{{ equipment.is_available }}</td>
-            <td>
-                <a href="{{ url_for('equipment.edit_equipment', id=equipment.id) }}">Edit</a>
-                <form action="{{ url_for('equipment.delete', id=equipment.id) }}" method="POST" style="display:inline;">
-                    <button type="submit">Delete</button>
-                </form>
-            </td>
+            {% if session.access_right in ['admin', 'moderator'] %}
+                <td>
+                    <a href="{{ url_for('equipment.edit_equipment', id=equipment.id) }}">Edit</a>
+                    <form action="{{ url_for('equipment.delete', id=equipment.id) }}" method="POST" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            {% endif %}
         </tr>
     {% endfor %}
 </table>
 
+{% if session.access_right in ['admin', 'moderator'] %}
 <h2>Add New Equipment</h2>
 <form action="{{ url_for('equipment.add') }}" method="POST">
     <label for="type_id">Equipment type's id:</label>
@@ -106,6 +108,7 @@
 
     <button type="submit">Add Equipment</button>
 </form>
+{% endif %}
 
 <!-- Logout button -->
 <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">

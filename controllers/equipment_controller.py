@@ -8,7 +8,7 @@ equipment_service = EquipmentService()
 equipment_controller = Blueprint('equipment', __name__)
 
 
-@equipment_controller.route('/', methods=['GET'])
+@equipment_controller.route('/list', methods=['GET'])
 def list_equipment():
     sort_by = request.args.get('sort_by')
     sort_order = request.args.get('sort_order')
@@ -21,19 +21,6 @@ def list_equipment():
     equipment = equipment_service.get_all(sort_by=sort_by, sort_order=sort_order,
                                           filter_by=filter_by, filter_value=filter_value)
     return render_template('equipment.html', equipment=equipment)
-
-@equipment_controller.route('/browse', methods=['GET'])
-def browse_equipment():
-    sort_by = request.args.get('sort_by')
-    sort_order = request.args.get('sort_order')
-    filter_by = request.args.get('filter_by')
-    filter_value = request.args.get('filter_value')
-
-    equipment_list = equipment_service.get_all_joined(sort_by=sort_by, sort_order=sort_order,
-                                                      filter_by=filter_by, filter_value=filter_value)
-
-    return render_template('authorized_equipment.html', equipment_list=equipment_list)
-
 
 @equipment_controller.route('/add', methods=['POST'])
 @roles_required('admin', 'moderator')

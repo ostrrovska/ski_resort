@@ -24,18 +24,6 @@ def view_lifts():
     lifts = lift_service.get_all()
     return render_template('guest_lifts.html', lifts=lifts)
 
-@lift_controller.route('/browse', methods=['GET'])
-def browse_lifts():
-    sort_by = request.args.get('sort_by')
-    sort_order = request.args.get('sort_order')
-    filter_by = request.args.get('filter_by')
-    filter_value = request.args.get('filter_value')
-
-    lifts = lift_service.get_all(sort_by=sort_by, sort_order=sort_order,
-                                 filter_by=filter_by, filter_value=filter_value)
-
-    return render_template('authorized_lifts.html', lifts=lifts)
-
 @lift_controller.route('/add', methods=['POST'])
 @roles_required('admin', 'moderator')
 def add():
