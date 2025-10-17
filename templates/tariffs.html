@@ -6,11 +6,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-<a href="{{ url_for('employee.list_employees') }}">View Employees</a>
-<a href="{{ url_for('client.list_clients') }}">View Clients</a>
-<a href="{{ url_for('equipment_type.list_equipment_types') }}">View Equipment Types</a>
-<a href="{{ url_for('equipment.list_equipment') }}">View Equipment</a>
-<a href="{{ url_for('schedule.list_schedules') }}">View schedules</a>
+    <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
 
 <h1>Tariffs</h1>
 
@@ -83,6 +79,13 @@
         </tr>
     {% endfor %}
 </table>
+
+    <form action="{{ url_for('client.save_view') }}" method="POST">
+    <input type="hidden" name="view_url" value="{{ request.full_path }}">
+    <label for="view_name">Report Name:</label>
+    <input type="text" id="view_name" name="view_name" required>
+    <button type="submit">Save this View</button>
+</form>
 
 <h2>Add New Tariff</h2>
 <form action="{{ url_for('tariff.add') }}" method="POST">

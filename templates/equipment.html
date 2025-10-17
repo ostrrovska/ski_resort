@@ -94,6 +94,13 @@
     {% endfor %}
 </table>
 
+<form action="{{ url_for('client.save_view') }}" method="POST">
+    <input type="hidden" name="view_url" value="{{ request.full_path }}">
+    <label for="view_name">Report Name:</label>
+    <input type="text" id="view_name" name="view_name" required>
+    <button type="submit">Save this View</button>
+</form>
+
 {% if session.access_right in ['admin', 'moderator'] %}
 <h2>Add New Equipment</h2>
 <form action="{{ url_for('equipment.add') }}" method="POST">
