@@ -20,6 +20,10 @@
             <option value="date_of_birth">Date of birth</option>
             <option value="phone_number">Phone Number</option>
             <option value="email">Email</option>
+            <option value="login">Login</option>
+            {% if session.access_right == 'admin' %}
+                <option value="access_right">Access Right</option>
+            {% endif %}
         </select>
         <label for="sort_order">Order:</label>
         <select id="sort_order" name="sort_order">
@@ -35,6 +39,10 @@
             <option value="date_of_birth">Date of birth</option>
             <option value="phone_number">Phone Number</option>
             <option value="email">Email</option>
+            <option value="login">Login</option>
+            {% if session.access_right == 'admin' %}
+                <option value="access_right">Access Right</option>
+            {% endif %}
         </select>
         <label for="filter_value">Value:</label>
         <input type="text" id="filter_value" name="filter_value"><br><br>
@@ -62,6 +70,9 @@
         <th>Date of birth</th>
         <th>Phone Number</th>
         <th>Email</th>
+        {% if session.access_right == 'admin' %}
+            <th>Role</th>
+        {% endif %}
         <th>Actions</th>
     </tr>
     {% for client in clients %}
@@ -72,11 +83,25 @@
             <td>{{ client.date_of_birth }}</td>
             <td>{{ client.phone_number }}</td>
             <td>{{ client.email }}</td>
+            {% if session.access_right == 'admin' %}
+                <td>{{ key.access_right.value }}</td>
+            {% endif %}
             <td>
-                <a href="{{ url_for('client.edit_client', id=client.id) }}">Edit</a>
-                <form action="{{ url_for('client.delete', id=client.id) }}" method="POST" style="display:inline;">
-                    <button type="submit">Delete</button>
-                </form>
+                {% if session.access_right in ['admin', 'moderator'] %}
+                    <a href="{{ url_for('client.edit_client', id=client.id) }}">Edit</a>
+                {% endif %}
+                {% if session.access_right == 'admin' %} {# Тільки адмін може видаляти КЛІЄНТІВ #}
+                    <form action="{{ url_for('client.delete', id=client.id) }}" method="POST" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+
+                    {# --- Кнопка "Make Moderator" --- #}
+                    {% if key.access_right.value == 'authorized' %} {# Показуємо кнопку тільки для authorized #}
+                        <form action="{{ url_for('client.set_moderator', client_id=client.id) }}" method="POST" style="display:inline;">
+                            <button type="submit">Make Moderator</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
             </td>
         </tr>
     {% endfor %}
@@ -87,26 +112,6 @@
     <label for="view_name">Report Name:</label>
     <input type="text" id="view_name" name="view_name" required>
     <button type="submit">Save this View</button>
-</form>
-
-<h2>Add New Client</h2>
-<form action="{{ url_for('client.register') }}" method="POST">
-    <label for="full_name">Full Name:</label>
-    <input type="text" id="full_name" name="full_name" required><br><br>
-
-    <label for="document_id">Document id:</label>
-    <input type="text" id="document_id" name="document_id" required><br><br>
-
-    <label for="date_of_birth">Date of birth:</label>
-    <input type="date" id="date_of_birth" name="date_of_birth" required><br><br>
-
-    <label for="phone_number">Phone Number:</label>
-    <input type="tel" id="phone_number" name="phone_number" required><br><br>
-
-    <label for="email">Email:</label>
-    <input type="text" id="email" name="email" required><br><br>
-
-    <button type="submit">Add Client</button>
 </form>
 
 <!-- Logout button -->

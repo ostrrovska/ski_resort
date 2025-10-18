@@ -1,4 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+
+from middlewares.authorization import roles_required
+from models.key import AccessRight
 from services.client_service import ClientService
 from services.saved_view_service import SavedViewService
 
@@ -91,20 +94,36 @@ def delete_view(view_id):
 
     return redirect(url_for('client.saved_views'))
 
-
-@client_controller.route('/', methods=['GET'])
+@client_controller.route('/')
+@roles_required('admin', 'moderator')  # Ця сторінка доступна адмінам і модераторам
 def list_clients():
     sort_by = request.args.get('sort_by')
     sort_order = request.args.get('sort_order')
     filter_by = request.args.get('filter_by')
     filter_value = request.args.get('filter_value')
-    clients = client_service.get_all(sort_by=sort_by, sort_order=sort_order,
-                                     filter_by=filter_by, filter_value=filter_value)
-    return render_template('clients.html', clients=clients)
+
+    # Використовуємо оновлений get_all, який повертає (Client, Key)
+    clients_with_keys = client_service.get_all(sort_by=sort_by, sort_order=sort_order,
+                                               filter_by=filter_by, filter_value=filter_value)
+
+    # Передаємо об'єднані дані у шаблон
+    return render_template('clients.html', clients_with_keys=clients_with_keys)
+
+# --- Новий маршрут для підвищення ролі ---
+@client_controller.route('/set_moderator/<int:client_id>', methods=['POST'])
+@roles_required('admin') # Тільки адмін може підвищувати
+def set_moderator(client_id):
+    success = client_service.set_access_right(client_id, AccessRight.MODERATOR)
+    if success:
+        flash('User promoted to Moderator successfully!', 'success')
+    else:
+        flash('Could not promote user.', 'error')
+    return redirect(url_for('client.list_clients'))
 
 
 
 @client_controller.route('/edit/<int:id>', methods=['GET'])
+@roles_required('admin', 'moderator')
 def edit_client(id):
     client = client_service.get_by_id(id)
     if not client:
@@ -113,6 +132,7 @@ def edit_client(id):
 
 
 @client_controller.route('/update/<int:id>', methods=['POST'])
+@roles_required('admin', 'moderator')
 def update(id):
     full_name = request.form['full_name']
     document_id = request.form['document_id']
@@ -127,6 +147,7 @@ def update(id):
 
 
 @client_controller.route('/delete/<int:id>', methods=['POST'])
+@roles_required('admin', 'moderator')
 def delete(id):
     client_service.delete(id)
     return redirect(url_for('client.list_clients'))

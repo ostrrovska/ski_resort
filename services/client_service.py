@@ -38,36 +38,77 @@ class ClientService:
 
     @staticmethod
     def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None):
-        query = Client.query
+        # --- Змінюємо запит, щоб об'єднати Client та Key ---
+        query = db.session.query(Client, Key).join(Key, Client.authorization_fkey == Key.id)
+
+        # --- Оновлюємо словник для сортування/фільтрації ---
         sort_filter_options = {
             'id': Client.id,
             'full_name': Client.full_name,
             'document_id': Client.document_id,
             'date_of_birth': Client.date_of_birth,
             'phone_number': Client.phone_number,
-            'email': Client.email
+            'email': Client.email,
+            'login': Key.login,  # Можна додати сортування/фільтрацію за логіном
+            'access_right': Key.access_right  # Можна додати сортування/фільтрацію за роллю
         }
-        if sort_by in sort_filter_options:
-            if sort_order == 'desc':
-                query = query.order_by(sort_filter_options[sort_by].desc())
-            else:
-                query = query.order_by(sort_filter_options[sort_by])
 
-        if filter_by in sort_filter_options and filter_value:
-            column = sort_filter_options[filter_by]
+        # --- Логіка фільтрації ---
+        if filter_by in sort_filter_options and filter_value is not None:
+            column_attr = sort_filter_options[filter_by]
+            model = Client if hasattr(Client, filter_by) else Key  # Визначаємо модель для колонки
+            column = getattr(model, filter_by)  # Отримуємо атрибут колонки SQLAlchemy
+
+            # Обробка різних типів даних
             if isinstance(column.type, db.Integer):
-                query = query.filter(column == int(filter_value))
+                try:
+                    query = query.filter(column == int(filter_value))
+                except ValueError:
+                    pass  # Ігноруємо нечислові значення для числових колонок
             elif isinstance(column.type, db.Date):
-                # Parse filter_value to a date object
-                date_value = datetime.datetime.strptime(filter_value, "%Y-%m-%d").date()
-                query = query.filter(column == date_value)
-            elif isinstance(column.type, db.Time):
-                # Parse filter_value to a time object
-                time_value = datetime.datetime.strptime(filter_value, "%H:%M:%S").time()
-                query = query.filter(column == time_value)
-            else:
+                try:
+                    date_value = datetime.datetime.strptime(filter_value, "%Y-%m-%d").date()
+                    query = query.filter(column == date_value)
+                except ValueError:
+                    pass  # Ігноруємо некоректний формат дати
+            elif isinstance(column.type, db.Enum):
+                # Дозволяємо фільтрацію за роллю (якщо filter_by == 'access_right')
+                try:
+                    # Перетворюємо рядок filter_value на член Enum
+                    enum_value = AccessRight(filter_value.lower())
+                    query = query.filter(column == enum_value)
+                except ValueError:
+                    pass  # Ігноруємо, якщо значення не є валідною роллю
+            else:  # Для рядкових типів (String)
                 query = query.filter(column.ilike(f'%{filter_value}%'))
+
+        # --- Логіка сортування ---
+        if sort_by in sort_filter_options:
+            column_attr = sort_filter_options[sort_by]
+            model = Client if hasattr(Client, sort_by) else Key
+            column = getattr(model, sort_by)
+
+            if sort_order == 'desc':
+                query = query.order_by(column.desc())
+            else:
+                query = query.order_by(column.asc())
+
+        # Повертаємо список кортежів (Client, Key)
         return query.all()
+
+    @staticmethod
+    def set_access_right(client_id, new_role: AccessRight):
+        """Змінює роль доступу для клієнта."""
+        client = ClientService.get_by_id(client_id)
+        if not client:
+            return False  # Клієнта не знайдено
+
+        key = Key.query.get(client.authorization_fkey)
+        if key:
+            key.access_right = new_role
+            db.session.commit()
+            return True
+        return False  # Ключ не знайдено (малоймовірно)
 
     @staticmethod
     def get_by_id(id):
