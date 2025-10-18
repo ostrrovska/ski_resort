@@ -75,7 +75,7 @@
         {% endif %}
         <th>Actions</th>
     </tr>
-    {% for client in clients %}
+    {% for client, key in clients_with_keys %}
         <tr>
             <td>{{ client.id }}</td>
             <td>{{ client.full_name }}</td>
@@ -90,7 +90,7 @@
                 {% if session.access_right in ['admin', 'moderator'] %}
                     <a href="{{ url_for('client.edit_client', id=client.id) }}">Edit</a>
                 {% endif %}
-                {% if session.access_right == 'admin' %} {# Тільки адмін може видаляти КЛІЄНТІВ #}
+                {% if session.access_right == 'admin' and key.access_right.value != 'admin' %} {# Тільки адмін може видаляти КЛІЄНТІВ #}
                     <form action="{{ url_for('client.delete', id=client.id) }}" method="POST" style="display:inline;">
                         <button type="submit">Delete</button>
                     </form>
