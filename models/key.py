@@ -17,9 +17,12 @@ class Key(db.Model):
     password_hash = db.Column(db.String(256), nullable=False)
     access_right = db.Column(db.Enum(AccessRight), nullable=False, default=AccessRight.AUTHORIZED)
 
-    def __init__(self, login, access_right):
+    is_approved = db.Column(db.Boolean, nullable=False, default=False)
+
+    def __init__(self, login, access_right, is_approved=False):
         self.login = login
         self.access_right = access_right
+        self.is_approved = is_approved
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

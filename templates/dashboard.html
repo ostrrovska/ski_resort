@@ -26,6 +26,12 @@
             <li><a href="{{ url_for('schedule.list_schedules') }}">Browse schedules </a> </li>
             <li><a href="{{ url_for('tariff.list_tariffs') }}">Browse tariffs </a> </li>
         {% endif %}
+
+    {% if session.access_right == 'admin' %}
+            <li style="font-weight: bold; margin-top: 10px;">
+                <a href="{{ url_for('client.pending_registrations') }}">View Pending Registrations</a>
+            </li>
+        {% endif %}
     </ul>
 
     <h2>Your Reports</h2>

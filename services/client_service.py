@@ -10,7 +10,7 @@ class ClientService:
     def register(full_name, document_id, date_of_birth, phone_number, email, login, password):
         if Key.query.filter_by(login=login).first():
             return None
-        new_key = Key(login=login, access_right=AccessRight.AUTHORIZED)
+        new_key = Key(login=login, access_right=AccessRight.AUTHORIZED, is_approved=False)
         new_key.set_password(password)
 
         db.session.add(new_key)
@@ -33,13 +33,15 @@ class ClientService:
     def login(login, password):
         key = Key.query.filter_by(login=login).first()
         if key and key.check_password(password):
+            if not key.is_approved:
+                return 'pending'
             return key
-        return None
+        return 'invalid'
 
     @staticmethod
     def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None):
         # --- Змінюємо запит, щоб об'єднати Client та Key ---
-        query = db.session.query(Client, Key).join(Key, Client.authorization_fkey == Key.id)
+        query = db.session.query(Client, Key).join(Key, Client.authorization_fkey == Key.id).filter(Key.is_approved == True)
 
         # --- Оновлюємо словник для сортування/фільтрації ---
         sort_filter_options = {
@@ -109,6 +111,37 @@ class ClientService:
             db.session.commit()
             return True
         return False  # Ключ не знайдено (малоймовірно)
+
+    @staticmethod
+    def get_pending_registrations():
+        """Повертає всіх користувачів, які очікують на підтвердження."""
+        return db.session.query(Client, Key).join(Key, Client.authorization_fkey == Key.id).filter(
+            Key.is_approved == False).all()
+
+    @staticmethod
+    def approve_registration(key_id):
+        """Підтверджує реєстрацію за ID ключа."""
+        key = Key.query.get(key_id)
+        if key and not key.is_approved:
+            key.is_approved = True
+            db.session.commit()
+            return True
+        return False
+
+    @staticmethod
+    def reject_registration(key_id):
+        """Відхиляє та видаляє заявку на реєстрацію (клієнта і ключ)."""
+        key = Key.query.get(key_id)
+        if key:
+            # Знаходимо пов'язаного клієнта
+            client = Client.query.filter_by(authorization_fkey=key.id).first()
+            if client:
+                db.session.delete(client)
+
+            db.session.delete(key)
+            db.session.commit()
+            return True
+        return False
 
     @staticmethod
     def get_by_id(id):

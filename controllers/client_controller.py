@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 
 from middlewares.authorization import roles_required
-from models.key import AccessRight
+from models.key import AccessRight, Key
 from services.client_service import ClientService
 from services.saved_view_service import SavedViewService
 
@@ -20,7 +20,7 @@ def register():
     password = request.form['password']
     client = client_service.register(full_name, document_id, date_of_birth, phone_number, email, login, password)
     if client:
-        flash('Account created successfully. Please login.')
+        flash('Your registration application has been submitted for admin approval.')
         return redirect(url_for('index'))
     else:
         flash('A user with this login already exists.')
@@ -31,12 +31,16 @@ def register():
 def login():
     login = request.form['login']
     password = request.form['password']
-    key = client_service.login(login, password)  # Тепер отримуємо об'єкт key
-    if key:
-        session['client_id'] = key.client.id
-        session['access_right'] = key.access_right.value
+    result = client_service.login(login, password)  # Отримуємо результат
+
+    if isinstance(result, Key):  # Якщо це об'єкт Key - вхід успішний
+        session['client_id'] = result.client.id
+        session['access_right'] = result.access_right.value
         return redirect(url_for('client.dashboard'))
-    else:
+    elif result == 'pending':
+        flash('Your account is awaiting admin approval.')
+        return redirect(url_for('index'))
+    else:  # 'invalid'
         flash('Invalid login or password')
         return redirect(url_for('index'))
 
@@ -44,6 +48,7 @@ def login():
 @client_controller.route('/logout', methods=['POST'])
 def logout():
     session.pop('client_id', None)
+    session.pop('access_right', None)
     return redirect(url_for('index'))
 
 @client_controller.route('/dashboard')
@@ -95,23 +100,20 @@ def delete_view(view_id):
     return redirect(url_for('client.saved_views'))
 
 @client_controller.route('/')
-@roles_required('admin', 'moderator')  # Ця сторінка доступна адмінам і модераторам
+@roles_required('admin', 'moderator')
 def list_clients():
     sort_by = request.args.get('sort_by')
     sort_order = request.args.get('sort_order')
     filter_by = request.args.get('filter_by')
     filter_value = request.args.get('filter_value')
 
-    # Використовуємо оновлений get_all, який повертає (Client, Key)
     clients_with_keys = client_service.get_all(sort_by=sort_by, sort_order=sort_order,
                                                filter_by=filter_by, filter_value=filter_value)
 
-    # Передаємо об'єднані дані у шаблон
     return render_template('clients.html', clients_with_keys=clients_with_keys)
 
-# --- Новий маршрут для підвищення ролі ---
 @client_controller.route('/set_moderator/<int:client_id>', methods=['POST'])
-@roles_required('admin') # Тільки адмін може підвищувати
+@roles_required('admin')
 def set_moderator(client_id):
     success = client_service.set_access_right(client_id, AccessRight.MODERATOR)
     if success:
@@ -120,7 +122,35 @@ def set_moderator(client_id):
         flash('Could not promote user.', 'error')
     return redirect(url_for('client.list_clients'))
 
+# --- Нові маршрути для керування заявками ---
 
+@client_controller.route('/pending_registrations')
+@roles_required('admin')
+def pending_registrations():
+    pending_list = client_service.get_pending_registrations()
+    return render_template('pending_registrations.html', pending_list=pending_list)
+
+
+@client_controller.route('/approve_registration/<int:key_id>', methods=['POST'])
+@roles_required('admin')
+def approve_registration(key_id):
+    if client_service.approve_registration(key_id):
+        flash('Registration approved successfully.', 'success')
+    else:
+        flash('Error approving registration.', 'danger')
+    return redirect(url_for('client.pending_registrations'))
+
+
+@client_controller.route('/reject_registration/<int:key_id>', methods=['POST'])
+@roles_required('admin')
+def reject_registration(key_id):
+    if client_service.reject_registration(key_id):
+        flash('Registration rejected and deleted.', 'success')
+    else:
+        flash('Error rejecting registration.', 'danger')
+    return redirect(url_for('client.pending_registrations'))
+
+# --- ------------------------------------- ---
 
 @client_controller.route('/edit/<int:id>', methods=['GET'])
 @roles_required('admin', 'moderator')
