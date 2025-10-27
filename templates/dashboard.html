@@ -9,6 +9,11 @@
     <h1>Welcome, Authorized User!</h1>
     <p>From here you can browse resort data or view your saved reports.</p>
 
+    <h2>Reports</h2>
+    <ul>
+        <li><a href="{{ url_for('report.index') }}">View Predefined Reports</a></li>
+    </ul>
+
     <h2>Browse Data</h2>
     <ul>
         <li><a href="{{ url_for('employee.browse_employees') }}">Browse Employees</a></li>

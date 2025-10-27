@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
+
+    <h1>Ski Resort Reports</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <div class="report-description">
+        <p><strong>Query 1:</strong> View information about clients and the passes they have purchased.</p>
+        <a href="{{ url_for('report.clients_and_passes') }}" class="report-link">Run Report 1</a>
+    </div>
+
+    {# --- Тут пізніше можна буде додати посилання на інші звіти ---
+    <div class="report-description">
+        <p><strong>Query 2:</strong> Equipment rental statistics...</p>
+        <a href="{{ url_for('report.equipment_rental_stats') }}" class="report-link">Run Report 2</a>
+    </div>
+    ... і так далі ...
+    #}
+
+    <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline; margin-top: 20px;">
+        <button type="submit">Logout</button>
+    </form>
+</body>
+</html>

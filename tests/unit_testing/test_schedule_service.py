@@ -14,7 +14,6 @@ EMP_SERVICE_PATH = 'services.schedule_service.EmployeeService.get_by_id'
 SCHEDULE_QUERY_PATH = 'services.schedule_service.Schedule.query'
 SCHEDULE_SERVICE_GET_BY_ID_PATH = 'services.schedule_service.ScheduleService.get_by_id'
 
-# Автоматично застосовує app_context до всіх тестів у файлі
 pytestmark = pytest.mark.usefixtures("app_context")
 
 
@@ -212,7 +211,6 @@ def test_get_all_sorting(mock_schedule_query, schedule_service,
 
 
 # Test 6: get_all filtering (3 cases)
-# --- ОСЬ ТУТ ОСНОВНЕ ВИПРАВЛЕННЯ ---
 @pytest.mark.parametrize("filter_by, filter_value, expected_db_value", [
     ("employee_id", "123", 123),
     ("work_date", "2025-10-20", date(2025, 10, 20)),
@@ -230,16 +228,12 @@ def test_get_all_filtering(mock_schedule_query, schedule_service,
     mock_schedule_query.filter.return_value = mock_filter
     mock_filter.all.return_value = []
 
-    # Прибираємо складний 'patch.dict', він був причиною помилки.
-
     # Act
-    # Просто викликаємо, 'app_context' вже активний.
     schedule_service.get_all(filter_by=filter_by, filter_value=filter_value)
 
     # Assert
     mock_schedule_query.filter.assert_called_once()
 
-    # Перевіряємо, що .filter() був викликаний з правильним виразом
     filter_expression = mock_schedule_query.filter.call_args[0][0]
 
     assert filter_expression.left.key == filter_by

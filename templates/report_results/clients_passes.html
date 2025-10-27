@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report: Clients and Passes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('report.index') }}">Back to Reports</a>
+    <h1>Report: Clients and Passes Purchased</h1>
+
+    {% if data %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Client ID</th>
+                    <th>Client Name</th>
+                    <th>Email</th>
+                    <th>Pass ID</th>
+                    <th>Pass Type</th>
+                    <th>Purchase Date</th>
+                    <th>Valid From</th>
+                    <th>Valid To</th>
+                    <th>Remaining Lifts</th>
+                    <th>Remaining Hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{ row.client_id }}</td>
+                    <td>{{ row.full_name }}</td>
+                    <td>{{ row.email }}</td>
+                    <td>{{ row.pass_id }}</td>
+                    <td>{{ row.pass_type_name }}</td>
+                    <td>{{ row.purchase_date }}</td>
+                    <td>{{ row.valid_from }}</td>
+                    <td>{{ row.valid_to }}</td>
+                    <td>{{ row.remaining_lifts }}</td>
+                    <td>{{ row.remaining_hours }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No data found for this report.</p>
+    {% endif %}
+</body>
+</html>
