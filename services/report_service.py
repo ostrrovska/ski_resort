@@ -2,6 +2,7 @@ from models import db
 from models.client import Client
 from models.equipment import Equipment
 from models.equipment_type import EquipmentType
+from models.key import Key
 from models.passes import Pass
 from models.pass_type import PassType
 from sqlalchemy import desc, func  # Для сортування
@@ -27,6 +28,8 @@ class ReportService:
             Pass.remaining_hours
         ).join(Pass, Client.id == Pass.client_id) \
          .join(PassType, Pass.pass_type_id == PassType.id) \
+         .join(Key, Client.authorization_fkey == Key.id) \
+         .filter(Key.is_approved == True) \
          .order_by(Client.full_name, Pass.purchase_date)
 
 
@@ -47,7 +50,7 @@ class ReportService:
          .join(EquipmentType, Equipment.type_id == EquipmentType.id) \
          .filter(Rental.rental_date >= start_date, Rental.rental_date <= end_date) \
          .group_by(Equipment.id, Equipment.model, EquipmentType.name) \
-         .order_by(desc('rental_count')) # Order by most rented
+         .order_by(desc('rental_count'), Equipment.model.asc()) # Order by most rented
         return query.all() # Return all results sorted by count
 
     def get_equipment_count_by_type_daily(self, date_):
