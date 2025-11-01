@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report Parameters: Equipment Stats</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('report.index') }}">Back to Reports</a>
+    <h1>Configure Report: Equipment Rental Statistics</h1>
+
+    {# Display flash messages if any #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    {# Form to collect date inputs from the user #}
+    <form method="POST" action="{{ url_for('report.equipment_rental_stats') }}" class="report-form">
+        <div class="form-section">
+            <p>Select the **week** for "Most Rented Equipment":</p>
+            <label for="start_date">Start Date of Week:</label>
+            <input type="date" id="start_date" name="start_date" value="{{ start_date or '' }}" required>
+        </div>
+
+        <div class="form-section">
+            <p>Select the **day** for "Equipment Count by Type":</p>
+            <label for="specific_date">Specific Day:</label>
+            <input type="date" id="specific_date" name="specific_date" value="{{ specific_date or '' }}" required>
+        </div>
+
+        <button type="submit">Generate Report</button>
+    </form>
+</body>
+</html>

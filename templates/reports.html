@@ -25,13 +25,13 @@
         <a href="{{ url_for('report.clients_and_passes') }}" class="report-link">Run Report 1</a>
     </div>
 
-    {# --- Тут пізніше можна буде додати посилання на інші звіти ---
+    {# --- ADDED LINK FOR QUERY 2 --- #}
     <div class="report-description">
-        <p><strong>Query 2:</strong> Equipment rental statistics...</p>
-        <a href="{{ url_for('report.equipment_rental_stats') }}" class="report-link">Run Report 2</a>
+        <p><strong>Query 2:</strong> Analyze equipment rental statistics (most rented weekly, count by type daily). Requires selecting dates.</p>
+        {# Link now goes to the form first #}
+        <a href="{{ url_for('report.equipment_rental_stats') }}" class="report-link">Configure & Run Report 2</a>
     </div>
-    ... і так далі ...
-    #}
+    {# --- END ADDED LINK --- #}
 
     <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline; margin-top: 20px;">
         <button type="submit">Logout</button>
