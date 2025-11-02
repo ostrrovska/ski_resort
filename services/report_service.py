@@ -3,6 +3,8 @@ from models.client import Client
 from models.equipment import Equipment
 from models.equipment_type import EquipmentType
 from models.key import Key
+from models.lift import Lift
+from models.lift_usage import LiftUsage
 from models.passes import Pass
 from models.pass_type import PassType
 from sqlalchemy import desc, func  # Для сортування
@@ -105,5 +107,26 @@ class ReportService:
             PassType.name
         ).order_by(
             PassType.name.asc()
+        )
+        return query.all()
+#query 4: Get most used lifts in the specified period.
+
+    def get_most_used_lifts_by_period(self, start_date, end_date):
+        """Part of Query 4: Get most used lifts in the specified period."""
+        if not start_date or not end_date:
+            return []
+
+        query = db.session.query(
+            Lift.name.label('lift_name'),
+            func.count(LiftUsage.id).label('usage_count')
+        ).join(
+            Lift, LiftUsage.lift_id == Lift.id
+        ).filter(
+            LiftUsage.usage_date >= start_date,
+            LiftUsage.usage_date <= end_date
+        ).group_by(
+            Lift.id, Lift.name
+        ).order_by(
+            desc('usage_count')
         )
         return query.all()

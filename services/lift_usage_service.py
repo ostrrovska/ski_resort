@@ -2,6 +2,7 @@ import datetime
 
 from models.lift_usage import LiftUsage, db
 from services.employee_service import EmployeeService
+from services.client_service import ClientService
 from services.lift_service import LiftService
 
 class LiftUsageService:
@@ -46,7 +47,7 @@ class LiftUsageService:
 
     @staticmethod
     def add(client_id, lift_id, usage_date, usage_time_start, usage_time_end):
-        client = EmployeeService.get_by_id(client_id)
+        client = ClientService.get_by_id(client_id)
         lift = LiftService.get_by_id(lift_id)
         if not client:
             raise ValueError(f"Client with ID {client_id} is not found.")
@@ -63,7 +64,7 @@ class LiftUsageService:
         if not usage:
             return None
 
-        client = EmployeeService.get_by_id(client_id)
+        client = ClientService.get_by_id(client_id)
         lift = LiftService.get_by_id(lift_id)
         if not client:
             raise ValueError(f"Client with ID {client_id} is not found.")

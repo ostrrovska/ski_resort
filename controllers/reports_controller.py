@@ -124,4 +124,55 @@ def pass_sales_stats():
         return render_template('report_results/pass_sales_params.html',
                                start_date=today.strftime('%Y-%m-%d'),
                                end_date=today.strftime('%Y-%m-%d'))
-# --- END NEW ROUTE ---
+
+
+@report_controller.route('/most_used_lifts', methods=['GET', 'POST'])
+@roles_required('admin', 'moderator', 'authorized')
+def most_used_lifts():
+    """Запит 4: Визначити найбільш використовувані підйомники за період."""
+
+    if request.method == 'POST':
+        try:
+            start_date_str = request.form.get('start_date')
+            end_date_str = request.form.get('end_date')
+
+            if not start_date_str or not end_date_str:
+                flash('Please select both a start and end date.', 'warning')
+                return render_template('report_results/most_used_lifts_params.html',
+                                       start_date=start_date_str,
+                                       end_date=end_date_str)
+
+            start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d').date()
+
+            if end_date < start_date:
+                flash('End date cannot be earlier than start date.', 'warning')
+                return render_template('report_results/most_used_lifts_params.html',
+                                       start_date=start_date_str,
+                                       end_date=end_date_str)
+
+            # Викликаємо метод сервісу
+            report_data = report_service.get_most_used_lifts_by_period(start_date, end_date)
+
+            # Рендеримо шаблон з результатами
+            return render_template('report_results/most_used_lifts_stats.html',
+                                   data=report_data,
+                                   start_date=start_date,
+                                   end_date=end_date)
+        except ValueError:
+            flash('Invalid date format. Please use YYYY-MM-DD.', 'danger')
+            return render_template('report_results/most_used_lifts_params.html',
+                                   start_date=start_date_str,
+                                   end_date=end_date_str)
+        except Exception as e:
+            flash(f'Error generating report: {e}', 'danger')
+            return render_template('report_results/most_used_lifts_params.html',
+                                   start_date=start_date_str,
+                                   end_date=end_date_str)
+
+    else:
+        # GET request
+        today = datetime.date.today()
+        return render_template('report_results/most_used_lifts_params.html',
+                               start_date=today.strftime('%Y-%m-%d'),
+                               end_date=today.strftime('%Y-%m-%d'))
