@@ -35,7 +35,6 @@ class ReportService:
 
         return query.all()
 
-# --- NEW METHODS FOR QUERY 2 ---
     def get_most_rented_equipment_weekly(self, start_date, end_date):
         """Part of Query 2: Get equipment rented most often in the specified period (week)."""
         if not start_date or not end_date:
@@ -68,4 +67,43 @@ class ReportService:
          .group_by(EquipmentType.name) \
          .order_by(EquipmentType.name)
         return query.all()
-    # --- END NEW METHODS ---
+
+#Query 3: Get the count of passes sold per day in a period. Get the count of passes sold by type in a period.
+
+    def get_pass_sales_by_day(self, start_date, end_date):
+        """Part of Query 3: Get the count of passes sold per day in a period."""
+        if not start_date or not end_date:
+            return []
+
+        query = db.session.query(
+            Pass.purchase_date,
+            func.count(Pass.id).label('sales_count')
+        ).filter(
+            Pass.purchase_date >= start_date,
+            Pass.purchase_date <= end_date
+        ).group_by(
+            Pass.purchase_date
+        ).order_by(
+            Pass.purchase_date.asc()
+        )
+        return query.all()
+
+    def get_pass_sales_by_type(self, start_date, end_date):
+        """Part of Query 3: Get the count of passes sold by type in a period."""
+        if not start_date or not end_date:
+            return []
+
+        query = db.session.query(
+            PassType.name.label('pass_type_name'),
+            func.count(Pass.id).label('sales_count')
+        ).join(
+            PassType, Pass.pass_type_id == PassType.id
+        ).filter(
+            Pass.purchase_date >= start_date,
+            Pass.purchase_date <= end_date
+        ).group_by(
+            PassType.name
+        ).order_by(
+            PassType.name.asc()
+        )
+        return query.all()
