@@ -7,7 +7,7 @@ from models.lift import Lift
 from models.lift_usage import LiftUsage
 from models.passes import Pass
 from models.pass_type import PassType
-from sqlalchemy import desc, func  # Для сортування
+from sqlalchemy import desc, func, extract  # Для сортування
 
 from models.rental import Rental
 from models.rental_equipment import RentalEquipment
@@ -128,5 +128,47 @@ class ReportService:
             Lift.id, Lift.name
         ).order_by(
             desc('usage_count')
+        )
+        return query.all()
+
+# --- Query 5: Get total rental revenue grouped by year and month. ---
+
+    def get_rental_revenue_by_month(self, start_date, end_date):
+        """Part of Query 5: Get total rental revenue grouped by year and month."""
+        if not start_date or not end_date:
+            return []
+
+        query = db.session.query(
+            extract('year', Rental.rental_date).label('year'),
+            extract('month', Rental.rental_date).label('month'),
+            func.sum(Rental.total_price).label('total_revenue')
+        ).filter(
+            Rental.rental_date.between(start_date, end_date)
+        ).group_by(
+            extract('year', Rental.rental_date),
+            extract('month', Rental.rental_date)
+        ).order_by(
+            extract('year', Rental.rental_date).asc(),
+            extract('month', Rental.rental_date).asc()
+        )
+        return query.all()
+
+    def get_rental_revenue_by_quarter(self, start_date, end_date):
+        """Part of Query 5: Get total rental revenue grouped by year and quarter."""
+        if not start_date or not end_date:
+            return []
+
+        query = db.session.query(
+            extract('year', Rental.rental_date).label('year'),
+            extract('quarter', Rental.rental_date).label('quarter'),
+            func.sum(Rental.total_price).label('total_revenue')
+        ).filter(
+            Rental.rental_date.between(start_date, end_date)
+        ).group_by(
+            extract('year', Rental.rental_date),
+            extract('quarter', Rental.rental_date)
+        ).order_by(
+            extract('year', Rental.rental_date).asc(),
+            extract('quarter', Rental.rental_date).asc()
         )
         return query.all()

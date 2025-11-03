@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report Parameters: Rental Revenue</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('report.index') }}">Back to Reports</a>
+    <h1>Configure Report: Rental Revenue Statistics</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('report.rental_revenue_stats') }}" class="report-form">
+        <div class="form-section">
+            <p>Select the date range for the report:</p>
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" value="{{ start_date or '' }}" required>
+        </div>
+
+        <div class="form-section">
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" value="{{ end_date or '' }}" required>
+        </div>
+
+        <button type="submit">Generate Report</button>
+    </form>
+</body>
+</html>

@@ -176,3 +176,56 @@ def most_used_lifts():
         return render_template('report_results/most_used_lifts_params.html',
                                start_date=today.strftime('%Y-%m-%d'),
                                end_date=today.strftime('%Y-%m-%d'))
+
+@report_controller.route('/rental_revenue_stats', methods=['GET', 'POST'])
+@roles_required('admin', 'moderator', 'authorized')
+def rental_revenue_stats():
+    """Запит 5: Обчислити загальну суму за прокат спорядження за місяцями; за кварталами."""
+
+    if request.method == 'POST':
+        try:
+            start_date_str = request.form.get('start_date')
+            end_date_str = request.form.get('end_date')
+
+            if not start_date_str or not end_date_str:
+                flash('Please select both a start and end date.', 'warning')
+                return render_template('report_results/rental_revenue_params.html',
+                                       start_date=start_date_str,
+                                       end_date=end_date_str)
+
+            start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d').date()
+
+            if end_date < start_date:
+                flash('End date cannot be earlier than start date.', 'warning')
+                return render_template('report_results/rental_revenue_params.html',
+                                       start_date=start_date_str,
+                                       end_date=end_date_str)
+
+            # Викликаємо нові методи сервісу
+            revenue_by_month = report_service.get_rental_revenue_by_month(start_date, end_date)
+            revenue_by_quarter = report_service.get_rental_revenue_by_quarter(start_date, end_date)
+
+            # Рендеримо шаблон з результатами
+            return render_template('report_results/rental_revenue_stats.html',
+                                   revenue_by_month=revenue_by_month,
+                                   revenue_by_quarter=revenue_by_quarter,
+                                   start_date=start_date,
+                                   end_date=end_date)
+        except ValueError:
+            flash('Invalid date format. Please use YYYY-MM-DD.', 'danger')
+            return render_template('report_results/rental_revenue_params.html',
+                                   start_date=start_date_str,
+                                   end_date=end_date_str)
+        except Exception as e:
+            flash(f'Error generating report: {e}', 'danger')
+            return render_template('report_results/rental_revenue_params.html',
+                                   start_date=start_date_str,
+                                   end_date=end_date_str)
+
+    else:
+        # GET request
+        today = datetime.date.today()
+        return render_template('report_results/rental_revenue_params.html',
+                               start_date=today.strftime('%Y-%m-%d'),
+                               end_date=today.strftime('%Y-%m-%d'))

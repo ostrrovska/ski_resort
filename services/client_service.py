@@ -2,6 +2,7 @@ import datetime
 
 from models.client import Client, db
 from models.key import Key, AccessRight
+from models.saved_view import SavedView
 
 
 class ClientService:
@@ -165,6 +166,10 @@ class ClientService:
         client = ClientService.get_by_id(id)
         if client:
             key = Key.query.get(client.authorization_fkey)
+
+            # Manually delete associated saved views first
+            SavedView.query.filter_by(client_id=client.id).delete()
+
             if key:
                 db.session.delete(key)
             db.session.delete(client)

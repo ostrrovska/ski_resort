@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report: Rental Revenue Statistics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .report-subsection { margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <a href="{{ url_for('report.index') }}">Back to Reports</a>
+    <h1>Report: Rental Revenue ({{ start_date.strftime('%Y-%m-%d') }} to {{ end_date.strftime('%Y-%m-%d') }})</h1>
+
+    {# Section for Revenue by Month #}
+    <div class="report-subsection">
+        <h2>Revenue by Month</h2>
+        {% if revenue_by_month %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Month</th>
+                        <th>Total Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in revenue_by_month %}
+                    <tr>
+                        <td>{{ item.year }}</td>
+                        <td>{{ item.month }}</td>
+                        <td>{{ item.total_revenue }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No rental revenue data found for this period.</p>
+        {% endif %}
+    </div>
+
+    {# Section for Revenue by Quarter #}
+    <div class="report-subsection">
+        <h2>Revenue by Quarter</h2>
+        {% if revenue_by_quarter %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Quarter</th>
+                        <th>Total Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in revenue_by_quarter %}
+                    <tr>
+                        <td>{{ item.year }}</td>
+                        <td>{{ item.quarter }}</td>
+                        <td>{{ item.total_revenue }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No rental revenue data found for this period.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>
