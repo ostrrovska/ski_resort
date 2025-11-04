@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report: Client Pass Statistics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('report.index') }}">Back to Reports</a>
+    <h1>Report: Client Pass Statistics</h1>
+
+    {# Section for Exhausted Passes #}
+    <div class="report-subsection">
+        <h2>Clients with Exhausted Lift Passes (All Time)</h2>
+        {% if exhausted_passes_clients %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client ID</th>
+                        <th>Client Name</th>
+                        <th>Email</th>
+                        <th>Pass ID</th>
+                        <th>Pass Type</th>
+                        <th>Remaining Lifts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in exhausted_passes_clients %}
+                    <tr>
+                        <td>{{ client.client_id }}</td>
+                        <td>{{ client.full_name }}</td>
+                        <td>{{ client.email }}</td>
+                        <td>{{ client.pass_id }}</td>
+                        <td>{{ client.pass_type_name }}</td>
+                        <td>{{ client.remaining_lifts }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No approved clients with exhausted passes found.</p>
+        {% endif %}
+    </div>
+
+    {# Section for Over 15 Lifts Daily #}
+    <div class="report-subsection">
+        <h2>Clients with Over 15 Lifts (Day: {{ specific_date.strftime('%Y-%m-%d') }})</h2>
+        {% if over_15_lifts_clients %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client ID</th>
+                        <th>Client Name</th>
+                        <th>Email</th>
+                        <th>Lifts Used</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in over_15_lifts_clients %}
+                    <tr>
+                        <td>{{ client.client_id }}</td>
+                        <td>{{ client.full_name }}</td>
+                        <td>{{ client.email }}</td>
+                        <td>{{ client.lift_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No approved clients used more than 15 lifts on this day.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

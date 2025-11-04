@@ -46,6 +46,11 @@
         <a href="{{ url_for('report.rental_revenue_stats') }}" class="report-link">Configure & Run Report 5</a>
     </div>
 
+    <div class="report-description">
+        <p><strong>Query 6:</strong> Get information about clients who have exhausted the number of lifts provided for in the subscription; who have completed more than 15 lifts on a given day.</p>
+        <a href="{{ url_for('report.client_pass_stats') }}" class="report-link">Configure & Run Report 6</a>
+    </div>
+
     <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline; margin-top: 20px;">
         <button type="submit">Logout</button>
     </form>

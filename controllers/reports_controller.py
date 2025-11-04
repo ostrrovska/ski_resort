@@ -229,3 +229,44 @@ def rental_revenue_stats():
         return render_template('report_results/rental_revenue_params.html',
                                start_date=today.strftime('%Y-%m-%d'),
                                end_date=today.strftime('%Y-%m-%d'))
+
+@report_controller.route('/client_pass_stats', methods=['GET', 'POST'])
+@roles_required('admin', 'moderator', 'authorized')
+def client_pass_stats():
+    """Запит 6: Отримати інформацію про клієнтів, які вичерпали абонементи,
+                та тих, хто виконав більше 15 підйомів за день."""
+
+    if request.method == 'POST':
+        try:
+            specific_date_str = request.form.get('specific_date')
+
+            if not specific_date_str:
+                flash('Please select a specific day.', 'warning')
+                return render_template('report_results/client_pass_stats_params.html',
+                                       specific_date=specific_date_str)
+
+            specific_date = datetime.datetime.strptime(specific_date_str, '%Y-%m-%d').date()
+
+            # Викликаємо методи сервісу
+            exhausted_passes_clients = report_service.get_clients_with_exhausted_passes()
+            over_15_lifts_clients = report_service.get_clients_with_over_15_lifts_daily(specific_date)
+
+            # Рендеримо шаблон з результатами
+            return render_template('report_results/client_pass_stats.html',
+                                   exhausted_passes_clients=exhausted_passes_clients,
+                                   over_15_lifts_clients=over_15_lifts_clients,
+                                   specific_date=specific_date)
+        except ValueError:
+            flash('Invalid date format. Please use YYYY-MM-DD.', 'danger')
+            return render_template('report_results/client_pass_stats_params.html',
+                                   specific_date=specific_date_str)
+        except Exception as e:
+            flash(f'Error generating report: {e}', 'danger')
+            return render_template('report_results/client_pass_stats_params.html',
+                                   specific_date=specific_date_str)
+
+    else:
+        # GET request
+        today = datetime.date.today()
+        return render_template('report_results/client_pass_stats_params.html',
+                               specific_date=today.strftime('%Y-%m-%d'))

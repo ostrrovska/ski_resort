@@ -172,3 +172,41 @@ class ReportService:
             extract('quarter', Rental.rental_date).asc()
         )
         return query.all()
+
+    def get_clients_with_exhausted_passes(self):
+        """Part of Query 6: Get clients with passes that have 0 or fewer remaining lifts."""
+        query = db.session.query(
+            Client.id.label('client_id'),
+            Client.full_name,
+            Client.email,
+            Pass.id.label('pass_id'),
+            PassType.name.label('pass_type_name'),
+            Pass.remaining_lifts
+        ).join(Pass, Client.id == Pass.client_id) \
+            .join(PassType, Pass.pass_type_id == PassType.id) \
+            .join(Key, Client.authorization_fkey == Key.id) \
+            .filter(Key.is_approved == True) \
+            .filter(Pass.remaining_lifts <= 0) \
+            .order_by(Client.full_name, Pass.id)
+
+        return query.all()
+
+    def get_clients_with_over_15_lifts_daily(self, specific_date):
+        """Part of Query 6: Get clients who used lifts more than 15 times on a specific day."""
+        if not specific_date:
+            return []
+
+        query = db.session.query(
+            Client.id.label('client_id'),
+            Client.full_name,
+            Client.email,
+            func.count(LiftUsage.id).label('lift_count')
+        ).join(LiftUsage, Client.id == LiftUsage.client_id) \
+            .join(Key, Client.authorization_fkey == Key.id) \
+            .filter(Key.is_approved == True) \
+            .filter(LiftUsage.usage_date == specific_date) \
+            .group_by(Client.id, Client.full_name, Client.email) \
+            .having(func.count(LiftUsage.id) > 15) \
+            .order_by(desc('lift_count'), Client.full_name)
+
+        return query.all()

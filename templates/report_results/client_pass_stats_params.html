@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report Parameters: Client Pass Stats</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('report.index') }}">Back to Reports</a>
+    <h1>Configure Report: Client Pass Statistics</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('report.client_pass_stats') }}" class="report-form">
+        <div class="form-section">
+            <p>Select the <strong>day</strong> for "Clients with over 15 lifts" report:</p>
+            <label for="specific_date">Specific Day:</label>
+            <input type="date" id="specific_date" name="specific_date" value="{{ specific_date or '' }}" required>
+        </div>
+
+        <button type="submit">Generate Report</button>
+    </form>
+</body>
+</html>
