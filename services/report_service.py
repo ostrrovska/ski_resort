@@ -11,6 +11,7 @@ from sqlalchemy import desc, func, extract  # Для сортування
 
 from models.rental import Rental
 from models.rental_equipment import RentalEquipment
+from models.tariff import Tariff
 
 
 class ReportService:
@@ -230,5 +231,21 @@ class ReportService:
             .filter(extract('year', Pass.purchase_date) == year) \
             .filter(extract('month', Pass.purchase_date) == month) \
             .order_by(Client.full_name, Pass.purchase_date)
+
+        return query.all()
+
+    def get_equipment_tariffs_with_weekday_discount(self):
+        """
+        Part of Query 8: Get tariff information for all equipment types,
+        including base prices and weekday discounts.
+        """
+        query = db.session.query(
+            EquipmentType.name.label('equipment_type_name'),
+            EquipmentType.description,
+            Tariff.price_per_hour.label('base_price_hour'),
+            Tariff.price_per_day.label('base_price_day'),
+            Tariff.weekday_discount
+        ).join(Tariff, EquipmentType.id == Tariff.equipment_type_id) \
+            .order_by(EquipmentType.name)
 
         return query.all()

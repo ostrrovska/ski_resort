@@ -1,5 +1,5 @@
 # controllers/reports_controller.py
-from flask import Blueprint, render_template, flash
+from flask import Blueprint, render_template, flash, redirect, url_for
 from services.report_service import ReportService
 from middlewares.authorization import roles_required
 from flask import Blueprint, render_template, request, flash
@@ -314,3 +314,20 @@ def february_unlimited_clients():
         default_year = datetime.date.today().year
         return render_template('report_results/february_unlimited_clients_params.html',
                                year=default_year)
+
+
+# ... (в кінці файлу, після february_unlimited_clients)
+
+@report_controller.route('/equipment_tariffs_report')
+@roles_required('admin', 'moderator', 'authorized')
+def equipment_tariffs_report():
+    """Запит 8: Отримати інформацію про тарифи на кожен вид обладнання (вихідні/робочі дні)."""
+    try:
+        # Цей звіт не потребує параметрів, він просто обчислює на основі існуючих даних
+        tariff_data = report_service.get_equipment_tariffs_with_weekday_discount()
+
+        return render_template('report_results/equipment_tariffs_stats.html',
+                               tariff_data=tariff_data)
+    except Exception as e:
+        flash(f'Error generating report: {e}', 'danger')
+        return redirect(url_for('report.index'))

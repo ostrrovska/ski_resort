@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report: Equipment Tariffs (Weekday/Weekend)</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .report-subsection { margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <a href="{{ url_for('report.index') }}">Back to Reports</a>
+    <h1>Report: Equipment Tariffs (Weekday vs. Weekend)</h1>
+
+    <div class="report-subsection">
+        <p>Weekend Prices are base prices. Weekday Prices are calculated with a discount.</p>
+        {% if tariff_data %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Equipment Type</th>
+                        <th>Description</th>
+                        <th>Weekend Price (Hour)</th>
+                        <th>Weekday Price (Hour)</th>
+                        <th>Weekend Price (Day)</th>
+                        <th>Weekday Price (Day)</th>
+                        <th>Discount (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in tariff_data %}
+                    <tr>
+                        <td>{{ item.equipment_type_name }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>{{ "%.2f"|format(item.base_price_hour) }}</td>
+                        <td>{{ "%.2f"|format(item.base_price_hour * (1 - item.weekday_discount / 100.0)) }}</td>
+                        <td>{{ "%.2f"|format(item.base_price_day) }}</td>
+                        <td>{{ "%.2f"|format(item.base_price_day * (1 - item.weekday_discount / 100.0)) }}</td>
+                        <td>{{ item.weekday_discount }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No equipment tariff data found.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>
