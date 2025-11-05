@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report: February Pass Buyers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .report-subsection { margin-bottom: 30px; }
+        .recommendation {
+            background-color: #f0f8ff;
+            border: 1px solid #b0e0e6;
+            padding: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <a href="{{ url_for('report.index') }}">Back to Reports</a>
+    <h1>Report: Clients Who Bought '{{ pass_name }}' in February {{ year }}</h1>
+
+    <div class="report-subsection">
+        {% if clients %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client ID</th>
+                        <th>Client Name</th>
+                        <th>Email</th>
+                        <th>Pass ID</th>
+                        <th>Purchase Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                    <tr>
+                        <td>{{ client.client_id }}</td>
+                        <td>{{ client.full_name }}</td>
+                        <td>{{ client.email }}</td>
+                        <td>{{ client.pass_id }}</td>
+                        <td>{{ client.purchase_date.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="recommendation">
+                <strong>Recommendation:</strong> A 10% discount is advised for these clients as per the business rule.
+            </div>
+
+        {% else %}
+            <p>No approved clients purchased a '{{ pass_name }}' in February {{ year }}.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

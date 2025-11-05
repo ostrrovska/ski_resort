@@ -210,3 +210,25 @@ class ReportService:
             .order_by(desc('lift_count'), Client.full_name)
 
         return query.all()
+
+    def get_clients_bought_pass_by_month(self, pass_name, year, month):
+        """Part of Query 7: Get clients who bought a specific pass type in a specific month and year."""
+        if not year or not month or not pass_name:
+            return []
+
+        query = db.session.query(
+            Client.id.label('client_id'),
+            Client.full_name,
+            Client.email,
+            Pass.id.label('pass_id'),
+            Pass.purchase_date
+        ).join(Pass, Client.id == Pass.client_id) \
+            .join(PassType, Pass.pass_type_id == PassType.id) \
+            .join(Key, Client.authorization_fkey == Key.id) \
+            .filter(Key.is_approved == True) \
+            .filter(PassType.name.ilike(pass_name)) \
+            .filter(extract('year', Pass.purchase_date) == year) \
+            .filter(extract('month', Pass.purchase_date) == month) \
+            .order_by(Client.full_name, Pass.purchase_date)
+
+        return query.all()

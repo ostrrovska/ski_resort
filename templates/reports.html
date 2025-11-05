@@ -51,6 +51,11 @@
         <a href="{{ url_for('report.client_pass_stats') }}" class="report-link">Configure & Run Report 6</a>
     </div>
 
+    <div class="report-description">
+        <p><strong>Query 7:</strong>Get information about customers who purchased an unlimited subscription in February (to provide a 10% discount).</p>
+        <a href="{{ url_for('report.february_unlimited_clients') }}" class="report-link">Configure & Run Report 7</a>
+    </div>
+
     <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline; margin-top: 20px;">
         <button type="submit">Logout</button>
     </form>

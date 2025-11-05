@@ -270,3 +270,47 @@ def client_pass_stats():
         today = datetime.date.today()
         return render_template('report_results/client_pass_stats_params.html',
                                specific_date=today.strftime('%Y-%m-%d'))
+
+# ... (в кінці файлу controllers/reports_controller.py)
+
+@report_controller.route('/february_unlimited_clients', methods=['GET', 'POST'])
+@roles_required('admin', 'moderator', 'authorized')
+def february_unlimited_clients():
+    """Запит 7: Отримати інформацію про клієнтів, які придбали безлімітний абонемент у лютому."""
+
+    PASS_NAME = "Unlimited"
+    MONTH = 2  # Лютий
+
+    if request.method == 'POST':
+        try:
+            year_str = request.form.get('year')
+            if not year_str:
+                flash('Please specify a year.', 'warning')
+                return render_template('report_results/february_unlimited_clients_params.html',
+                                       year=year_str)
+
+            year = int(year_str)
+
+            # Викликаємо метод сервісу
+            clients = report_service.get_clients_bought_pass_by_month(PASS_NAME, year, MONTH)
+
+            # Рендеримо шаблон з результатами
+            return render_template('report_results/february_unlimited_clients_stats.html',
+                                   clients=clients,
+                                   year=year,
+                                   month=MONTH,
+                                   pass_name=PASS_NAME)
+        except ValueError:
+            flash('Invalid year format. Please enter a number.', 'danger')
+            return render_template('report_results/february_unlimited_clients_params.html',
+                                   year=year_str)
+        except Exception as e:
+            flash(f'Error generating report: {e}', 'danger')
+            return render_template('report_results/february_unlimited_clients_params.html',
+                                   year=year_str)
+
+    else:
+        # GET request
+        default_year = datetime.date.today().year
+        return render_template('report_results/february_unlimited_clients_params.html',
+                               year=default_year)

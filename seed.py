@@ -81,7 +81,21 @@ def seed_data():
             authorization_fkey=key2.id
         )
 
-        db.session.add_all([client1, client2])
+        #Admin
+        key_admin = Key(login="a", access_right=AccessRight.ADMIN, is_approved=True)
+        key_admin.set_password("a")
+        db.session.add(key_admin)
+        db.session.commit()
+        client_admin = Client(
+            full_name="Kateryna",
+            document_id="1234",
+            date_of_birth=date(2005, 12, 13),
+            phone_number="0981739760",
+            email="ostrovskakatia@gmail.com",
+            authorization_fkey=key_admin.id
+        )
+
+        db.session.add_all([client1, client2, client_admin])
         db.session.commit()
         print(f"Created clients with IDs: {client1.id}, {client2.id}. All are pending approval.")
 
