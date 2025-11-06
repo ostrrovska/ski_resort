@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report: Client Visit Statistics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('report.index') }}">Back to Reports</a>
+    <h1>Report: Client Visit Statistics</h1>
+
+    {# Section 1: Clients in Date Range #}
+    <div class="report-subsection">
+        <h2>Clients Who Visited Between {{ start_date.strftime('%Y-%m-%d') }} and {{ end_date.strftime('%Y-%m-%d') }}</h2>
+        {% if clients_in_range %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client ID</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Date of Birth</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients_in_range %}
+                    <tr>
+                        <td>{{ client.id }}</td>
+                        <td>{{ client.full_name }}</td>
+                        <td>{{ client.email }}</td>
+                        <td>{{ client.phone_number }}</td>
+                        <td>{{ client.date_of_birth }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No approved clients visited (used a lift) in this date range.</p>
+        {% endif %}
+    </div>
+
+    {# Section 2: Frequent Visitors #}
+    <div class="report-subsection">
+        <h2>Clients Who Visited More Than {{ visit_threshold }} Times (All Time)</h2>
+        {% if clients_frequent %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client ID</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Distinct Visit Days</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client, visit_count in clients_frequent %}
+                    <tr>
+                        <td>{{ client.id }}</td>
+                        <td>{{ client.full_name }}</td>
+                        <td>{{ client.email }}</td>
+                        <td>{{ client.phone_number }}</td>
+                        <td>{{ visit_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No approved clients found who visited more than {{ visit_threshold }} times.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

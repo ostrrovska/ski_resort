@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report Parameters: Client Visit Statistics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('report.index') }}">Back to Reports</a>
+    <h1>Configure Report: Client Visit Statistics</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('report.client_visit_stats') }}" class="report-form">
+        <div class="form-section">
+            <p><strong>Part 1:</strong> Select the date range for "Clients who visited":</p>
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" value="{{ start_date or '' }}" required>
+        </div>
+
+        <div class="form-section">
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" value="{{ end_date or '' }}" required>
+        </div>
+
+        <div class="form-section">
+            <p><strong>Part 2:</strong> Set the threshold for "Frequent visitors":</p>
+            <label for="visit_threshold">Visited more than (times):</label>
+            <input type="number" id="visit_threshold" name="visit_threshold" value="{{ visit_threshold or 3 }}" required min="0">
+        </div>
+
+        <button type="submit">Generate Report</button>
+    </form>
+</body>
+</html>

@@ -249,3 +249,44 @@ class ReportService:
             .order_by(EquipmentType.name)
 
         return query.all()
+
+    # --- Query 9: Client Visit Statistics ---
+
+    def get_clients_visited_in_date_range(self, start_date, end_date):
+        """Part of Query 9: Get clients who used a lift (visited) in a specific date range."""
+        if not start_date or not end_date:
+            return []
+
+        query = db.session.query(
+            Client
+        ).join(LiftUsage, Client.id == LiftUsage.client_id) \
+            .join(Key, Client.authorization_fkey == Key.id) \
+            .filter(Key.is_approved == True) \
+            .filter(LiftUsage.usage_date.between(start_date, end_date)) \
+            .distinct(Client.id) \
+            .order_by(Client.id, Client.full_name)
+
+        return query.all()
+
+    def get_clients_visited_more_than_x_times(self, visit_count_threshold):
+        """Part of Query 9: Get clients who visited (on distinct days) more than X times."""
+        if not visit_count_threshold:
+            return []
+
+        # Subquery to count distinct visit days per client
+        visit_counts_sq = db.session.query(
+            LiftUsage.client_id,
+            func.count(func.distinct(LiftUsage.usage_date)).label('visit_count')
+        ).group_by(LiftUsage.client_id).subquery()
+
+        # Main query
+        query = db.session.query(
+            Client,
+            visit_counts_sq.c.visit_count
+        ).join(visit_counts_sq, Client.id == visit_counts_sq.c.client_id) \
+            .join(Key, Client.authorization_fkey == Key.id) \
+            .filter(Key.is_approved == True) \
+            .filter(visit_counts_sq.c.visit_count > visit_count_threshold) \
+            .order_by(desc('visit_count'), Client.full_name)
+
+        return query.all()

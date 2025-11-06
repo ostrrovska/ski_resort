@@ -61,6 +61,11 @@
         <a href="{{ url_for('report.equipment_tariffs_report') }}" class="report-link">Run Report 8</a>
     </div>
 
+    <div class="report-description">
+        <p><strong>Query 9:</strong> Get full information about clients who skied from January 2 to 12; who visited the resort more than three times.</p>
+        <a href="{{ url_for('report.client_visit_stats') }}" class="report-link">Configure & Run Report 9</a>
+    </div>
+
     <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline; margin-top: 20px;">
         <button type="submit">Logout</button>
     </form>

@@ -331,3 +331,69 @@ def equipment_tariffs_report():
     except Exception as e:
         flash(f'Error generating report: {e}', 'danger')
         return redirect(url_for('report.index'))
+
+# [Existing code in controllers/reports_controller.py]...
+
+# ... [Existing code for equipment_tariffs_report] ...
+
+@report_controller.route('/client_visit_stats', methods=['GET', 'POST'])
+@roles_required('admin', 'moderator', 'authorized')
+def client_visit_stats():
+    """Запит 9: Отримати повну інформацію про клієнтів, які каталися з 2 по 12 січня;
+                які більше трьох разів відвідували курорт."""
+
+    if request.method == 'POST':
+        try:
+            start_date_str = request.form.get('start_date')
+            end_date_str = request.form.get('end_date')
+            threshold_str = request.form.get('visit_threshold')
+
+            if not start_date_str or not end_date_str or not threshold_str:
+                flash('All fields are required.', 'warning')
+                return render_template('report_results/client_visit_stats_params.html',
+                                       start_date=start_date_str,
+                                       end_date=end_date_str,
+                                       visit_threshold=threshold_str)
+
+            start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            visit_threshold = int(threshold_str)
+
+            if end_date < start_date:
+                flash('End date cannot be earlier than start date.', 'warning')
+                return render_template('report_results/client_visit_stats_params.html',
+                                       start_date=start_date_str,
+                                       end_date=end_date_str,
+                                       visit_threshold=visit_threshold)
+
+            # Call service methods
+            clients_in_range = report_service.get_clients_visited_in_date_range(start_date, end_date)
+            clients_frequent = report_service.get_clients_visited_more_than_x_times(visit_threshold)
+
+            return render_template('report_results/client_visit_stats.html',
+                                   clients_in_range=clients_in_range,
+                                   clients_frequent=clients_frequent,
+                                   start_date=start_date,
+                                   end_date=end_date,
+                                   visit_threshold=visit_threshold)
+
+        except ValueError as e:
+            flash(f'Invalid data format. Dates must be YYYY-MM-DD and threshold must be a number. Error: {e}', 'danger')
+            return render_template('report_results/client_visit_stats_params.html',
+                                   start_date=request.form.get('start_date'),
+                                   end_date=request.form.get('end_date'),
+                                   visit_threshold=request.form.get('visit_threshold'))
+        except Exception as e:
+            flash(f'Error generating report: {e}', 'danger')
+            return render_template('report_results/client_visit_stats_params.html',
+                                   start_date=request.form.get('start_date'),
+                                   end_date=request.form.get('end_date'),
+                                   visit_threshold=request.form.get('visit_threshold'))
+
+    else:
+        # GET request
+        default_year = datetime.date.today().year
+        return render_template('report_results/client_visit_stats_params.html',
+                               start_date=f"{default_year}-01-02",
+                               end_date=f"{default_year}-01-12",
+                               visit_threshold=3)
