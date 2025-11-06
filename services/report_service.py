@@ -1,5 +1,6 @@
 from models import db
 from models.client import Client
+from models.employee import Employee
 from models.equipment import Equipment
 from models.equipment_type import EquipmentType
 from models.key import Key
@@ -11,6 +12,7 @@ from sqlalchemy import desc, func, extract  # Для сортування
 
 from models.rental import Rental
 from models.rental_equipment import RentalEquipment
+from models.schedule import Schedule
 from models.tariff import Tariff
 
 
@@ -288,5 +290,40 @@ class ReportService:
             .filter(Key.is_approved == True) \
             .filter(visit_counts_sq.c.visit_count > visit_count_threshold) \
             .order_by(desc('visit_count'), Client.full_name)
+
+        return query.all()
+
+    # --- Query 10: Employee Work Statistics ---
+
+    def get_employee_rental_details(self):
+        """Part of Query 10: Get all employees and the equipment they have issued."""
+
+        query = db.session.query(
+            Employee.full_name,
+            Employee.position,
+            Rental.id.label('rental_id'),
+            Rental.rental_date,
+            Equipment.model,
+            EquipmentType.name.label('equipment_type')
+        ).join(Rental, Employee.id == Rental.employee_id) \
+            .join(RentalEquipment, Rental.id == RentalEquipment.rental_id) \
+            .join(Equipment, RentalEquipment.equipment_id == Equipment.id) \
+            .join(EquipmentType, Equipment.type_id == EquipmentType.id) \
+            .order_by(Employee.full_name, Rental.rental_date)
+
+        return query.all()
+
+    def get_employees_working_on_date(self, specific_date):
+        """Part of Query 10: Get employees who were scheduled to work on a specific date."""
+        if not specific_date:
+            return []
+
+        query = db.session.query(
+            Employee,
+            Schedule.shift_start,
+            Schedule.shift_end
+        ).join(Schedule, Employee.id == Schedule.employee_id) \
+            .filter(Schedule.work_date == specific_date) \
+            .order_by(Employee.full_name)
 
         return query.all()

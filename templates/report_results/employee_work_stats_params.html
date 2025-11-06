@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report Parameters: Employee Work Statistics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('report.index') }}">Back to Reports</a>
+    <h1>Configure Report: Employee Work Statistics</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('report.employee_work_stats') }}" class="report-form">
+        <div class="form-section">
+            <p>Select the <strong>day</strong> for the "Workers on shift" report:</p>
+            <p>(The "Employee Rental History" report shows all-time data and requires no parameters.)</p>
+            <label for="specific_date">Specific Day:</label>
+            <input type="date" id="specific_date" name="specific_date" value="{{ specific_date or '' }}" required>
+        </div>
+
+        <button type="submit">Generate Report</button>
+    </form>
+</body>
+</html>

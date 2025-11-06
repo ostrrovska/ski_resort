@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report: Employee Work Statistics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('report.index') }}">Back to Reports</a>
+    <h1>Report: Employee Work Statistics</h1>
+
+    {# Section 1: Employees on Shift #}
+    <div class="report-subsection">
+        <h2>Employees on Shift (Day: {{ specific_date.strftime('%Y-%m-%d') }})</h2>
+        {% if employees_on_date %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Full Name</th>
+                        <th>Position</th>
+                        <th>Shift Start</th>
+                        <th>Shift End</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee, shift_start, shift_end in employees_on_date %}
+                    <tr>
+                        <td>{{ employee.id }}</td>
+                        <td>{{ employee.full_name }}</td>
+                        <td>{{ employee.position }}</td>
+                        <td>{{ shift_start }}</td>
+                        <td>{{ shift_end }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No employees were scheduled to work on this day.</p>
+        {% endif %}
+    </div>
+
+    {# Section 2: Employee Rental History #}
+    <div class="report-subsection">
+        <h2>Employee Rental History (All Time)</h2>
+        {% if employee_rentals %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Position</th>
+                        <th>Rental ID</th>
+                        <th>Rental Date</th>
+                        <th>Equipment Model</th>
+                        <th>Equipment Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in employee_rentals %}
+                    <tr>
+                        <td>{{ item.full_name }}</td>
+                        <td>{{ item.position }}</td>
+                        <td>{{ item.rental_id }}</td>
+                        <td>{{ item.rental_date }}</td>
+                        <td>{{ item.model }}</td>
+                        <td>{{ item.equipment_type }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No equipment rental history found for any employee.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

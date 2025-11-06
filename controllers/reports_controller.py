@@ -397,3 +397,44 @@ def client_visit_stats():
                                start_date=f"{default_year}-01-02",
                                end_date=f"{default_year}-01-12",
                                visit_threshold=3)
+
+@report_controller.route('/employee_work_stats', methods=['GET', 'POST'])
+@roles_required('admin', 'moderator', 'authorized')
+def employee_work_stats():
+    """Запит 10: Отримати повну інформацію про робітників прокатного пункту
+                 та спорядження, що вони видавали;
+                 інформацію про робітників, які працювали у зазначений день."""
+
+    if request.method == 'POST':
+        try:
+            specific_date_str = request.form.get('specific_date')
+
+            if not specific_date_str:
+                flash('Please select a specific day.', 'warning')
+                return render_template('report_results/employee_work_stats_params.html',
+                                       specific_date=specific_date_str)
+
+            specific_date = datetime.datetime.strptime(specific_date_str, '%Y-%m-%d').date()
+
+            # Call service methods
+            employees_on_date = report_service.get_employees_working_on_date(specific_date)
+            employee_rentals = report_service.get_employee_rental_details() # This report is for all time
+
+            return render_template('report_results/employee_work_stats.html',
+                                   employees_on_date=employees_on_date,
+                                   employee_rentals=employee_rentals,
+                                   specific_date=specific_date)
+
+        except ValueError:
+            flash('Invalid date format. Please use YYYY-MM-DD.', 'danger')
+            return render_template('report_results/employee_work_stats_params.html',
+                                   specific_date=request.form.get('specific_date'))
+        except Exception as e:
+            flash(f'Error generating report: {e}', 'danger')
+            return render_template('report_results/employee_work_stats_params.html',
+                                   specific_date=request.form.get('specific_date'))
+
+    else:
+        # GET request
+        return render_template('report_results/employee_work_stats_params.html',
+                               specific_date=datetime.date.today().strftime('%Y-%m-%d'))

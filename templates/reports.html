@@ -66,6 +66,11 @@
         <a href="{{ url_for('report.client_visit_stats') }}" class="report-link">Configure & Run Report 9</a>
     </div>
 
+    <div class="report-description">
+        <p><strong>Query 10:</strong> Get full information about rental workers and equipment they issued; information about workers who worked on a specified day.</p>
+        <a href="{{ url_for('report.employee_work_stats') }}" class="report-link">Configure & Run Report 10</a>
+    </div>
+
     <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline; margin-top: 20px;">
         <button type="submit">Logout</button>
     </form>
