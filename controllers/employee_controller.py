@@ -7,15 +7,47 @@ employee_service = EmployeeService()
 
 employee_controller = Blueprint('employee', __name__)
 
+
 @employee_controller.route('/browse', methods=['GET'])
 def browse_employees():
     sort_by = request.args.get('sort_by')
-    sort_order = request.args.get('sort_order')
+    sort_order = request.args.get('sort_order', 'asc')
+
+    # --- Зчитуємо ВСІ можливі параметри ---
+
+    # Новий стиль (для модераторів)
+    filter_cols = request.args.getlist('filter_col')
+    filter_ops = request.args.getlist('filter_op')
+    filter_vals = request.args.getlist('filter_val')
+
+    # Старий стиль (для authorized)
     filter_by = request.args.get('filter_by')
     filter_value = request.args.get('filter_value')
-    employees = employee_service.get_all(sort_by=sort_by, sort_order=sort_order,
-                                         filter_by=filter_by, filter_value=filter_value)
-    return render_template('employees.html', employees=employees)
+
+    # Сервіс сам розбереться, які з них використовувати
+    employees = employee_service.get_all(
+        sort_by=sort_by,
+        sort_order=sort_order,
+        filter_cols=filter_cols,
+        filter_ops=filter_ops,
+        filter_vals=filter_vals,
+        filter_by=filter_by,
+        filter_value=filter_value
+    )
+
+    # Ми все одно передаємо ВСІ параметри в шаблон,
+    # щоб він міг відновити стан форми (і старої, і нової)
+    active_filters = list(zip(filter_cols, filter_ops, filter_vals))
+
+    return render_template(
+        'employees.html',
+        employees=employees,
+        active_filters=active_filters,  # Для нової форми
+        filter_by=filter_by,  # Для старої форми
+        filter_value=filter_value,  # Для старої форми
+        sort_by=sort_by,
+        sort_order=sort_order
+    )
 
 
 @employee_controller.route('/add', methods=['POST'])
