@@ -9,32 +9,53 @@
     <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
 <h1>Client List</h1>
 
-<form action="{{ url_for('client.list_clients') }}" method="GET">
+<form action="{{ url_for('client.list_clients') }}" method="GET" id="filter-form">
     <div class="form-group">
         <label for="sort_by">Sort by:</label>
         <select id="sort_by" name="sort_by">
-            <option value="" selected>None</option>
-            <option value="id">ID</option>
-            <option value="full_name">Full Name</option>
-            <option value="document_id">Document id</option>
-            <option value="date_of_birth">Date of birth</option>
-            <option value="phone_number">Phone Number</option>
-            <option value="email">Email</option>
-            <option value="login">Login</option>
+            <option value="" {% if not sort_by %}selected{% endif %}>None</option>
+            <option value="id" {% if sort_by == 'id' %}selected{% endif %}>ID</option>
+            <option value="full_name" {% if sort_by == 'full_name' %}selected{% endif %}>Full Name</option>
+            <option value="document_id" {% if sort_by == 'document_id' %}selected{% endif %}>Document id</option>
+            <option value="date_of_birth" {% if sort_by == 'date_of_birth' %}selected{% endif %}>Date of birth</option>
+            <option value="phone_number" {% if sort_by == 'phone_number' %}selected{% endif %}>Phone Number</option>
+            <option value="email" {% if sort_by == 'email' %}selected{% endif %}>Email</option>
+            <option value="login" {% if sort_by == 'login' %}selected{% endif %}>Login</option>
             {% if session.access_right == 'admin' %}
-                <option value="access_right">Access Right</option>
+                <option value="access_right" {% if sort_by == 'access_right' %}selected{% endif %}>Access Right</option>
             {% endif %}
         </select>
         <label for="sort_order">Order:</label>
         <select id="sort_order" name="sort_order">
-            <option value="asc" selected>Ascending</option>
-            <option value="desc">Descending</option>
+            <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Ascending</option>
+            <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Descending</option>
         </select>
     </div>
+
+    <div id="hidden-filters-container">
+        {% for col, op, val in active_filters %}
+            <input type="hidden" name="filter_col" value="{{ col }}">
+            <input type="hidden" name="filter_op" value="{{ op }}">
+            <input type="hidden" name="filter_val" value="{{ val }}">
+        {% endfor %}
+    </div>
+
     <div class="form-group">
-        <label for="filter_by">Filter by:</label>
-        <select id="filter_by" name="filter_by">
-            <option value="" selected>None</option>
+        <strong>Active Filters:</strong>
+        <div id="active-filters-display">
+            {% if not active_filters %}<span id="no-filters-msg">None</span>{% endif %}
+            {% for col, op, val in active_filters %}
+                <span class="active-filter-tag">
+                    {{ col }} {{ op }} {{ val }}
+                    <b class="remove-filter-btn" data-col="{{ col }}" data-op="{{ op }}" data-val="{{ val }}">&times;</b>
+                </span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group form-section">
+        <label for="new_filter_col">Add Filter:</label>
+        <select id="new_filter_col">
             <option value="full_name">Full Name</option>
             <option value="date_of_birth">Date of birth</option>
             <option value="phone_number">Phone Number</option>
@@ -44,23 +65,30 @@
                 <option value="access_right">Access Right</option>
             {% endif %}
         </select>
-        <label for="filter_value">Value:</label>
-        <input type="text" id="filter_value" name="filter_value"><br><br>
-    </div>
-    <button type="submit">Apply</button>
-    <a href="{{ url_for('client.list_clients') }}">Clear</a>
-</form>
 
-<script>
-    document.getElementById('filter_by').addEventListener('change', function() {
-        var filterValueInput = document.getElementById('filter_value');
-        if (this.value === 'date_of_birth') {
-            filterValueInput.type = 'date';
-        } else {
-            filterValueInput.type = 'text';
-        }
-    });
-</script>
+        <label for="new_filter_op">Is:</label>
+        <select id="new_filter_op">
+            <option value="like">Contains (text)</option>
+            <option value="eq">Equal to (=)</option>
+            <option value="neq">Not Equal to (!=)</option>
+            <option value="gt">Greater than (>)</option>
+            <option value="gte">Greater or equal (>=)</option>
+            <option value="lt">Less than (<)</option>
+            <option value="lte">Less or equal (<=)</option>
+            <option value="in">Is (for roles)</option>
+        </select>
+
+        <label for="new_filter_val">Value:</label>
+        <input type="text" id="new_filter_val" placeholder="Enter value...">
+
+        <button type="button" id="add-filter-btn">Add Filter</button>
+    </div>
+
+    <div class="form-group" style="margin-top: 15px;">
+        <button type="submit">Apply Filters & Sort</button>
+        <a href="{{ url_for('client.list_clients') }}">Clear All</a>
+    </div>
+</form>
 
 <table>
     <tr>
@@ -86,17 +114,16 @@
             {% if session.access_right == 'admin' %}
                 <td>{{ key.access_right.value }}</td>
             {% endif %}
+
             <td>
-                {% if session.access_right in ['admin', 'moderator'] %}
-                    <a href="{{ url_for('client.edit_client', id=client.id) }}">Edit</a>
-                {% endif %}
-                {% if session.access_right == 'admin' and key.access_right.value != 'admin' %} {# Тільки адмін може видаляти КЛІЄНТІВ #}
+                <a href="{{ url_for('client.edit_client', id=client.id) }}">Edit</a>
+
+                {% if session.access_right == 'admin' and key.access_right.value != 'admin' %}
                     <form action="{{ url_for('client.delete', id=client.id) }}" method="POST" style="display:inline;">
                         <button type="submit">Delete</button>
                     </form>
 
-                    {# --- Кнопка "Make Moderator" --- #}
-                    {% if key.access_right.value == 'authorized' %} {# Показуємо кнопку тільки для authorized #}
+                    {% if key.access_right.value == 'authorized' %}
                         <form action="{{ url_for('client.set_moderator', client_id=client.id) }}" method="POST" style="display:inline;">
                             <button type="submit">Make Moderator</button>
                         </form>
@@ -114,9 +141,104 @@
     <button type="submit">Save this View</button>
 </form>
 
-<!-- Logout button -->
 <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
     <button type="submit">Logout</button>
 </form>
+
+<script>
+(function() {
+    // Нам не потрібна перевірка if(!newColEl), бо ця форма тепер єдина
+    const form = document.getElementById('filter-form');
+    const hiddenContainer = document.getElementById('hidden-filters-container');
+    const displayContainer = document.getElementById('active-filters-display');
+    const noFiltersMsg = document.getElementById('no-filters-msg');
+    const newColEl = document.getElementById('new_filter_col');
+    const newOpEl = document.getElementById('new_filter_op');
+    const newColVal = document.getElementById('new_filter_val');
+
+    // --- Налаштування логіки для Client + Key ---
+    newColEl.addEventListener('change', function() {
+        if (this.value === 'date_of_birth') {
+            newColVal.type = 'date';
+            newColVal.placeholder = '';
+        } else {
+            // full_name, phone_number, email, login, access_right
+            newColVal.type = 'text';
+            newColVal.placeholder = 'Enter value...';
+        }
+    });
+    newColEl.dispatchEvent(new Event('change'));
+    // --- Кінець налаштування ---
+
+    // --- (Універсальна логіка додавання/видалення) ---
+    document.getElementById('add-filter-btn').addEventListener('click', function() {
+        const col = newColEl.value;
+        const op = newOpEl.value;
+        const val = newColVal.value;
+
+        if (!col || !val) {
+            alert('Будь ласка, виберіть колонку та введіть значення.');
+            return;
+        }
+
+        hiddenContainer.insertAdjacentHTML('beforeend', `
+            <input type="hidden" name="filter_col" value="${col}">
+            <input type="hidden" name="filter_op" value="${op}">
+            <input type="hidden" name="filter_val" value="${val}">
+        `);
+
+        if (noFiltersMsg) noFiltersMsg.style.display = 'none';
+
+        displayContainer.insertAdjacentHTML('beforeend', `
+            <span class="active-filter-tag">
+                ${col} ${op} ${val}
+                <b class="remove-filter-btn"
+                   data-col="${col}"
+                   data-op="${op}"
+                   data-val="${val}">&times;</b>
+            </span>
+        `);
+
+        newColVal.value = '';
+        updateRemoveListeners();
+    });
+
+    function updateRemoveListeners() {
+        displayContainer.querySelectorAll('.remove-filter-btn').forEach(btn => {
+            btn.removeEventListener('click', removeFilter);
+            btn.addEventListener('click', removeFilter);
+        });
+    }
+
+    function removeFilter(event) {
+        const btn = event.target;
+        const col = btn.dataset.col;
+        const op = btn.dataset.op;
+        const val = btn.dataset.val;
+
+        btn.parentElement.remove();
+
+        const allCols = hiddenContainer.querySelectorAll('input[name="filter_col"]');
+        const allOps = hiddenContainer.querySelectorAll('input[name="filter_op"]');
+        const allVals = hiddenContainer.querySelectorAll('input[name="filter_val"]');
+
+        for (let i = 0; i < allCols.length; i++) {
+            if (allCols[i].value === col && allOps[i].value === op && allVals[i].value === val) {
+                allCols[i].remove();
+                allOps[i].remove();
+                allVals[i].remove();
+                break;
+            }
+        }
+
+        if (displayContainer.querySelectorAll('.active-filter-tag').length === 0) {
+            if (noFiltersMsg) noFiltersMsg.style.display = 'inline';
+        }
+    }
+
+    updateRemoveListeners();
+})();
+</script>
+
 </body>
 </html>

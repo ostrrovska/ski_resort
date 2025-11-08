@@ -3,6 +3,8 @@ import datetime
 from models.client import Client, db
 from models.key import Key, AccessRight
 from models.saved_view import SavedView
+from utils.query_helper import QueryHelper
+from sqlalchemy import String, Enum
 
 
 class ClientService:
@@ -40,63 +42,22 @@ class ClientService:
         return 'invalid'
 
     @staticmethod
-    def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None):
-        # --- Змінюємо запит, щоб об'єднати Client та Key ---
-        query = db.session.query(Client, Key).join(Key, Client.authorization_fkey == Key.id).filter(Key.is_approved == True)
+    def get_all(sort_by=None, sort_order='asc',
+                filter_cols=None, filter_ops=None, filter_vals=None):  # <-- Тільки нові параметри
 
-        # --- Оновлюємо словник для сортування/фільтрації ---
-        sort_filter_options = {
-            'id': Client.id,
-            'full_name': Client.full_name,
-            'document_id': Client.document_id,
-            'date_of_birth': Client.date_of_birth,
-            'phone_number': Client.phone_number,
-            'email': Client.email,
-            'login': Key.login,  # Можна додати сортування/фільтрацію за логіном
-            'access_right': Key.access_right  # Можна додати сортування/фільтрацію за роллю
-        }
+        # 1. Початковий запит з JOIN
+        query = db.session.query(Client, Key).join(Key, Client.authorization_fkey == Key.id).filter(
+            Key.is_approved == True)
 
-        # --- Логіка фільтрації ---
-        if filter_by in sort_filter_options and filter_value is not None:
-            column_attr = sort_filter_options[filter_by]
-            model = Client if hasattr(Client, filter_by) else Key  # Визначаємо модель для колонки
-            column = getattr(model, filter_by)  # Отримуємо атрибут колонки SQLAlchemy
+        # 2. Створюємо карту моделей
+        models_map = {'Client': Client, 'Key': Key}
 
-            # Обробка різних типів даних
-            if isinstance(column.type, db.Integer):
-                try:
-                    query = query.filter(column == int(filter_value))
-                except ValueError:
-                    pass  # Ігноруємо нечислові значення для числових колонок
-            elif isinstance(column.type, db.Date):
-                try:
-                    date_value = datetime.datetime.strptime(filter_value, "%Y-%m-%d").date()
-                    query = query.filter(column == date_value)
-                except ValueError:
-                    pass  # Ігноруємо некоректний формат дати
-            elif isinstance(column.type, db.Enum):
-                # Дозволяємо фільтрацію за роллю (якщо filter_by == 'access_right')
-                try:
-                    # Перетворюємо рядок filter_value на член Enum
-                    enum_value = AccessRight(filter_value.lower())
-                    query = query.filter(column == enum_value)
-                except ValueError:
-                    pass  # Ігноруємо, якщо значення не є валідною роллю
-            else:  # Для рядкових типів (String)
-                query = query.filter(column.ilike(f'%{filter_value}%'))
+        # 3. Видалено логіку конвертації старих фільтрів
 
-        # --- Логіка сортування ---
-        if sort_by in sort_filter_options:
-            column_attr = sort_filter_options[sort_by]
-            model = Client if hasattr(Client, sort_by) else Key
-            column = getattr(model, sort_by)
+        # 4. Застосовуємо фільтри та сортування
+        query = QueryHelper.apply_filters(query, models_map, filter_cols, filter_ops, filter_vals)
+        query = QueryHelper.apply_sorting(query, models_map, sort_by, sort_order)
 
-            if sort_order == 'desc':
-                query = query.order_by(column.desc())
-            else:
-                query = query.order_by(column.asc())
-
-        # Повертаємо список кортежів (Client, Key)
         return query.all()
 
     @staticmethod

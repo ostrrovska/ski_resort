@@ -102,15 +102,37 @@ def delete_view(view_id):
 @client_controller.route('/')
 @roles_required('admin', 'moderator')
 def list_clients():
+    # Отримуємо параметри сортування
     sort_by = request.args.get('sort_by')
-    sort_order = request.args.get('sort_order')
-    filter_by = request.args.get('filter_by')
-    filter_value = request.args.get('filter_value')
+    sort_order = request.args.get('sort_order', 'asc')
 
-    clients_with_keys = client_service.get_all(sort_by=sort_by, sort_order=sort_order,
-                                               filter_by=filter_by, filter_value=filter_value)
+    # Отримуємо ТІЛЬКИ НОВІ фільтри
+    filter_cols = request.args.getlist('filter_col')
+    filter_ops = request.args.getlist('filter_op')
+    filter_vals = request.args.getlist('filter_val')
 
-    return render_template('clients.html', clients_with_keys=clients_with_keys)
+    # Старі 'filter_by' та 'filter_value' нам більше не потрібні
+
+    clients_with_keys = client_service.get_all(
+        sort_by=sort_by,
+        sort_order=sort_order,
+        filter_cols=filter_cols,
+        filter_ops=filter_ops,
+        filter_vals=filter_vals
+        # Старі параметри не передаємо
+    )
+
+    # Збираємо активні фільтри, щоб передати їх у шаблон
+    active_filters = list(zip(filter_cols, filter_ops, filter_vals))
+
+    return render_template(
+        'clients.html',
+        clients_with_keys=clients_with_keys,
+        active_filters=active_filters,  # Тільки нові
+        sort_by=sort_by,
+        sort_order=sort_order
+        # Старі 'filter_by' та 'filter_value' не передаємо
+    )
 
 @client_controller.route('/set_moderator/<int:client_id>', methods=['POST'])
 @roles_required('admin')
