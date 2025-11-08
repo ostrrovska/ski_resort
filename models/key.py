@@ -1,5 +1,7 @@
 import enum
 
+from flask import current_app
+from itsdangerous import Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 
@@ -29,3 +31,19 @@ class Key(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def get_reset_token(self, expires_sec=1800):
+        """Генерує токен для скидання пароля, дійсний 1800 сек (30 хв)."""
+        s = Serializer(current_app.config['SECRET_KEY'])
+        return s.dumps({'key_id': self.id})
+
+    @staticmethod
+    def verify_reset_token(token, expires_sec=1800):
+        """Перевіряє токен. Повертає Key, якщо токен валідний, інакше None."""
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token, max_age=expires_sec)
+            key_id = data.get('key_id')
+        except Exception:
+            return None
+        return Key.query.get(key_id)

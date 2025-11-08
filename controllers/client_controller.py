@@ -1,9 +1,12 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, current_app
+from flask_mail import Message
 
 from middlewares.authorization import roles_required
+from models.client import Client
 from models.key import AccessRight, Key
 from services.client_service import ClientService
 from services.saved_view_service import SavedViewService
+from models import db, mail
 
 client_service = ClientService()
 saved_view_service = SavedViewService()
@@ -203,3 +206,73 @@ def update(id):
 def delete(id):
     client_service.delete(id)
     return redirect(url_for('client.list_clients'))
+
+def send_reset_email(key_obj):
+    """Допоміжна функція для надсилання листа."""
+    token = key_obj.get_reset_token()
+    client_email = key_obj.client.email
+    msg = Message(
+        'Password Reset Request',
+        sender=current_app.config['MAIL_DEFAULT_SENDER'],
+        recipients=[client_email]
+    )
+    reset_url = url_for('client.reset_token', token=token, _external=True)
+
+    # Використовуємо простий текстовий шаблон
+    msg.body = f'''To reset your password, visit the following link:
+{reset_url}
+
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
+    try:
+        mail.send(msg)
+    except Exception as e:
+        flash(f'Error sending email: {e}', 'danger')
+        print(f"Email Error: {e}")  # Для дебагу в консолі
+
+
+@client_controller.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if 'client_id' in session:
+        return redirect(url_for('client.dashboard'))
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        client = Client.query.filter_by(email=email).first()
+
+        if client and client.key:
+            # Надсилаємо лист, навіть якщо client.key.is_approved == False
+            # Це дозволяє схваленим та не схваленим користувачам відновлювати пароль
+            send_reset_email(client.key)
+
+        # Завжди показуємо однакове повідомлення, щоб не розкривати, чи існує email в базі
+        flash('If an account with that email exists, a password reset link has been sent.', 'info')
+        return redirect(url_for('index'))
+
+    return render_template('forgot_password.html')
+
+
+@client_controller.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_token(token):
+    if 'client_id' in session:
+        return redirect(url_for('client.dashboard'))
+
+    key_obj = Key.verify_reset_token(token)
+    if key_obj is None:
+        flash('That is an invalid or expired token. Please try again.', 'warning')
+        return redirect(url_for('client.forgot_password'))
+
+    if request.method == 'POST':
+        password = request.form.get('password')
+        password_confirm = request.form.get('password_confirm')
+
+        if password != password_confirm:
+            flash('Passwords do not match.', 'danger')
+            return render_template('reset_password.html', token=token)
+
+        key_obj.set_password(password)
+        db.session.commit()
+        flash('Your password has been updated! You are now able to log in.', 'success')
+        return redirect(url_for('index'))  # Або `client.login` якщо у вас є окрема сторінка
+
+    return render_template('reset_password.html', token=token)

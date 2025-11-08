@@ -14,7 +14,7 @@ from controllers.rental_controller import rental_controller
 from controllers.rental_equipment_controller import rental_equipment_controller
 from controllers.reports_controller import report_controller
 from middlewares.authentication_middleware import require_login_middleware
-from models import db
+from models import db, mail
 from models.saved_view import SavedView
 from config import Config
 from dotenv import load_dotenv
@@ -29,6 +29,7 @@ app.config.from_object(Config)
 app.secret_key = os.getenv('SESSION_SECRET_KEY')
 
 db.init_app(app)
+mail.init_app(app)
 
 with app.app_context():
     db.create_all()
