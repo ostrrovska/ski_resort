@@ -1,29 +1,23 @@
 from models.equipment_type import EquipmentType, db
+from utils.query_helper import QueryHelper
+
 
 class EquipmentTypeService:
 
     @staticmethod
-    def get_all(sort_by = None, sort_order = 'asc', filter_by = None, filter_value = None):
-        query = EquipmentType.query
-        sort_filter_options = {
-            'id': EquipmentType.id,
-            'name': EquipmentType.name,
-            'description': EquipmentType.description
-        }
-        if sort_by in sort_filter_options:
-            if sort_order == 'desc':
-                query = query.order_by(sort_filter_options[sort_by].desc())
-            else:
-                query = query.order_by(sort_filter_options[sort_by])
+    def get_all(filter_cols=None, filter_ops=None, filter_vals=None,sort_by=None, sort_order='asc',
+                filter_by=None, filter_value=None):
+        return QueryHelper.get_all(
+            EquipmentType,
+            sort_by,
+            sort_order,
+            filter_cols,
+            filter_ops,
+            filter_vals,
+            filter_by=filter_by,
+            filter_value=filter_value,
+        )
 
-        if filter_by in sort_filter_options and filter_value:
-            column = sort_filter_options[filter_by]
-            if isinstance(column.type, db.Integer):
-                query = query.filter(column == int(filter_value))
-            else:
-                query = query.filter(column.ilike(f'%{filter_value}%'))
-
-        return query.all()
 
     @staticmethod
     def get_by_id(id):

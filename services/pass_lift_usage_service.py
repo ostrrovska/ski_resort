@@ -2,25 +2,21 @@ from models.pass_lift_usage import PassLiftUsage
 from models import db
 from services.pass_service import PassService
 from services.lift_usage_service import LiftUsageService
+from utils.query_helper import QueryHelper
 
 
 class PassLiftUsageService:
 
     @staticmethod
-    def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None):
-        query = PassLiftUsage.query
-
-        if filter_by and filter_value is not None:
-            if filter_by in ['pass_id', 'lift_usage_id']:
-                query = query.filter(getattr(PassLiftUsage, filter_by) == filter_value)
-
-        if sort_by in ['pass_id', 'lift_usage_id']:
-            sort_column = getattr(PassLiftUsage, sort_by)
-            if sort_order == 'desc':
-                sort_column = sort_column.desc()
-            query = query.order_by(sort_column)
-
-        return query.all()
+    def get_all(sort_by=None, sort_order='asc', filter_cols=None, filter_ops=None, filter_vals=None):
+        return QueryHelper.get_all(
+            PassLiftUsage,
+            sort_by,
+            sort_order,
+            filter_cols,
+            filter_ops,
+            filter_vals
+        )
 
     @staticmethod
     def get_by_id(pass_id, lift_usage_id):

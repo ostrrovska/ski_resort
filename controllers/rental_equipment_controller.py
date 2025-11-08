@@ -11,13 +11,20 @@ rental_equipment_controller = Blueprint('rental_equipment', __name__)
 def list_rental_equipments():
     sort_by = request.args.get('sort_by')
     sort_order = request.args.get('sort_order')
-    filter_by = request.args.get('filter_by')
-    filter_value = request.args.get('filter_value')
+    # Новий стиль (для модераторів)
+    filter_cols = request.args.getlist('filter_col')
+    filter_ops = request.args.getlist('filter_op')
+    filter_vals = request.args.getlist('filter_val')
 
     rental_equipments = rental_equipment_service.get_all(sort_by=sort_by, sort_order=sort_order,
-                                        filter_by=filter_by, filter_value=filter_value)
+                                        filter_cols=filter_cols, filter_ops=filter_ops, filter_vals=filter_vals)
+    active_filters = list(zip(filter_cols, filter_ops, filter_vals))
 
-    return render_template('rental_equipments.html', rental_equipments=rental_equipments)
+    return render_template('rental_equipments.html', rental_equipments=rental_equipments,
+                           active_filters = active_filters,
+                           sort_by = sort_by,
+                           sort_order = sort_order
+                           )
 
 @rental_equipment_controller.route('/add', methods=['POST'])
 @roles_required('admin', 'moderator')

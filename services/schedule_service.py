@@ -2,41 +2,21 @@ import datetime
 
 from models.schedule import Schedule, db
 from services.employee_service import EmployeeService
+from utils.query_helper import QueryHelper
 
 
 class ScheduleService:
 
     @staticmethod
-    def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None):
-        query = Schedule.query
-        sort_filter_options = {
-            'id': Schedule.id,
-            'employee_id': Schedule.employee_id,
-            'work_date': Schedule.work_date,
-            'shift_start': Schedule.shift_start,
-            'shift_end': Schedule.shift_end
-        }
-        if sort_by in sort_filter_options:
-            if sort_order == 'desc':
-                query = query.order_by(sort_filter_options[sort_by].desc())
-            else:
-                query = query.order_by(sort_filter_options[sort_by])
-
-        if filter_by in sort_filter_options and filter_value:
-            column = sort_filter_options[filter_by]
-            if isinstance(column.type, db.Integer):
-                query = query.filter(column == int(filter_value))
-            elif isinstance(column.type, db.Date):
-                # Parse filter_value to a date object
-                date_value = datetime.datetime.strptime(filter_value, "%Y-%m-%d").date()
-                query = query.filter(column == date_value)
-            elif isinstance(column.type, db.Time):
-                # Parse filter_value to a time object
-                time_value = datetime.datetime.strptime(filter_value, "%H:%M:%S").time()
-                query = query.filter(column == time_value)
-            else:
-                query = query.filter(column.ilike(f'%{filter_value}%'))
-        return query.all()
+    def get_all(sort_by=None, sort_order='asc', filter_cols=None, filter_ops=None, filter_vals=None):
+        return QueryHelper.get_all(
+            Schedule,
+            sort_by,
+            sort_order,
+            filter_cols,
+            filter_ops,
+            filter_vals
+        )
 
     @staticmethod
     def get_by_id(id):

@@ -14,10 +14,25 @@ def list_lifts():
     filter_by = request.args.get('filter_by')
     filter_value = request.args.get('filter_value')
 
-    lifts = lift_service.get_all(sort_by=sort_by, sort_order=sort_order, filter_by=filter_by,
-                                 filter_value=filter_value)
+    # Новий стиль (для модераторів)
+    filter_cols = request.args.getlist('filter_col')
+    filter_ops = request.args.getlist('filter_op')
+    filter_vals = request.args.getlist('filter_val')
 
-    return render_template('lifts.html', lifts=lifts)
+    lifts = lift_service.get_all(
+        sort_by=sort_by, sort_order=sort_order,
+        filter_by=filter_by, filter_value=filter_value,
+        filter_cols=filter_cols, filter_ops=filter_ops, filter_vals=filter_vals
+    )
+    active_filters = list(zip(filter_cols, filter_ops, filter_vals))
+
+    return render_template('lifts.html', lifts=lifts,
+                           active_filters = active_filters,
+                           filter_by = filter_by,
+                           filter_value = filter_value,
+                           sort_by = sort_by,
+                           sort_order = sort_order
+                           )
 
 @lift_controller.route('/view', methods=['GET'])
 def view_lifts():

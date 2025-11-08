@@ -11,12 +11,21 @@ pass_controller = Blueprint('pass', __name__)
 def list_passes():
     sort_by = request.args.get('sort_by')
     sort_order = request.args.get('sort_order')
-    filter_by = request.args.get('filter_by')
-    filter_value = request.args.get('filter_value')
+
+    # Новий стиль (для модераторів)
+    filter_cols = request.args.getlist('filter_col')
+    filter_ops = request.args.getlist('filter_op')
+    filter_vals = request.args.getlist('filter_val')
 
     passes = pass_service.get_all(sort_by=sort_by, sort_order=sort_order,
-                                  filter_by=filter_by, filter_value=filter_value)
-    return render_template('passes.html', passes=passes)
+                                  filter_cols=filter_cols, filter_ops=filter_ops, filter_vals=filter_vals)
+
+    active_filters = list(zip(filter_cols, filter_ops, filter_vals))
+    return render_template('passes.html', passes=passes,
+                           active_filters = active_filters,
+                           sort_by = sort_by,
+                           sort_order = sort_order
+                           )
 
 @pass_controller.route('/add', methods=['POST'])
 @roles_required('admin', 'moderator')

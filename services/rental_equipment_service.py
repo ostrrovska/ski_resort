@@ -2,24 +2,21 @@ from models.rental_equipment import RentalEquipment
 from models import db
 from services.equipment_service import EquipmentService
 from services.rental_service import RentalService
+from utils.query_helper import QueryHelper
+
 
 class RentalEquipmentService:
 
     @staticmethod
-    def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None):
-        query = RentalEquipment.query
-
-        if filter_by and filter_value is not None:
-            if filter_by in ['rental_id', 'equipment_id']:
-                query = query.filter(getattr(RentalEquipment, filter_by) == filter_value)
-
-        if sort_by in ['rental_id', 'equipment_id']:
-            sort_column = getattr(RentalEquipment, sort_by)
-            if sort_order == 'desc':
-                sort_column = sort_column.desc()
-            query = query.order_by(sort_column)
-
-        return query.all()
+    def get_all(sort_by=None, sort_order='asc', filter_cols=None, filter_ops=None, filter_vals=None):
+        return QueryHelper.get_all(
+            RentalEquipment,
+            sort_by,
+            sort_order,
+            filter_cols,
+            filter_ops,
+            filter_vals
+        )
 
     @staticmethod
     def get_by_id(rental_id, equipment_id):

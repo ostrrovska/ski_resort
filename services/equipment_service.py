@@ -2,36 +2,27 @@ from models.equipment import Equipment, db
 from models.equipment_type import EquipmentType
 from models.tariff import Tariff
 from services.equipment_type_service import EquipmentTypeService
+from utils.query_helper import QueryHelper
 
 
 class EquipmentService:
 
     @staticmethod
-    def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None):
-        query = Equipment.query
-        sort_filter_options = {
-            'id': Equipment.id,
-            'type_id': Equipment.type_id,
-            'model': Equipment.model,
-            'is_available': Equipment.is_available
-        }
+    def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None,
+                filter_cols=None, filter_ops=None, filter_vals=None):
 
-        if sort_by in sort_filter_options:
-            if sort_order == 'desc':
-                query = query.order_by(sort_filter_options[sort_by].desc())
-            else:
-                query = query.order_by(sort_filter_options[sort_by])
+        return QueryHelper.get_all(
+            Equipment, #do i need type here???? Equipment type
+            sort_by,
+            sort_order,
+            filter_cols,
+            filter_ops,
+            filter_vals,
+            filter_by=filter_by,
+            filter_value=filter_value,
+        )
 
-        if filter_by in sort_filter_options and filter_value:
-            column = sort_filter_options[filter_by]
-            if isinstance(column.type, db.Integer):
-                query = query.filter(column == int(filter_value))
-            elif isinstance(column.type, db.Boolean):
-                processed_value = str(filter_value).lower() in ('true', 'on', '1', 'yes')
-                query = query.filter(column == processed_value)
-            else:
-                query = query.filter(column.ilike(f'%{filter_value}%'))
-        return query.all()
+
 
     @staticmethod
     def get_all_joined(sort_by=None, sort_order='asc', filter_by=None, filter_value=None):

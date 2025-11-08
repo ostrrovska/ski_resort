@@ -44,7 +44,7 @@ class QueryHelper:
                 elif isinstance(col.type, db.Date):
                     val = datetime.datetime.strptime(val_str, "%Y-%m-%d").date()
                 elif isinstance(col.type, db.Time):
-                    val = datetime.datetime.strptime(val_str, "%H:%M:%S").time()
+                    val = datetime.datetime.strptime(val_str, "%H:%M").time()
                 elif isinstance(col.type, db.Boolean):
                     val = val_str.lower() in ('true', '1', 'yes', 'on')
                 elif isinstance(col.type, db.Enum):

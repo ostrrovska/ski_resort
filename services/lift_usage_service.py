@@ -4,42 +4,21 @@ from models.lift_usage import LiftUsage, db
 from services.employee_service import EmployeeService
 from services.client_service import ClientService
 from services.lift_service import LiftService
+from utils.query_helper import QueryHelper
+
 
 class LiftUsageService:
 
     @staticmethod
-    def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None):
-        query = LiftUsage.query
-        sort_filter_options = {
-            'id': LiftUsage.id,
-            'client_id': LiftUsage.client_id,
-            'lift_id': LiftUsage.lift_id,
-            'usage_date': LiftUsage.usage_date,
-            'usage_time_start': LiftUsage.usage_time_start,
-            'usage_time_end': LiftUsage.usage_time_end,
-        }
-
-        if sort_by in sort_filter_options:
-            if sort_order == 'desc':
-                query = query.order_by(sort_filter_options[sort_by].desc())
-            else:
-                query = query.order_by(sort_filter_options[sort_by])
-
-        if filter_by in sort_filter_options and filter_value:
-            column = sort_filter_options[filter_by]
-            if isinstance(column.type, db.Integer):
-                query = query.filter(column == int(filter_value))
-            elif isinstance(column.type, db.Date):
-                # Parse filter_value to a date object
-                date_value = datetime.datetime.strptime(filter_value, "%Y-%m-%d").date()
-                query = query.filter(column == date_value)
-            elif isinstance(column.type, db.Time):
-                # Parse filter_value to a time object
-                time_value = datetime.datetime.strptime(filter_value, "%H:%M:%S").time()
-                query = query.filter(column == time_value)
-            else:
-                query = query.filter(column.ilike(f'%{filter_value}%'))
-        return query.all()
+    def get_all(sort_by=None, sort_order='asc', filter_cols=None, filter_ops=None, filter_vals=None):
+        return QueryHelper.get_all(
+            LiftUsage,
+            sort_by,
+            sort_order,
+            filter_cols,
+            filter_ops,
+            filter_vals,
+        )
 
     @staticmethod
     def get_by_id(id):

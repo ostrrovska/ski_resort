@@ -20,11 +20,50 @@
     {% endif %}
 {% endwith %}
 
-<form action="{{ url_for('lift_usage.list_lift_usages') }}" method="GET">
+<form action="{{ url_for('lift_usage.list_lift_usages') }}" method="GET" id="filter-form">
+
     <div class="form-group">
         <label for="sort_by">Sort by:</label>
         <select id="sort_by" name="sort_by">
-            <option value="" selected>None</option>
+            <option value="" {% if not sort_by %}selected{% endif %}>None</option>
+            <option value="id" {% if sort_by == 'id' %}selected{% endif %}>ID</option>
+            <option value="client_id" {% if sort_by == 'client_id' %}selected{% endif %}>Client id</option>
+            <option value="lift_id" {% if sort_by == 'lift_id' %}selected{% endif %}>Lift id</option>
+            <option value="usage_date" {% if sort_by == 'usage_date' %}selected{% endif %}>Usage date</option>
+            <option value="usage_time_start" {% if sort_by == 'usage_time_start' %}selected{% endif %}>Usage time start</option>
+            <option value="usage_time_end" {% if sort_by == 'usage_time_end' %}selected{% endif %}>Usage time end</option>
+        </select>
+        <label for="sort_order">Order:</label>
+        <select id="sort_order" name="sort_order">
+            <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Ascending</option>
+            <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Descending</option>
+        </select>
+    </div>
+
+    <div id="hidden-filters-container">
+        {% for col, op, val in active_filters %}
+            <input type="hidden" name="filter_col" value="{{ col }}">
+            <input type="hidden" name="filter_op" value="{{ op }}">
+            <input type="hidden" name="filter_val" value="{{ val }}">
+        {% endfor %}
+    </div>
+
+    <div class="form-group">
+        <strong>Active Filters:</strong>
+        <div id="active-filters-display">
+            {% if not active_filters %}<span id="no-filters-msg">None</span>{% endif %}
+            {% for col, op, val in active_filters %}
+                <span class="active-filter-tag">
+                    {{ col }} {{ op }} {{ val }}
+                    <b class="remove-filter-btn" data-col="{{ col }}" data-op="{{ op }}" data-val="{{ val }}">&times;</b>
+                </span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group form-section">
+        <label for="new_filter_col">Add Filter:</label>
+        <select id="new_filter_col">
             <option value="id">ID</option>
             <option value="client_id">Client id</option>
             <option value="lift_id">Lift id</option>
@@ -32,42 +71,28 @@
             <option value="usage_time_start">Usage time start</option>
             <option value="usage_time_end">Usage time end</option>
         </select>
-        <label for="sort_order">Order:</label>
-        <select id="sort_order" name="sort_order">
-            <option value="asc" selected>Ascending</option>
-            <option value="desc">Descending</option>
+
+        <label for="new_filter_op">Is:</label>
+        <select id="new_filter_op">
+            <option value="eq">Equal to (=)</option>
+            <option value="neq">Not Equal to (!=)</option>
+            <option value="gt">Greater than (>)</option>
+            <option value="gte">Greater or equal (>=)</option>
+            <option value="lt">Less than (<)</option>
+            <option value="lte">Less or equal (<=)</option>
         </select>
+
+        <label for="new_filter_val">Value:</label>
+        <input type="text" id="new_filter_val" placeholder="Enter value...">
+
+        <button type="button" id="add-filter-btn">Add Filter</button>
     </div>
 
-    <div class="form-group">
-        <label for="filter_by">Filter by:</label>
-        <select id="filter_by" name="filter_by">
-            <option value="" selected>None</option>
-            <option value="client_id">Client id</option>
-            <option value="lift_id">Lift id</option>
-            <option value="usage_date">Usage date</option>
-            <option value="usage_time_start">Usage time start</option>
-            <option value="usage_time_end">Usage time end</option>
-        </select>
-        <label for="filter_value">Value:</label>
-        <input type="text" id="filter_value" name="filter_value"><br><br>
+    <div class="form-group" style="margin-top: 15px;">
+        <button type="submit">Apply Filters & Sort</button>
+        <a href="{{ url_for('lift_usage.list_lift_usages') }}">Clear All</a>
     </div>
-    <button type="submit">Apply</button>
-    <a href="{{ url_for('lift_usage.list_lift_usages') }}">Clear</a>
 </form>
-
-<script>
-    document.getElementById('filter_by').addEventListener('change', function () {
-        var filterValueInput = document.getElementById('filter_value');
-        if (this.value === 'usage_date') {
-            filterValueInput.type = 'date';
-        } else if (this.value === 'usage_time_start' || this.value === 'usage_time_end') {
-            filterValueInput.type = 'time';
-        } else {
-            filterValueInput.type = 'number';
-        }
-    });
-</script>
 
 <table>
     <tr>
@@ -124,9 +149,111 @@
 
     <button type="submit">Add Lift Usage</button>
 </form>
-<!-- Logout button -->
 <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
     <button type="submit">Logout</button>
 </form>
+
+<script>
+(function() {
+    // Оскільки ми знаємо, що це сторінка лише для модераторів,
+    // ми можемо одразу отримати елементи нової форми
+
+    const form = document.getElementById('filter-form');
+    const hiddenContainer = document.getElementById('hidden-filters-container');
+    const displayContainer = document.getElementById('active-filters-display');
+    const noFiltersMsg = document.getElementById('no-filters-msg');
+
+    const newColEl = document.getElementById('new_filter_col');
+    const newOpEl = document.getElementById('new_filter_op');
+    const newColVal = document.getElementById('new_filter_val');
+
+    // --- Налаштування логіки для LiftUsage ---
+    // (Ми беремо цю логіку з вашого оригінального <script> блоку)
+    newColEl.addEventListener('change', function() {
+        const val = this.value;
+        if (val === 'usage_date') {
+            newColVal.type = 'date';
+            newColVal.placeholder = '';
+        } else if (val === 'usage_time_start' || val === 'usage_time_end') {
+            newColVal.type = 'time';
+            newColVal.placeholder = '';
+        } else { // 'id', 'client_id', 'lift_id'
+            newColVal.type = 'number';
+            newColVal.placeholder = 'Enter ID...';
+        }
+    });
+    newColEl.dispatchEvent(new Event('change')); // Запустити при завантаженні
+    // --- Кінець налаштування ---
+
+    // --- (Універсальна логіка додавання/видалення) ---
+    document.getElementById('add-filter-btn').addEventListener('click', function() {
+        const col = newColEl.value;
+        const op = newOpEl.value;
+        const val = newColVal.value;
+
+        if (!col || !val) {
+            alert('Будь ласка, виберіть колонку та введіть значення.');
+            return;
+        }
+
+        hiddenContainer.insertAdjacentHTML('beforeend', `
+            <input type="hidden" name="filter_col" value="${col}">
+            <input type="hidden" name="filter_op" value="${op}">
+            <input type="hidden" name="filter_val" value="${val}">
+        `);
+
+        if (noFiltersMsg) noFiltersMsg.style.display = 'none';
+
+        displayContainer.insertAdjacentHTML('beforeend', `
+            <span class="active-filter-tag">
+                ${col} ${op} ${val}
+                <b class="remove-filter-btn"
+                   data-col="${col}"
+                   data-op="${op}"
+                   data-val="${val}">&times;</b>
+            </span>
+        `);
+
+        newColVal.value = '';
+        updateRemoveListeners();
+    });
+
+    function updateRemoveListeners() {
+        displayContainer.querySelectorAll('.remove-filter-btn').forEach(btn => {
+            btn.removeEventListener('click', removeFilter);
+            btn.addEventListener('click', removeFilter);
+        });
+    }
+
+    function removeFilter(event) {
+        const btn = event.target;
+        const col = btn.dataset.col;
+        const op = btn.dataset.op;
+        const val = btn.dataset.val;
+
+        btn.parentElement.remove();
+
+        const allCols = hiddenContainer.querySelectorAll('input[name="filter_col"]');
+        const allOps = hiddenContainer.querySelectorAll('input[name="filter_op"]');
+        const allVals = hiddenContainer.querySelectorAll('input[name="filter_val"]');
+
+        for (let i = 0; i < allCols.length; i++) {
+            if (allCols[i].value === col && allOps[i].value === op && allVals[i].value === val) {
+                allCols[i].remove();
+                allOps[i].remove();
+                allVals[i].remove();
+                break;
+            }
+        }
+
+        if (displayContainer.querySelectorAll('.active-filter-tag').length === 0) {
+            if (noFiltersMsg) noFiltersMsg.style.display = 'inline';
+        }
+    }
+
+    updateRemoveListeners();
+})();
+</script>
+
 </body>
 </html>

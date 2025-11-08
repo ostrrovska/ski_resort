@@ -18,18 +18,18 @@
     <ul>
         <li><a href="{{ url_for('employee.browse_employees') }}">Browse Employees</a></li>
         <li><a href="{{ url_for('equipment.list_equipment') }}">Browse Equipment</a></li>
+        <li><a href="{{ url_for('equipment_type.list_equipment_types') }}">Browse equipment types </a> </li>
         <li><a href="{{ url_for('lift.list_lifts') }}">Browse lifts</a></li>
+        <li><a href="{{ url_for('pass_type.list_pass_types') }}">Browse pass types </a> </li>
+        <li><a href="{{ url_for('tariff.list_tariffs') }}">Browse tariffs </a> </li>
         {% if session.access_right in ['admin', 'moderator'] %}
             <li><a href="{{ url_for('client.list_clients') }}">Browse clients </a> </li>
-            <li><a href="{{ url_for('equipment_type.list_equipment_types') }}">Browse equipment types </a> </li>
-            <li><a href="{{ url_for('pass_type.list_pass_types') }}">Browse pass types </a> </li>
             <li><a href="{{ url_for('pass.list_passes') }}">Browse passes </a> </li>
             <li><a href="{{ url_for('lift_usage.list_lift_usages') }}">Browse lift usages </a> </li>
             <li><a href="{{ url_for('pass_lift_usage.list_pass_lift_usages') }}">Browse pass lift usages </a> </li>
             <li><a href="{{ url_for('rental.list_rentals') }}">Browse rentals </a> </li>
             <li><a href="{{ url_for('rental_equipment.list_rental_equipments') }}">Browse rental equipment </a> </li>
             <li><a href="{{ url_for('schedule.list_schedules') }}">Browse schedules </a> </li>
-            <li><a href="{{ url_for('tariff.list_tariffs') }}">Browse tariffs </a> </li>
         {% endif %}
 
     {% if session.access_right == 'admin' %}

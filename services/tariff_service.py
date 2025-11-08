@@ -1,32 +1,24 @@
 from models import db
 from models.tariff import Tariff
 from services.equipment_type_service import EquipmentTypeService
+from utils.query_helper import QueryHelper
+
 
 class TariffService:
 
     @staticmethod
-    def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None):
-        query = Tariff.query
-        sort_filter_options = {
-            'id': Tariff.id,
-            'equipment_type_id': Tariff.equipment_type_id,
-            'price_per_hour': Tariff.price_per_hour,
-            'price_per_day': Tariff.price_per_day,
-            'weekday_discount': Tariff.weekday_discount
-        }
-        if sort_by in sort_filter_options:
-            if sort_order == 'desc':
-                query = query.order_by(sort_filter_options[sort_by].desc())
-            else:
-                query = query.order_by(sort_filter_options[sort_by])
-
-        if filter_by in sort_filter_options and filter_value:
-            column = sort_filter_options[filter_by]
-            if isinstance(column.type, db.Integer):
-                query = query.filter(column == int(filter_value))
-            else:
-                query = query.filter(column.ilike(f'%{filter_value}%'))
-        return query.all()
+    def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None,
+                filter_cols=None, filter_ops=None, filter_vals=None):
+        return QueryHelper.get_all(
+            Tariff,
+            sort_by,
+            sort_order,
+            filter_cols,
+            filter_ops,
+            filter_vals,
+            filter_by=filter_by,
+            filter_value=filter_value,
+        )
 
     @staticmethod
     def get_by_id(id):

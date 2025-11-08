@@ -7,7 +7,7 @@ class EmployeeService:
     @staticmethod
     def get_all(sort_by=None, sort_order='asc',
                 filter_cols=None, filter_ops=None, filter_vals=None,
-                filter_by=None, filter_value=None,):
+                filter_by=None, filter_value=None):
 
         return QueryHelper.get_all(
             Employee,

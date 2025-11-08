@@ -1,31 +1,23 @@
 from models.pass_type import PassType, db
+from utils.query_helper import QueryHelper
+
 
 class PassTypeService:
 
     @staticmethod
-    def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None):
-        query = PassType.query
-        sort_filter_options = {
-            'id': PassType.id,
-            'name': PassType.name,
-            'limit_lifts': PassType.limit_lifts,
-            'limit_hours': PassType.limit_hours,
-            'price': PassType.price
-        }
-        if sort_by in sort_filter_options:
-            if sort_order == 'desc':
-                query = query.order_by(sort_filter_options[sort_by].desc())
-            else:
-                query = query.order_by(sort_filter_options[sort_by])
+    def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None,
+                filter_cols=None, filter_ops=None, filter_vals=None):
+        return QueryHelper.get_all(
+            PassType,
+            sort_by,
+            sort_order,
+            filter_cols,
+            filter_ops,
+            filter_vals,
+            filter_by=filter_by,
+            filter_value=filter_value,
+        )
 
-        if filter_by in sort_filter_options and filter_value:
-            column = sort_filter_options[filter_by]
-            if isinstance(column.type, db.Integer):
-                query = query.filter(column == int(filter_value))
-            else:
-                query = query.filter(column.ilike(f'%{filter_value}%'))
-
-        return query.all()
 
     @staticmethod
     def get_by_id(id):

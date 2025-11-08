@@ -3,39 +3,21 @@ import datetime
 from models.passes import Pass, db
 from services.client_service import ClientService
 from services.pass_type_service import PassTypeService
+from utils.query_helper import QueryHelper
+
 
 class PassService:
 
     @staticmethod
-    def get_all(sort_by=None, sort_order='asc', filter_by=None, filter_value=None):
-        query = Pass.query
-        sort_filter_options = {
-            'id': Pass.id,
-            'pass_type_id': Pass.pass_type_id,
-            'client_id': Pass.client_id,
-            'purchase_date': Pass.purchase_date,
-            'valid_from': Pass.valid_from,
-            'valid_to': Pass.valid_to,
-            'remaining_lifts': Pass.remaining_lifts,
-            'remaining_hours': Pass.remaining_hours
-        }
-        if sort_by in sort_filter_options:
-            if sort_order == 'desc':
-                query = query.order_by(sort_filter_options[sort_by].desc())
-            else:
-                query = query.order_by(sort_filter_options[sort_by])
-
-        if filter_by in sort_filter_options and filter_value:
-            column = sort_filter_options[filter_by]
-            if isinstance(column.type, db.Integer):
-                query = query.filter(column == int(filter_value))
-            elif isinstance(column.type, db.Date):
-                # Parse filter_value to a date object
-                date_value = datetime.datetime.strptime(filter_value, "%Y-%m-%d").date()
-                query = query.filter(column == date_value)
-            else:
-                query = query.filter(column.ilike(f'%{filter_value}%'))
-        return query.all()
+    def get_all(sort_by=None, sort_order='asc', filter_cols=None, filter_ops=None, filter_vals=None):
+        return QueryHelper.get_all(
+            Pass,
+            sort_by,
+            sort_order,
+            filter_cols,
+            filter_ops,
+            filter_vals,
+        )
 
     @staticmethod
     def get_by_id(id):

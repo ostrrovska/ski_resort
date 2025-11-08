@@ -10,17 +10,36 @@ equipment_controller = Blueprint('equipment', __name__)
 
 @equipment_controller.route('/list', methods=['GET'])
 def list_equipment():
+    #just authorized
     sort_by = request.args.get('sort_by')
     sort_order = request.args.get('sort_order')
     filter_by = request.args.get('filter_by')
     filter_value = request.args.get('filter_value')
 
-    if filter_by == 'is_available' and filter_value is None and 'filter_by' in request.args:
-        filter_value = 'false'
+    #moderators, administartors
+    filter_cols = request.args.getlist('filter_cols')
+    filter_ops = request.args.getlist('filter_ops')
+    filter_vals = request.args.getlist('filter_vals')
 
-    equipment = equipment_service.get_all(sort_by=sort_by, sort_order=sort_order,
-                                          filter_by=filter_by, filter_value=filter_value)
-    return render_template('equipment.html', equipment=equipment)
+    #servise will figure out
+    equipment = equipment_service.get_all(
+        sort_by=sort_by,
+        sort_order=sort_order,
+        filter_by=filter_by,
+        filter_value=filter_value,
+        filter_cols=filter_cols,
+        filter_ops=filter_ops,
+        filter_vals=filter_vals,
+    )
+
+    active_filters = list(zip(filter_cols, filter_ops, filter_vals))
+    return render_template('equipment.html', equipment=equipment,
+                           active_filters=active_filters,
+                           filter_by=filter_by,
+                           filter_value=filter_value,
+                           sort_by=sort_by,
+                           sort_order=sort_order
+                           )
 
 @equipment_controller.route('/add', methods=['POST'])
 @roles_required('admin', 'moderator')
