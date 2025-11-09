@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Our Equipment & Prices</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+    <h1>Our Equipment & Prices</h1>
+    <p>Below is a list of all equipment types we offer, their rental prices, and available models.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Equipment Type</th>
+                <th>Description</th>
+                <th>Price (Hour)</th>
+                <th>Price (Day)</th>
+                <th>Weekday Discount</th>
+                <th>Available Models</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for eq_type in equipment_types %}
+            <tr>
+                <td><strong>{{ eq_type.type_name }}</strong></td>
+                <td>{{ eq_type.description }}</td>
+                <td>{{ eq_type.price_per_hour }}</td>
+                <td>{{ eq_type.price_per_day }}</td>
+                <td>{{ eq_type.weekday_discount }}%</td>
+                <td>
+                    {% if eq_type.models %}
+                        {{ eq_type.models | join(', ') }}
+                    {% else %}
+                        <em>(All currently rented)</em>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6">No equipment information available at this time.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

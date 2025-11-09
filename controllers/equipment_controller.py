@@ -90,3 +90,34 @@ def update(id):
 def delete(id):
     equipment_service.delete(id)
     return redirect(url_for('equipment.list_equipment'))
+
+
+@equipment_controller.route('/view', methods=['GET'])
+def view_equipment():
+    """
+    Публічний маршрут для гостей, що показує все обладнання,
+    його типи та тарифи.
+    """
+    # Використовуємо існуючий joined-метод
+    equipment_list = equipment_service.get_all_joined(
+        sort_by='type_name',
+        sort_order='asc'
+    )
+
+    # Агрегуємо дані для шаблону
+    aggregated_data = {}
+    for equipment, eq_type, tariff in equipment_list:
+        if eq_type.id not in aggregated_data:
+            aggregated_data[eq_type.id] = {
+                'type_name': eq_type.name,
+                'description': eq_type.description,
+                'price_per_hour': tariff.price_per_hour,
+                'price_per_day': tariff.price_per_day,
+                'weekday_discount': tariff.weekday_discount,
+                'models': []
+            }
+        if equipment.is_available:
+            aggregated_data[eq_type.id]['models'].append(equipment.model)
+
+    return render_template('guest_equipment.html',
+                           equipment_types=list(aggregated_data.values()))

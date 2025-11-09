@@ -11,19 +11,21 @@
     <table>
         <thead>
             <tr>
-                <th>Equipment Type ID</th>
+                <th>Equipment Type</th>
+                <th>Description</th>
                 <th>Price per Hour</th>
                 <th>Price per Day</th>
                 <th>Weekday Discount</th>
             </tr>
         </thead>
         <tbody>
-            {% for tariff in tariffs %}
+            {% for tariff, eq_type in tariffs_joined %}
             <tr>
-                <td>{{ tariff.equipment_type_id }}</td>
+                <td>{{ eq_type.name }}</td>
+                <td>{{ eq_type.description }}</td>
                 <td>{{ tariff.price_per_hour }}</td>
                 <td>{{ tariff.price_per_day }}</td>
-                <td>{{ tariff.weekday_discount }}</td>
+                <td>{{ tariff.weekday_discount }}%</td>
             </tr>
             {% endfor %}
         </tbody>

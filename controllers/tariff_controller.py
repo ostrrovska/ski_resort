@@ -33,8 +33,8 @@ def list_tariffs():
 
 @tariff_controller.route('/view', methods=['GET'])
 def view_tariffs():
-    tariffs = tariff_service.get_all()
-    return render_template('guest_tariffs.html', tariffs=tariffs)
+    tariffs_joined = tariff_service.get_all_joined()
+    return render_template('guest_tariffs.html', tariffs_joined=tariffs_joined)
 
 @tariff_controller.route('/add', methods = ['POST'])
 @roles_required('admin', 'moderator')

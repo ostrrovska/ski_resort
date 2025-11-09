@@ -1,4 +1,5 @@
 from models import db
+from models.equipment_type import EquipmentType
 from models.tariff import Tariff
 from services.equipment_type_service import EquipmentTypeService
 from utils.query_helper import QueryHelper
@@ -60,3 +61,27 @@ class TariffService:
             db.session.commit()
             return True
         return False
+
+    @staticmethod
+    def get_all_joined(sort_by='type_name', sort_order='asc'):
+        """
+        Повертає список тарифів з об'єднаною інформацією про тип обладнання.
+        """
+        query = db.session.query(Tariff, EquipmentType).join(
+            EquipmentType, Tariff.equipment_type_id == EquipmentType.id
+        )
+
+        sort_options = {
+            'type_name': EquipmentType.name,
+            'price_per_hour': Tariff.price_per_hour,
+            'price_per_day': Tariff.price_per_day,
+            'weekday_discount': Tariff.weekday_discount
+        }
+
+        column = sort_options.get(sort_by, EquipmentType.name)
+        if sort_order == 'desc':
+            query = query.order_by(column.desc())
+        else:
+            query = query.order_by(column.asc())
+
+        return query.all()
