@@ -1,5 +1,6 @@
 from models.equipment import Equipment, db
 from models.equipment_type import EquipmentType
+from models.rental_equipment import RentalEquipment
 from models.tariff import Tariff
 from services.equipment_type_service import EquipmentTypeService
 from utils.query_helper import QueryHelper
@@ -12,7 +13,7 @@ class EquipmentService:
                 filter_cols=None, filter_ops=None, filter_vals=None):
 
         return QueryHelper.get_all(
-            Equipment, #do i need type here???? Equipment type
+            Equipment,
             sort_by,
             sort_order,
             filter_cols,
@@ -103,6 +104,11 @@ class EquipmentService:
     def delete(id):
         equipment = EquipmentService.get_by_id(id)
         if equipment:
+            # --- ПОЧАТОК ЗМІН ---
+            # Каскадне видалення: спочатку видаляємо пов'язані записи
+            RentalEquipment.query.filter_by(equipment_id=id).delete(synchronize_session=False)
+            # --- КІНЕЦЬ ЗМІН ---
+
             db.session.delete(equipment)
             db.session.commit()
             return True

@@ -1,4 +1,5 @@
 from models.lift import Lift, db
+from models.lift_usage import LiftUsage
 from utils.query_helper import QueryHelper
 
 
@@ -42,8 +43,17 @@ class LiftService:
 
     @staticmethod
     def delete(id):
+        from services.lift_usage_service import LiftUsageService
         lift = LiftService.get_by_id(id)
         if lift:
+            # --- ПОЧАТОК ЗМІН ---
+            # Каскадне видалення: знаходимо всі дочірні LiftUsage
+            usages_to_delete = LiftUsage.query.filter_by(lift_id=id).all()
+            for usage in usages_to_delete:
+                # Викликаємо сервіс, щоб він обробив своїх дітей
+                LiftUsageService.delete(usage.id)
+            # --- КІНЕЦЬ ЗМІН ---
+
             db.session.delete(lift)
             db.session.commit()
             return True

@@ -2,6 +2,9 @@ import datetime
 
 from models.client import Client, db
 from models.key import Key, AccessRight
+from models.lift_usage import LiftUsage
+from models.passes import Pass
+from models.rental import Rental
 from models.saved_view import SavedView
 from utils.query_helper import QueryHelper
 from sqlalchemy import String, Enum
@@ -124,12 +127,34 @@ class ClientService:
 
     @staticmethod
     def delete(id):
+        from services.pass_service import PassService
+        from services.rental_service import RentalService
+        from services.lift_usage_service import LiftUsageService
         client = ClientService.get_by_id(id)
         if client:
             key = Key.query.get(client.authorization_fkey)
 
-            # Manually delete associated saved views first
-            SavedView.query.filter_by(client_id=client.id).delete()
+            # --- ПОЧАТОК ЗМІН ---
+            # Каскадне видалення: викликаємо сервіси для всіх залежностей
+
+            # 1. Saved Views (не має дітей)
+            SavedView.query.filter_by(client_id=client.id).delete(synchronize_session=False)
+
+            # 2. Passes (PassService видалить PassLiftUsage і PassRentalUsage)
+            passes_to_delete = Pass.query.filter_by(client_id=client.id).all()
+            for pass_ in passes_to_delete:
+                PassService.delete(pass_.id)
+
+            # 3. Rentals (RentalService видалить RentalEquipment і PassRentalUsage)
+            rentals_to_delete = Rental.query.filter_by(client_id=client.id).all()
+            for rental in rentals_to_delete:
+                RentalService.delete(rental.id)
+
+            # 4. Lift Usages (LiftUsageService видалить PassLiftUsage)
+            usages_to_delete = LiftUsage.query.filter_by(client_id=client.id).all()
+            for usage in usages_to_delete:
+                LiftUsageService.delete(usage.id)
+            # --- КІНЕЦЬ ЗМІН ---
 
             if key:
                 db.session.delete(key)

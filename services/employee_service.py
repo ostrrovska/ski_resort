@@ -1,4 +1,6 @@
 from models.employee import Employee, db
+from models.rental import Rental
+from models.schedule import Schedule
 from utils.query_helper import QueryHelper
 
 
@@ -46,8 +48,19 @@ class EmployeeService:
 
     @staticmethod
     def delete(id):
+        from services.rental_service import RentalService
         employee = EmployeeService.get_by_id(id)
         if employee:
+            # --- ПОЧАТОК ЗМІН ---
+            # Каскадне видалення
+            Schedule.query.filter_by(employee_id=id).delete(synchronize_session=False)
+
+            # Викликаємо сервіс RentalService для коректного видалення
+            rentals_to_delete = Rental.query.filter_by(employee_id=id).all()
+            for rental in rentals_to_delete:
+                RentalService.delete(rental.id)
+            # --- КІНЕЦЬ ЗМІН ---
+
             db.session.delete(employee)
             db.session.commit()
             return True

@@ -1,4 +1,5 @@
 from models.pass_type import PassType, db
+from models.passes import Pass
 from utils.query_helper import QueryHelper
 
 
@@ -44,8 +45,16 @@ class PassTypeService:
 
     @staticmethod
     def delete(id):
+        from services.pass_service import PassService
         pass_type = PassTypeService.get_by_id(id)
         if pass_type:
+            # --- ПОЧАТОК ЗМІН ---
+            # Каскадне видалення
+            passes_to_delete = Pass.query.filter_by(pass_type_id=id).all()
+            for pass_ in passes_to_delete:
+                PassService.delete(pass_.id)  # PassService вже обробляє своїх дітей
+            # --- КІНЕЦЬ ЗМІН ---
+
             db.session.delete(pass_type)
             db.session.commit()
             return True

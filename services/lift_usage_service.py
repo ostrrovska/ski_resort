@@ -1,7 +1,7 @@
 import datetime
 
 from models.lift_usage import LiftUsage, db
-from services.employee_service import EmployeeService
+from models.pass_lift_usage import PassLiftUsage
 from services.client_service import ClientService
 from services.lift_service import LiftService
 from utils.query_helper import QueryHelper
@@ -62,6 +62,11 @@ class LiftUsageService:
     def delete(id):
         usage = LiftUsageService.get_by_id(id)
         if usage:
+            # --- ПОЧАТОК ЗМІН ---
+            # Каскадне видалення: спочатку видаляємо пов'язані записи
+            PassLiftUsage.query.filter_by(lift_usage_id=id).delete(synchronize_session=False)
+            # --- КІНЕЦЬ ЗМІН ---
+
             db.session.delete(usage)
             db.session.commit()
             return True

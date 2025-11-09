@@ -1,4 +1,6 @@
+from models.equipment import Equipment
 from models.equipment_type import EquipmentType, db
+from models.tariff import Tariff
 from utils.query_helper import QueryHelper
 
 
@@ -42,8 +44,18 @@ class EquipmentTypeService:
 
     @staticmethod
     def delete(id):
+        from services.equipment_service import EquipmentService
         equipment_type = EquipmentTypeService.get_by_id(id)
         if equipment_type:
+            # --- ПОЧАТОК ЗМІН ---
+            # Каскадне видалення
+            Tariff.query.filter_by(equipment_type_id=id).delete(synchronize_session=False)
+
+            equipment_to_delete = Equipment.query.filter_by(type_id=id).all()
+            for equipment in equipment_to_delete:
+                EquipmentService.delete(equipment.id)
+            # --- КІНЕЦЬ ЗМІН ---
+
             db.session.delete(equipment_type)
             db.session.commit()
             return True
