@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Pass Rental Usage</title>
+</head>
+<body>
+
+<h1>Edit Pass Rental Usage</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<form action="{{ url_for('pass_rental_usage.update',
+                         old_pass_id=pass_rental_usage.pass_id,
+                         old_rental_id=pass_rental_usage.rental_id) }}" method="POST">
+
+    <p>This will refund hours to the old pass and deduct from the new pass.</p>
+
+    <label for="pass_id">Pass ID:</label>
+    <input type="number" id="pass_id" name="pass_id" value="{{ pass_rental_usage.pass_id }}" required><br><br>
+
+    <label for="rental_id">Rental ID:</label>
+    <input type="number" id="rental_id" name="rental_id" value="{{ pass_rental_usage.rental_id }}" required><br><br>
+
+    <button type="submit">Update Link</button>
+</form>
+
+<a href="{{ url_for('pass_rental_usage.list_pass_rental_usages') }}">Back to List</a>
+
+</body>
+</html>

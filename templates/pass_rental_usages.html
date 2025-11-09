@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pass Rental Usages</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
+
+<h1>Pass Rental Usage List</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<form action="{{ url_for('pass_rental_usage.list_pass_rental_usages') }}" method="GET" id="filter-form">
+    <div class="form-group">
+        <label for="sort_by">Sort by:</label>
+        <select id="sort_by" name="sort_by">
+            <option value="" {% if not sort_by %}selected{% endif %}>None</option>
+            <option value="pass_id" {% if sort_by == 'pass_id' %}selected{% endif %}>Pass ID</option>
+            <option value="rental_id" {% if sort_by == 'rental_id' %}selected{% endif %}>Rental ID</option>
+            <option value="hours_deducted" {% if sort_by == 'hours_deducted' %}selected{% endif %}>Hours Deducted</option>
+        </select>
+        <label for="sort_order">Order:</label>
+        <select id="sort_order" name="sort_order">
+            <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Ascending</option>
+            <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Descending</option>
+        </select>
+    </div>
+
+    <div id="hidden-filters-container">
+        {% for col, op, val in active_filters %}
+            <input type="hidden" name="filter_col" value="{{ col }}">
+            <input type="hidden" name="filter_op" value="{{ op }}">
+            <input type="hidden" name="filter_val" value="{{ val }}">
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        <strong>Active Filters:</strong>
+        <div id="active-filters-display">
+            {% if not active_filters %}<span id="no-filters-msg">None</span>{% endif %}
+            {% for col, op, val in active_filters %}
+                <span class="active-filter-tag">
+                    {{ col }} {{ op }} {{ val }}
+                    <b class="remove-filter-btn" data-col="{{ col }}" data-op="{{ op }}" data-val="{{ val }}">&times;</b>
+                </span>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="form-group form-section">
+        <label for="new_filter_col">Add Filter:</label>
+        <select id="new_filter_col">
+            <option value="pass_id">Pass ID</option>
+            <option value="rental_id">Rental ID</option>
+            <option value="hours_deducted">Hours Deducted</option>
+        </select>
+        <label for="new_filter_op">Is:</label>
+        <select id="new_filter_op">
+            <option value="eq">Equal to (=)</option>
+            <option value="neq">Not Equal to (!=)</option>
+            <option value="gt">Greater than (>)</option>
+            <option value="gte">Greater or equal (>=)</option>
+            <option value="lt">Less than (<)</option>
+            <option value="lte">Less or equal (<=)</option>
+        </select>
+        <label for="new_filter_val">Value:</label>
+        <input type="number" id="new_filter_val" placeholder="Enter ID or hours...">
+        <button type="button" id="add-filter-btn">Add Filter</button>
+    </div>
+    <div class="form-group" style="margin-top: 15px;">
+        <button type="submit">Apply Filters & Sort</button>
+        <a href="{{ url_for('pass_rental_usage.list_pass_rental_usages') }}">Clear All</a>
+    </div>
+</form>
+
+<table>
+    <tr>
+        <th>Pass ID</th>
+        <th>Rental ID</th>
+        <th>Hours Deducted</th>
+        <th>Actions</th>
+    </tr>
+    {% for pru in pass_rental_usages %}
+        <tr>
+            <td>{{ pru.pass_id }}</td>
+            <td>{{ pru.rental_id }}</td>
+            <td>{{ "%.2f"|format(pru.hours_deducted) }}</td>
+            <td>
+                <a href="{{ url_for('pass_rental_usage.edit_pass_rental_usage', pass_id=pru.pass_id, rental_id=pru.rental_id) }}">Edit</a>
+                <form action="{{ url_for('pass_rental_usage.delete', pass_id=pru.pass_id, rental_id=pru.rental_id) }}" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<form action="{{ url_for('client.save_view') }}" method="POST">
+    <input type="hidden" name="view_url" value="{{ request.full_path }}">
+    <label for="view_name">Report Name:</label>
+    <input type="text" id="view_name" name="view_name" required>
+    <button type="submit">Save this View</button>
+</form>
+
+<h2>Link New Pass to Rental (Deduct Hours)</h2>
+<form action="{{ url_for('pass_rental_usage.add') }}" method="POST">
+    <label for="pass_id">Pass ID (Hourly):</label>
+    <input type="number" id="pass_id" name="pass_id" required><br><br>
+
+    <label for="rental_id">Rental ID (Hourly):</label>
+    <input type="number" id="rental_id" name="rental_id" required><br><br>
+
+    <button type="submit">Add Link</button>
+</form>
+
+<form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+    <button type="submit">Logout</button>
+</form>
+
+<script>
+(function() {
+    // Цей скрипт скопійовано з pass_lift_usages.html
+    const form = document.getElementById('filter-form');
+    const hiddenContainer = document.getElementById('hidden-filters-container');
+    const displayContainer = document.getElementById('active-filters-display');
+    const noFiltersMsg = document.getElementById('no-filters-msg');
+    const newColEl = document.getElementById('new_filter_col');
+    const newOpEl = document.getElementById('new_filter_op');
+    const newColVal = document.getElementById('new_filter_val');
+
+    newColEl.addEventListener('change', function() {
+        newColVal.type = 'number';
+        newColVal.placeholder = 'Enter a number...';
+    });
+    newColEl.dispatchEvent(new Event('change'));
+
+    document.getElementById('add-filter-btn').addEventListener('click', function() {
+        const col = newColEl.value; const op = newOpEl.value; const val = newColVal.value;
+        if (!col || !val) { alert('Будь ласка, виберіть колонку та введіть значення.'); return; }
+        hiddenContainer.insertAdjacentHTML('beforeend', `
+            <input type="hidden" name="filter_col" value="${col}">
+            <input type="hidden" name="filter_op" value="${op}">
+            <input type="hidden" name="filter_val" value="${val}">`);
+        if (noFiltersMsg) noFiltersMsg.style.display = 'none';
+        displayContainer.insertAdjacentHTML('beforeend', `
+            <span class="active-filter-tag">
+                ${col} ${op} ${val}
+                <b class="remove-filter-btn" data-col="${col}" data-op="${op}" data-val="${val}">&times;</b>
+            </span>`);
+        newColVal.value = '';
+        updateRemoveListeners();
+    });
+    function updateRemoveListeners() {
+        displayContainer.querySelectorAll('.remove-filter-btn').forEach(btn => {
+            btn.removeEventListener('click', removeFilter);
+            btn.addEventListener('click', removeFilter);
+        });
+    }
+    function removeFilter(event) {
+        const btn = event.target; const col = btn.dataset.col; const op = btn.dataset.op; const val = btn.dataset.val;
+        btn.parentElement.remove();
+        const allCols = hiddenContainer.querySelectorAll('input[name="filter_col"]');
+        const allOps = hiddenContainer.querySelectorAll('input[name="filter_op"]');
+        const allVals = hiddenContainer.querySelectorAll('input[name="filter_val"]');
+        for (let i = 0; i < allCols.length; i++) {
+            if (allCols[i].value === col && allOps[i].value === op && allVals[i].value === val) {
+                allCols[i].remove(); allOps[i].remove(); allVals[i].remove(); break;
+            }
+        }
+        if (displayContainer.querySelectorAll('.active-filter-tag').length === 0) {
+            if (noFiltersMsg) noFiltersMsg.style.display = 'inline';
+        }
+    }
+    updateRemoveListeners();
+})();
+</script>
+
+</body>
+</html>

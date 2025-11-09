@@ -1,5 +1,7 @@
 import datetime
 
+from models.pass_lift_usage import PassLiftUsage
+from models.pass_rental_usage import PassRentalUsage
 from models.passes import Pass, db
 from services.client_service import ClientService
 from services.pass_type_service import PassTypeService
@@ -67,6 +69,8 @@ class PassService:
     def delete(id):
         pass_ = PassService.get_by_id(id)
         if pass_:
+            PassLiftUsage.query.filter_by(pass_id=id).delete(synchronize_session=False)
+            PassRentalUsage.query.filter_by(pass_id=id).delete(synchronize_session=False)
             db.session.delete(pass_)
             db.session.commit()
             return True
