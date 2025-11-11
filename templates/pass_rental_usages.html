@@ -95,7 +95,7 @@
             <td>{{ "%.2f"|format(pru.hours_deducted) }}</td>
             <td>
                 <a href="{{ url_for('pass_rental_usage.edit_pass_rental_usage', pass_id=pru.pass_id, rental_id=pru.rental_id) }}">Edit</a>
-                <form action="{{ url_for('pass_rental_usage.delete', pass_id=pru.pass_id, rental_id=pru.rental_id) }}" method="POST" style="display:inline;">
+                <form action="{{ url_for('pass_rental_usage.delete', pass_id=pru.pass_id, rental_id=pru.rental_id) }}" method="POST" style="display:inline;" class="delete-form">
                     <button type="submit">Delete</button>
                 </form>
             </td>
@@ -182,6 +182,6 @@
     updateRemoveListeners();
 })();
 </script>
-
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

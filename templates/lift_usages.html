@@ -115,7 +115,7 @@
             <td>
                 <a href="{{ url_for('lift_usage.edit_lift_usage', id=lift_usage.id) }}">Edit</a>
                 <form action="{{ url_for('lift_usage.delete', id=lift_usage.id) }}" method="POST"
-                      style="display:inline;">
+                      style="display:inline;" class="delete-form">
                     <button type="submit">Delete</button>
                 </form>
             </td>
@@ -254,6 +254,7 @@
     updateRemoveListeners();
 })();
 </script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
 </body>
 </html>

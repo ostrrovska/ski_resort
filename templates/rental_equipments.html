@@ -98,7 +98,7 @@
             <td>{{ rental_equipment.equipment_id }}</td>
             <td>
                 <a href="{{ url_for('rental_equipment.edit_rental_equipment', rental_id=rental_equipment.rental_id, equipment_id=rental_equipment.equipment_id) }}">Edit</a>
-                <form action="{{ url_for('rental_equipment.delete', rental_id=rental_equipment.rental_id, equipment_id=rental_equipment.equipment_id) }}" method="POST" style="display:inline;">
+                <form action="{{ url_for('rental_equipment.delete', rental_id=rental_equipment.rental_id, equipment_id=rental_equipment.equipment_id) }}" method="POST" style="display:inline;" class="delete-form">
                     <button type="submit">Delete</button>
                 </form>
             </td>
@@ -217,6 +217,6 @@
     updateRemoveListeners();
 })();
 </script>
-
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

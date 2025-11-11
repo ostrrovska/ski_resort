@@ -122,7 +122,7 @@
             <td>{{ pass.remaining_hours }}</td>
             <td>
                 <a href="{{ url_for('pass.edit_pass', id=pass.id) }}">Edit</a>
-                <form action="{{ url_for('pass.delete', id=pass.id) }}" method="POST" style="display:inline;">
+                <form action="{{ url_for('pass.delete', id=pass.id) }}" method="POST" style="display:inline;" class="delete-form">
                     <button type="submit">Delete</button>
                 </form>
             </td>
@@ -259,6 +259,6 @@
     updateRemoveListeners();
 })();
 </script>
-
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

@@ -123,7 +123,7 @@
             <td>{{ rental.total_price }}</td>
             <td>
                 <a href="{{ url_for('rental.edit_rental', id=rental.id) }}">Edit</a>
-                <form action="{{ url_for('rental.delete', id=rental.id) }}" method="POST" style="display:inline;">
+                <form action="{{ url_for('rental.delete', id=rental.id) }}" method="POST" style="display:inline;" class="delete-form">
                     <button type="submit">Delete</button>
                 </form>
             </td>
@@ -272,6 +272,6 @@
     updateRemoveListeners();
 })();
 </script>
-
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

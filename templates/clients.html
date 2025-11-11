@@ -119,7 +119,7 @@
                 <a href="{{ url_for('client.edit_client', id=client.id) }}">Edit</a>
 
                 {% if session.access_right == 'admin' and key.access_right.value != 'admin' %}
-                    <form action="{{ url_for('client.delete', id=client.id) }}" method="POST" style="display:inline;">
+                    <form action="{{ url_for('client.delete', id=client.id) }}" method="POST" style="display:inline;" class="delete-form">
                         <button type="submit">Delete</button>
                     </form>
 
@@ -239,6 +239,6 @@
     updateRemoveListeners();
 })();
 </script>
-
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

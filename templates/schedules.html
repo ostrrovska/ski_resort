@@ -110,7 +110,7 @@
             <td>{{ schedule.shift_end }}</td>
             <td>
                 <a href="{{ url_for('schedule.edit_schedule', id=schedule.id) }}">Edit</a>
-                <form action="{{ url_for('schedule.delete', id=schedule.id) }}" method="POST" style="display:inline;">
+                <form action="{{ url_for('schedule.delete', id=schedule.id) }}" method="POST" style="display:inline;" class="delete-form">
                     <button type="submit">Delete</button>
                 </form>
             </td>
@@ -250,6 +250,6 @@
     updateRemoveListeners();
 })();
 </script>
-
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

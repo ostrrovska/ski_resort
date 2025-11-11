@@ -134,7 +134,7 @@
             {% if session.access_right in ['admin', 'moderator'] %}
                 <td>
                     <a href="{{ url_for('equipment_type.edit_equipment_type', id=equipment_type.id) }}">Edit</a>
-                    <form action="{{ url_for('equipment_type.delete', id=equipment_type.id) }}" method="POST" style="display:inline;">
+                    <form action="{{ url_for('equipment_type.delete', id=equipment_type.id) }}" method="POST" style="display:inline;" class="delete-form">
                         <button type="submit">Delete</button>
                     </form>
                 </td>
@@ -285,6 +285,7 @@
     updateRemoveListeners();
 })();
 </script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
 </body>
 </html>

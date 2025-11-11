@@ -98,7 +98,7 @@
             <td>{{ plu.lift_usage_id }}</td>
             <td>
                 <a href="{{ url_for('pass_lift_usage.edit_pass_lift_usage', pass_id=plu.pass_id, lift_usage_id=plu.lift_usage_id) }}">Edit</a>
-                <form action="{{ url_for('pass_lift_usage.delete', pass_id=plu.pass_id, lift_usage_id=plu.lift_usage_id) }}" method="POST" style="display:inline;">
+                <form action="{{ url_for('pass_lift_usage.delete', pass_id=plu.pass_id, lift_usage_id=plu.lift_usage_id) }}" method="POST" style="display:inline;" class="delete-form">
                     <button type="submit">Delete</button>
                 </form>
             </td>
@@ -227,6 +227,7 @@
     updateRemoveListeners();
 })();
 </script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
 </body>
 </html>
