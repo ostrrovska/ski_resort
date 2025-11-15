@@ -34,6 +34,50 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Video Background for index page */
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.video-background video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    object-position: center;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(240, 248, 255, 0.3) 0%, rgba(224, 242, 254, 0.25) 50%, rgba(186, 230, 253, 0.3) 100%);
+    backdrop-filter: blur(0.5px);
+    z-index: 1;
+}
+
+/* Ensure content is above video */
+.main-layout,
+.messages {
+    position: relative;
+    z-index: 2;
 }
 
 /* Auto-wrap content in pages without glass-container */
@@ -107,13 +151,18 @@ form > label {
     margin: 0 auto;
     align-items: flex-start;
     padding: 20px;
+    position: relative;
+    z-index: 2;
 }
 
 .welcome-column {
     flex: 1;
     position: sticky;
-    top: 20px;
+    top: 50%;
+    transform: translateY(-50%);
     max-width: 50%;
+    align-self: flex-start;
+    height: fit-content;
 }
 
 .forms-column {
@@ -874,8 +923,11 @@ hr {
     border: 1px solid var(--glass-border);
     border-radius: 16px;
     padding: 20px;
-    margin: 20px 0;
+    margin: 20px auto;
+    max-width: 1400px;
     box-shadow: 0 4px 16px var(--ice-shadow);
+    position: relative;
+    z-index: 2;
 }
 
 .messages ul {

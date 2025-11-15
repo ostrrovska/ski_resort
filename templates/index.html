@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
+    <!-- Background Video -->
+    <div class="video-background">
+        <video autoplay muted loop playsinline>
+            <source src="{{ url_for('static', filename='video/background.mp4') }}" type="video/mp4">
+            <source src="{{ url_for('static', filename='video/background.webm') }}" type="video/webm">
+            <!-- Fallback if video doesn't load -->
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <div class="messages">
