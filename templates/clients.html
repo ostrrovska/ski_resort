@@ -111,23 +111,41 @@
             <td>{{ client.date_of_birth }}</td>
             <td>{{ client.phone_number }}</td>
             <td>{{ client.email }}</td>
-            {% if session.access_right == 'admin' %}
-                <td>{{ key.access_right.value }}</td>
-            {% endif %}
 
+            {% if session.access_right == 'admin' %}
+                <td>
+                    {# Адмін не може змінювати свою роль або роль іншого адміна #}
+                    {% if client.id == session.client_id or key.access_right.value == 'admin' %}
+                        {{ key.access_right.value }}
+                    {% else %}
+                        {# Форма з випадаючим списком та кнопкою "Update" #}
+                        <form action="{{ url_for('client.update_role', client_id=client.id) }}" method="POST" style="display:inline;" class="role-update-form">
+                            <label>
+                                <select name="role">
+                                    <option value="authorized" {% if key.access_right.value == 'authorized' %}selected{% endif %}>
+                                        authorized
+                                    </option>
+                                    <option value="moderator" {% if key.access_right.value == 'moderator' %}selected{% endif %}>
+                                        moderator
+                                    </option>
+                                    <option value="admin" {% if key.access_right.value == 'admin' %}selected{% endif %}>
+                                        admin
+                                    </option>
+                                </select>
+                            </label>
+                            <button type="submit">Update</button>
+                        </form>
+                    {% endif %}
+                </td>
+            {% endif %}
             <td>
                 <a href="{{ url_for('client.edit_client', id=client.id) }}">Edit</a>
 
+                {# Адмін може видалити будь-кого, хто не є адміном #}
                 {% if session.access_right == 'admin' and key.access_right.value != 'admin' %}
                     <form action="{{ url_for('client.delete', id=client.id) }}" method="POST" style="display:inline;" class="delete-form">
                         <button type="submit">Delete</button>
                     </form>
-
-                    {% if key.access_right.value == 'authorized' %}
-                        <form action="{{ url_for('client.set_moderator', client_id=client.id) }}" method="POST" style="display:inline;">
-                            <button type="submit">Make Moderator</button>
-                        </form>
-                    {% endif %}
                 {% endif %}
             </td>
         </tr>

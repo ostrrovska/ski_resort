@@ -137,17 +137,45 @@ def list_clients():
         # Старі 'filter_by' та 'filter_value' не передаємо
     )
 
-@client_controller.route('/set_moderator/<int:client_id>', methods=['POST'])
+# --- ПОЧАТОК ЗМІН ---
+# Замінюємо 'set_moderator' на 'update_role'
+@client_controller.route('/update_role/<int:client_id>', methods=['POST'])
 @roles_required('admin')
-def set_moderator(client_id):
-    success = client_service.set_access_right(client_id, AccessRight.MODERATOR)
-    if success:
-        flash('User promoted to Moderator successfully!', 'success')
-    else:
-        flash('Could not promote user.', 'error')
-    return redirect(url_for('client.list_clients'))
+def update_role(client_id):
+    new_role_str = request.form.get('role')
 
-# --- Нові маршрути для керування заявками ---
+    # 1. Запобігаємо зміні власної ролі
+    if client_id == session.get('client_id'):
+        flash('You cannot change your own role.', 'danger')
+        return redirect(url_for('client.list_clients'))
+
+    # 2. Валідація нової ролі
+    try:
+        new_role_enum = AccessRight(new_role_str)
+    except ValueError:
+        flash(f'"{new_role_str}" is not a valid role.', 'danger')
+        return redirect(url_for('client.list_clients'))
+
+    # 3. Отримуємо ключ цільового клієнта, щоб перевірити його поточну роль
+    target_client = client_service.get_by_id(client_id)
+    if not target_client or not target_client.key:
+        flash('Client not found.', 'danger')
+        return redirect(url_for('client.list_clients'))
+
+    # 4. Запобігаємо зміні ролі іншого адміністратора
+    if target_client.key.access_right == AccessRight.ADMIN:
+        flash('You cannot change the role of another administrator.', 'danger')
+        return redirect(url_for('client.list_clients'))
+
+    # 5. Оновлюємо роль
+    success = client_service.set_access_right(client_id, new_role_enum)
+    if success:
+        flash(f'User role updated to {new_role_enum.value}.', 'success')
+    else:
+        flash('Could not update user role.', 'error')
+
+    return redirect(url_for('client.list_clients'))
+# --- КІНЕЦЬ ЗМІН ---
 
 @client_controller.route('/pending_registrations')
 @roles_required('admin')
