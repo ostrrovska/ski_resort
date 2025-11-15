@@ -2,52 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Welcome, Authorized User!</h1>
-    <p>From here you can browse resort data or view your saved reports.</p>
+    <div class="glass-container">
+        <h1>Welcome, Authorized User!</h1>
+        <p style="text-align: center;">From here you can browse resort data or view your saved reports.</p>
 
-    <h2>Reports</h2>
-    <ul>
-        <li><a href="{{ url_for('report.index') }}">View Predefined Reports</a></li>
-    </ul>
+        <hr>
 
-    <h2>Browse Data</h2>
-    <ul>
-        <li><a href="{{ url_for('employee.browse_employees') }}">Browse Employees</a></li>
-        <li><a href="{{ url_for('equipment.list_equipment') }}">Browse Equipment</a></li>
-        <li><a href="{{ url_for('equipment_type.list_equipment_types') }}">Browse equipment types </a> </li>
-        <li><a href="{{ url_for('lift.list_lifts') }}">Browse lifts</a></li>
-        <li><a href="{{ url_for('pass_type.list_pass_types') }}">Browse pass types </a> </li>
-        <li><a href="{{ url_for('tariff.list_tariffs') }}">Browse tariffs </a> </li>
-        {% if session.access_right in ['admin', 'moderator'] %}
-            <li><a href="{{ url_for('client.list_clients') }}">Browse clients </a> </li>
-            <li><a href="{{ url_for('pass.list_passes') }}">Browse passes </a> </li>
-            <li><a href="{{ url_for('lift_usage.list_lift_usages') }}">Browse lift usages </a> </li>
-            <li><a href="{{ url_for('pass_lift_usage.list_pass_lift_usages') }}">Browse pass lift usages </a> </li>
-            <li><a href="{{ url_for('pass_rental_usage.list_pass_rental_usages') }}">Browse pass rental usages </a> </li>
-            <li><a href="{{ url_for('rental.list_rentals') }}">Browse rentals </a> </li>
-            <li><a href="{{ url_for('rental_equipment.list_rental_equipments') }}">Browse rental equipment </a> </li>
-            <li><a href="{{ url_for('schedule.list_schedules') }}">Browse schedules </a> </li>
-        {% endif %}
+        <h2>Reports</h2>
+        <ul>
+            <li><a href="{{ url_for('report.index') }}">View Predefined Reports</a></li>
+        </ul>
 
-    {% if session.access_right == 'admin' %}
-            <li style="font-weight: bold; margin-top: 10px;">
-                <a href="{{ url_for('client.pending_registrations') }}">View Pending Registrations</a>
-            </li>
-        {% endif %}
-    </ul>
+        <h2>Browse Data</h2>
+        <ul>
+            <li><a href="{{ url_for('employee.browse_employees') }}">Browse Employees</a></li>
+            <li><a href="{{ url_for('equipment.list_equipment') }}">Browse Equipment</a></li>
+            <li><a href="{{ url_for('equipment_type.list_equipment_types') }}">Browse equipment types </a> </li>
+            <li><a href="{{ url_for('lift.list_lifts') }}">Browse lifts</a></li>
+            <li><a href="{{ url_for('pass_type.list_pass_types') }}">Browse pass types </a> </li>
+            <li><a href="{{ url_for('tariff.list_tariffs') }}">Browse tariffs </a> </li>
+            {% if session.access_right in ['admin', 'moderator'] %}
+                <li><a href="{{ url_for('client.list_clients') }}">Browse clients </a> </li>
+                <li><a href="{{ url_for('pass.list_passes') }}">Browse passes </a> </li>
+                <li><a href="{{ url_for('lift_usage.list_lift_usages') }}">Browse lift usages </a> </li>
+                <li><a href="{{ url_for('pass_lift_usage.list_pass_lift_usages') }}">Browse pass lift usages </a> </li>
+                <li><a href="{{ url_for('pass_rental_usage.list_pass_rental_usages') }}">Browse pass rental usages </a> </li>
+                <li><a href="{{ url_for('rental.list_rentals') }}">Browse rentals </a> </li>
+                <li><a href="{{ url_for('rental_equipment.list_rental_equipments') }}">Browse rental equipment </a> </li>
+                <li><a href="{{ url_for('schedule.list_schedules') }}">Browse schedules </a> </li>
+            {% endif %}
 
-    <h2>Your Reports</h2>
-    <ul>
-        <li><a href="{{ url_for('client.saved_views') }}">View Saved Reports</a></li>
-    </ul>
+        {% if session.access_right == 'admin' %}
+                <li style="font-weight: bold; margin-top: 10px;">
+                    <a href="{{ url_for('client.pending_registrations') }}">View Pending Registrations</a>
+                </li>
+            {% endif %}
+        </ul>
 
-    <br>
-    <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
-        <button type="submit">Logout</button>
-    </form>
+        <h2>Your Reports</h2>
+        <ul>
+            <li><a href="{{ url_for('client.saved_views') }}">View Saved Reports</a></li>
+        </ul>
+
+        <div class="button-container" style="margin-top: 30px;">
+            <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

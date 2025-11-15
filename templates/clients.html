@@ -2,35 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clients</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
-<h1>Client List</h1>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('client.dashboard') }}" class="btn">← Back to Dashboard</a>
+        </div>
+        <h1>Client List</h1>
 
-<form action="{{ url_for('client.list_clients') }}" method="GET" id="filter-form">
-    <div class="form-group">
-        <label for="sort_by">Sort by:</label>
-        <select id="sort_by" name="sort_by">
-            <option value="" {% if not sort_by %}selected{% endif %}>None</option>
-            <option value="id" {% if sort_by == 'id' %}selected{% endif %}>ID</option>
-            <option value="full_name" {% if sort_by == 'full_name' %}selected{% endif %}>Full Name</option>
-            <option value="document_id" {% if sort_by == 'document_id' %}selected{% endif %}>Document id</option>
-            <option value="date_of_birth" {% if sort_by == 'date_of_birth' %}selected{% endif %}>Date of birth</option>
-            <option value="phone_number" {% if sort_by == 'phone_number' %}selected{% endif %}>Phone Number</option>
-            <option value="email" {% if sort_by == 'email' %}selected{% endif %}>Email</option>
-            <option value="login" {% if sort_by == 'login' %}selected{% endif %}>Login</option>
-            {% if session.access_right == 'admin' %}
-                <option value="access_right" {% if sort_by == 'access_right' %}selected{% endif %}>Access Right</option>
-            {% endif %}
-        </select>
-        <label for="sort_order">Order:</label>
-        <select id="sort_order" name="sort_order">
-            <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Ascending</option>
-            <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Descending</option>
-        </select>
-    </div>
+        <form action="{{ url_for('client.list_clients') }}" method="GET" id="filter-form">
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="sort_by">Sort by</label>
+                    <select id="sort_by" name="sort_by">
+                        <option value="" {% if not sort_by %}selected{% endif %}>None</option>
+                        <option value="id" {% if sort_by == 'id' %}selected{% endif %}>ID</option>
+                        <option value="full_name" {% if sort_by == 'full_name' %}selected{% endif %}>Full Name</option>
+                        <option value="document_id" {% if sort_by == 'document_id' %}selected{% endif %}>Document id</option>
+                        <option value="date_of_birth" {% if sort_by == 'date_of_birth' %}selected{% endif %}>Date of birth</option>
+                        <option value="phone_number" {% if sort_by == 'phone_number' %}selected{% endif %}>Phone Number</option>
+                        <option value="email" {% if sort_by == 'email' %}selected{% endif %}>Email</option>
+                        <option value="login" {% if sort_by == 'login' %}selected{% endif %}>Login</option>
+                        {% if session.access_right == 'admin' %}
+                            <option value="access_right" {% if sort_by == 'access_right' %}selected{% endif %}>Access Right</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="sort_order">Order</label>
+                    <select id="sort_order" name="sort_order">
+                        <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Ascending</option>
+                        <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Descending</option>
+                    </select>
+                </div>
+            </div>
 
     <div id="hidden-filters-container">
         {% for col, op, val in active_filters %}
@@ -40,128 +48,139 @@
         {% endfor %}
     </div>
 
-    <div class="form-group">
-        <strong>Active Filters:</strong>
-        <div id="active-filters-display">
+            <div class="form-group">
+                <strong>Active Filters:</strong>
+                <div id="active-filters-display">
             {% if not active_filters %}<span id="no-filters-msg">None</span>{% endif %}
             {% for col, op, val in active_filters %}
                 <span class="active-filter-tag">
                     {{ col }} {{ op }} {{ val }}
                     <b class="remove-filter-btn" data-col="{{ col }}" data-op="{{ op }}" data-val="{{ val }}">&times;</b>
                 </span>
-            {% endfor %}
+                {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-group form-section">
+                <div class="form-field">
+                    <label for="new_filter_col">Add Filter</label>
+                    <select id="new_filter_col">
+                        <option value="full_name">Full Name</option>
+                        <option value="date_of_birth">Date of birth</option>
+                        <option value="phone_number">Phone Number</option>
+                        <option value="email">Email</option>
+                        <option value="login">Login</option>
+                        {% if session.access_right == 'admin' %}
+                            <option value="access_right">Access Right</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="new_filter_op">Is</label>
+                    <select id="new_filter_op">
+                        <option value="like">Contains (text)</option>
+                        <option value="eq">Equal to (=)</option>
+                        <option value="neq">Not Equal to (!=)</option>
+                        <option value="gt">Greater than (>)</option>
+                        <option value="gte">Greater or equal (>=)</option>
+                        <option value="lt">Less than (<)</option>
+                        <option value="lte">Less or equal (<=)</option>
+                        <option value="in">Is (for roles)</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="new_filter_val">Value</label>
+                    <input type="text" id="new_filter_val" placeholder="Enter value...">
+                </div>
+            </div>
+
+            <div class="button-container">
+                <button type="submit">Apply Filters & Sort</button>
+                <a href="{{ url_for('client.list_clients') }}" class="btn">Clear All</a>
+            </div>
+        </form>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Document id</th>
+                <th>Date of birth</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                {% if session.access_right == 'admin' %}
+                    <th>Role</th>
+                {% endif %}
+                <th>Actions</th>
+            </tr>
+            {% for client, key in clients_with_keys %}
+                <tr>
+                    <td>{{ client.id }}</td>
+                    <td>{{ client.full_name }}</td>
+                    <td>{{ client.document_id }}</td>
+                    <td>{{ client.date_of_birth }}</td>
+                    <td>{{ client.phone_number }}</td>
+                    <td>{{ client.email }}</td>
+
+                    {% if session.access_right == 'admin' %}
+                        <td>
+                            {# Адмін не може змінювати свою роль або роль іншого адміна #}
+                            {% if client.id == session.client_id or key.access_right.value == 'admin' %}
+                                {{ key.access_right.value }}
+                            {% else %}
+                                {# Форма з випадаючим списком та кнопкою "Update" #}
+                                <form action="{{ url_for('client.update_role', client_id=client.id) }}" method="POST" style="display:inline;" class="role-update-form">
+                                    <label>
+                                        <select name="role">
+                                            <option value="authorized" {% if key.access_right.value == 'authorized' %}selected{% endif %}>
+                                                authorized
+                                            </option>
+                                            <option value="moderator" {% if key.access_right.value == 'moderator' %}selected{% endif %}>
+                                                moderator
+                                            </option>
+                                            <option value="admin" {% if key.access_right.value == 'admin' %}selected{% endif %}>
+                                                admin
+                                            </option>
+                                        </select>
+                                    </label>
+                                    <button type="submit">Update</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                    <td>
+                        <a href="{{ url_for('client.edit_client', id=client.id) }}">Edit</a>
+
+                        {# Адмін може видалити будь-кого, хто не є адміном #}
+                        {% if session.access_right == 'admin' and key.access_right.value != 'admin' %}
+                            <form action="{{ url_for('client.delete', id=client.id) }}" method="POST" style="display:inline;" class="delete-form">
+                                <button type="submit">Delete</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+        {% endfor %}
+        </table>
+
+        <form action="{{ url_for('client.save_view') }}" method="POST" style="margin-top: 30px;">
+            <input type="hidden" name="view_url" value="{{ request.full_path }}">
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="view_name">Report Name</label>
+                    <input type="text" id="view_name" name="view_name" placeholder="Enter report name" required>
+                </div>
+            </div>
+            <div class="button-container">
+                <button type="submit">Save this View</button>
+            </div>
+        </form>
+
+        <div class="button-container" style="margin-top: 20px;">
+            <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+                <button type="submit">Logout</button>
+            </form>
         </div>
     </div>
-
-    <div class="form-group form-section">
-        <label for="new_filter_col">Add Filter:</label>
-        <select id="new_filter_col">
-            <option value="full_name">Full Name</option>
-            <option value="date_of_birth">Date of birth</option>
-            <option value="phone_number">Phone Number</option>
-            <option value="email">Email</option>
-            <option value="login">Login</option>
-            {% if session.access_right == 'admin' %}
-                <option value="access_right">Access Right</option>
-            {% endif %}
-        </select>
-
-        <label for="new_filter_op">Is:</label>
-        <select id="new_filter_op">
-            <option value="like">Contains (text)</option>
-            <option value="eq">Equal to (=)</option>
-            <option value="neq">Not Equal to (!=)</option>
-            <option value="gt">Greater than (>)</option>
-            <option value="gte">Greater or equal (>=)</option>
-            <option value="lt">Less than (<)</option>
-            <option value="lte">Less or equal (<=)</option>
-            <option value="in">Is (for roles)</option>
-        </select>
-
-        <label for="new_filter_val">Value:</label>
-        <input type="text" id="new_filter_val" placeholder="Enter value...">
-
-        <button type="button" id="add-filter-btn">Add Filter</button>
-    </div>
-
-    <div class="form-group" style="margin-top: 15px;">
-        <button type="submit">Apply Filters & Sort</button>
-        <a href="{{ url_for('client.list_clients') }}">Clear All</a>
-    </div>
-</form>
-
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Full Name</th>
-        <th>Document id</th>
-        <th>Date of birth</th>
-        <th>Phone Number</th>
-        <th>Email</th>
-        {% if session.access_right == 'admin' %}
-            <th>Role</th>
-        {% endif %}
-        <th>Actions</th>
-    </tr>
-    {% for client, key in clients_with_keys %}
-        <tr>
-            <td>{{ client.id }}</td>
-            <td>{{ client.full_name }}</td>
-            <td>{{ client.document_id }}</td>
-            <td>{{ client.date_of_birth }}</td>
-            <td>{{ client.phone_number }}</td>
-            <td>{{ client.email }}</td>
-
-            {% if session.access_right == 'admin' %}
-                <td>
-                    {# Адмін не може змінювати свою роль або роль іншого адміна #}
-                    {% if client.id == session.client_id or key.access_right.value == 'admin' %}
-                        {{ key.access_right.value }}
-                    {% else %}
-                        {# Форма з випадаючим списком та кнопкою "Update" #}
-                        <form action="{{ url_for('client.update_role', client_id=client.id) }}" method="POST" style="display:inline;" class="role-update-form">
-                            <label>
-                                <select name="role">
-                                    <option value="authorized" {% if key.access_right.value == 'authorized' %}selected{% endif %}>
-                                        authorized
-                                    </option>
-                                    <option value="moderator" {% if key.access_right.value == 'moderator' %}selected{% endif %}>
-                                        moderator
-                                    </option>
-                                    <option value="admin" {% if key.access_right.value == 'admin' %}selected{% endif %}>
-                                        admin
-                                    </option>
-                                </select>
-                            </label>
-                            <button type="submit">Update</button>
-                        </form>
-                    {% endif %}
-                </td>
-            {% endif %}
-            <td>
-                <a href="{{ url_for('client.edit_client', id=client.id) }}">Edit</a>
-
-                {# Адмін може видалити будь-кого, хто не є адміном #}
-                {% if session.access_right == 'admin' and key.access_right.value != 'admin' %}
-                    <form action="{{ url_for('client.delete', id=client.id) }}" method="POST" style="display:inline;" class="delete-form">
-                        <button type="submit">Delete</button>
-                    </form>
-                {% endif %}
-            </td>
-        </tr>
-    {% endfor %}
-</table>
-
-    <form action="{{ url_for('client.save_view') }}" method="POST">
-    <input type="hidden" name="view_url" value="{{ request.full_path }}">
-    <label for="view_name">Report Name:</label>
-    <input type="text" id="view_name" name="view_name" required>
-    <button type="submit">Save this View</button>
-</form>
-
-<form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
-    <button type="submit">Logout</button>
-</form>
 
 <script>
 (function() {

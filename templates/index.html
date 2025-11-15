@@ -2,74 +2,114 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to the Ski Resort</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Welcome to our Ski Resort!</h1>
-    <p>Your ultimate winter destination for skiing and snowboarding adventures. Explore our offerings below or log in to manage your account.</p>
-
-    <hr>
-
-    <h2>For Our Guests</h2>
-    <p>View information about our lifts, passes, and equipment tariffs without registration.</p>
-    <ul>
-        <li><a href="{{ url_for('lift.view_lifts') }}">View Lifts</a></li>
-        <li><a href="{{ url_for('pass_type.view_pass_types') }}">View Pass Types & Prices</a></li>
-        <li><a href="{{ url_for('equipment.view_equipment') }}">View Equipment & Prices</a></li>
-    </ul>
-
-    <hr>
-
     {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <ul>
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
+            <div class="messages">
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
         {% endif %}
     {% endwith %}
 
-    <h2>Login</h2>
-    <form action="{{ url_for('client.login') }}" method="POST">
-        <label for="login">Login:</label>
-        <input type="text" id="login" name="login" required><br><br>
+    <!-- Main Layout: Welcome (left) + Forms (right) -->
+    <div class="main-layout">
+        <!-- Left Column: Welcome Block -->
+        <div class="welcome-column">
+            <div class="glass-container compact">
+                <h1>Welcome to our Ski Resort!</h1>
+                <p>Your ultimate winter destination for skiing and snowboarding adventures.</p>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
+                <hr>
 
-        <button type="submit">Login</button>
+                <h2>For Our Guests</h2>
+                <p>View information about our lifts, passes, and equipment tariffs without registration.</p>
+                <ul>
+                    <li><a href="{{ url_for('lift.view_lifts') }}">View Lifts</a></li>
+                    <li><a href="{{ url_for('pass_type.view_pass_types') }}">View Pass Types & Prices</a></li>
+                    <li><a href="{{ url_for('equipment.view_equipment') }}">View Equipment & Prices</a></li>
+                </ul>
+            </div>
+        </div>
 
-        <a href="{{ url_for('client.forgot_password') }}" style="margin-left: 10px;">Forgot password?</a>
-    </form>
+        <!-- Right Column: Forms -->
+        <div class="forms-column">
+            <!-- Login Form -->
+            <div class="form-container compact">
+                <h2>Login</h2>
+                <form action="{{ url_for('client.login') }}" method="POST">
+                    <div class="form-group">
+                        <div class="form-field">
+                            <label for="login">Login</label>
+                            <input type="text" id="login" name="login" placeholder="Enter your login" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        </div>
+                    </div>
+                    <div class="button-container">
+                        <button type="submit">Login</button>
+                        <a href="{{ url_for('client.forgot_password') }}" class="btn">Forgot password?</a>
+                    </div>
+                </form>
+            </div>
 
-    <hr>
+            <!-- Register Form -->
+            <div class="form-container compact">
+                <h2>Register</h2>
+                <form action="{{ url_for('client.register') }}" method="POST">
+                    <div class="form-group">
+                        <div class="form-field">
+                            <label for="full_name">Full Name</label>
+                            <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="document_id">Document ID</label>
+                            <input type="text" id="document_id" name="document_id" placeholder="Enter document ID" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="form-field">
+                            <label for="date_of_birth">Date of Birth</label>
+                            <input type="date" id="date_of_birth" name="date_of_birth" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="phone_number">Phone Number</label>
+                            <input type="tel" id="phone_number" name="phone_number" placeholder="Enter phone number" required>
+                        </div>
+                    </div>
 
-    <h2>Register</h2>
-    <form action="{{ url_for('client.register') }}" method="POST">
-        <label for="full_name">Full Name:</label>
-        <input type="text" id="full_name" name="full_name" required><br><br>
+                    <div class="form-group">
+                        <div class="form-field">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="reg_login">Login</label>
+                            <input type="text" id="reg_login" name="login" placeholder="Choose a login" required>
+                        </div>
+                    </div>
 
-        <label for="document_id">Document ID:</label>
-        <input type="text" id="document_id" name="document_id" required><br><br>
+                    <div class="form-group-single">
+                        <label for="reg_password">Password</label>
+                        <input type="password" id="reg_password" name="password" placeholder="Choose a password" required>
+                    </div>
 
-        <label for="date_of_birth">Date of Birth:</label>
-        <input type="date" id="date_of_birth" name="date_of_birth" required><br><br>
-
-        <label for="phone_number">Phone Number:</label>
-        <input type="tel" id="phone_number" name="phone_number" required><br><br>
-
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
-
-        <label for="reg_login">Login:</label>
-        <input type="text" id="reg_login" name="login" required><br><br>
-
-        <label for="reg_password">Password:</label>
-        <input type="password" id="reg_password" name="password" required><br><br>
-
-        <button type="submit">Register</button>
-    </form>
+                    <div class="button-container">
+                        <button type="submit">Register</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

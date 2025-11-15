@@ -2,12 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employees</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
-<h1>Employee List</h1>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('client.dashboard') }}" class="btn">← Back to Dashboard</a>
+        </div>
+        <h1>Employee List</h1>
 
 
 {% if session.access_right in ['admin', 'moderator'] %}
@@ -53,36 +57,42 @@
         </div>
 
         <div class="form-group form-section">
-            <label for="new_filter_col">Add Filter:</label>
-            <select id="new_filter_col">
-                <option value="full_name">Full Name</option>
-                <option value="position">Position</option>
-                <option value="salary">Salary</option>
-                <option value="phone_number">Phone Number</option>
-                <option value="email">Email</option>
-                <option value="id">ID</option>
-            </select>
-
-            <label for="new_filter_op">Is:</label>
-            <select id="new_filter_op">
+            <div class="form-field">
+                <label for="new_filter_col">Add Filter</label>
+                <select id="new_filter_col">
+                    <option value="full_name">Full Name</option>
+                    <option value="position">Position</option>
+                    <option value="salary">Salary</option>
+                    <option value="phone_number">Phone Number</option>
+                    <option value="email">Email</option>
+                    <option value="id">ID</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label for="new_filter_op">Is</label>
+                <select id="new_filter_op">
                 <option value="like">Contains (text)</option>
                 <option value="eq">Equal to (=)</option>
                 <option value="neq">Not Equal to (!=)</option>
                 <option value="gt">Greater than (>)</option>
                 <option value="gte">Greater or equal (>=)</option>
                 <option value="lt">Less than (<)</option>
-                <option value="lte">Less or equal (<=)</option>
-            </select>
+                    <option value="lte">Less or equal (<=)</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label for="new_filter_val">Value</label>
+                <input type="text" id="new_filter_val" placeholder="Enter value...">
+            </div>
+        </div>
 
-            <label for="new_filter_val">Value:</label>
-            <input type="text" id="new_filter_val" placeholder="Enter value...">
-
+        <div class="button-container">
             <button type="button" id="add-filter-btn">Add Filter</button>
         </div>
 
-        <div class="form-group" style="margin-top: 15px;">
+        <div class="button-container" style="margin-top: 15px;">
             <button type="submit">Apply Filters & Sort</button>
-            <a href="{{ url_for('employee.browse_employees') }}">Clear All</a>
+            <a href="{{ url_for('employee.browse_employees') }}" class="btn">Clear All</a>
         </div>
     </form>
 
@@ -117,12 +127,16 @@
                 <option value="phone_number" {% if filter_by == 'phone_number' %}selected{% endif %}>Phone Number</option>
                 <option value="email" {% if filter_by == 'email' %}selected{% endif %}>Email</option>
             </select>
-            <label for="filter_value">Value:</label>
-            <input type="text" id="filter_value" name="filter_value" value="{{ filter_value or '' }}"><br><br>
-        </div>
+                <div class="form-field">
+                    <label for="filter_value">Value</label>
+                    <input type="text" id="filter_value" name="filter_value" value="{{ filter_value or '' }}" placeholder="Enter value">
+                </div>
+            </div>
 
-        <button type="submit">Apply</button>
-        <a href="{{ url_for('employee.browse_employees') }}">Clear</a>
+            <div class="button-container">
+                <button type="submit">Apply</button>
+                <a href="{{ url_for('employee.browse_employees') }}" class="btn">Clear</a>
+            </div>
     </form>
 
 {% endif %}
@@ -159,38 +173,61 @@
     {% endfor %}
 </table>
 
-    <form action="{{ url_for('client.save_view') }}" method="POST">
-    <input type="hidden" name="view_url" value="{{ request.full_path }}">
-    <label for="view_name">Report Name:</label>
-    <input type="text" id="view_name" name="view_name" required>
-    <button type="submit">Save this View</button>
-</form>
+        <form action="{{ url_for('client.save_view') }}" method="POST" style="margin-top: 30px;">
+            <input type="hidden" name="view_url" value="{{ request.full_path }}">
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="view_name">Report Name</label>
+                    <input type="text" id="view_name" name="view_name" placeholder="Enter report name" required>
+                </div>
+            </div>
+            <div class="button-container">
+                <button type="submit">Save this View</button>
+            </div>
+        </form>
 
-{% if session.access_right in ['admin', 'moderator'] %}
-<h2>Add New Employee</h2>
-<form action="{{ url_for('employee.add') }}" method="POST">
-    <label for="full_name">Full Name:</label>
-    <input type="text" id="full_name" name="full_name" required><br><br>
+        {% if session.access_right in ['admin', 'moderator'] %}
+        <h2>Add New Employee</h2>
+        <form action="{{ url_for('employee.add') }}" method="POST">
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="full_name">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" placeholder="Enter full name" required>
+                </div>
+                <div class="form-field">
+                    <label for="position">Position</label>
+                    <input type="text" id="position" name="position" placeholder="Enter position" required>
+                </div>
+            </div>
 
-    <label for="position">Position:</label>
-    <input type="text" id="position" name="position" required><br><br>
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="salary">Salary</label>
+                    <input type="number" id="salary" name="salary" placeholder="Enter salary" required>
+                </div>
+                <div class="form-field">
+                    <label for="phone_number">Phone Number</label>
+                    <input type="tel" id="phone_number" name="phone_number" placeholder="Enter phone number" required>
+                </div>
+            </div>
 
-    <label for="salary">Salary:</label>
-    <input type="number" id="salary" name="salary" required><br><br>
+            <div class="form-group-single">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter email" required>
+            </div>
 
-    <label for="phone_number">Phone Number:</label>
-    <input type="tel" id="phone_number" name="phone_number" required><br><br>
+            <div class="button-container">
+                <button type="submit">Add Employee</button>
+            </div>
+        </form>
+        {% endif %}
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required><br><br>
-
-    <button type="submit">Add Employee</button>
-</form>
-{% endif %}
-
-<form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
-    <button type="submit">Logout</button>
-</form>
+        <div class="button-container" style="margin-top: 20px;">
+            <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
 
 
 <script>
