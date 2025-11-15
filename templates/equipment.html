@@ -42,9 +42,9 @@
 
         <div id="hidden-filters-container">
             {% for col, op, val in active_filters %}
-                <input type="hidden" name="filter_col" value="{{ col }}">
-                <input type="hidden" name="filter_op" value="{{ op }}">
-                <input type="hidden" name="filter_val" value="{{ val }}">
+                <input type="hidden" name="filter_cols" value="{{ col }}">
+                <input type="hidden" name="filter_ops" value="{{ op }}">
+                <input type="hidden" name="filter_vals" value="{{ val }}">
             {% endfor %}
         </div>
 
@@ -253,9 +253,9 @@
         }
 
         hiddenContainer.insertAdjacentHTML('beforeend', `
-            <input type="hidden" name="filter_col" value="${col}">
-            <input type="hidden" name="filter_op" value="${op}">
-            <input type="hidden" name="filter_val" value="${val}">
+            <input type="hidden" name="filter_cols" value="${col}">
+            <input type="hidden" name="filter_ops" value="${op}">
+            <input type="hidden" name="filter_vals" value="${val}">
         `);
 
         if (noFiltersMsg) noFiltersMsg.style.display = 'none';
@@ -289,9 +289,9 @@
 
         btn.parentElement.remove();
 
-        const allCols = hiddenContainer.querySelectorAll('input[name="filter_col"]');
-        const allOps = hiddenContainer.querySelectorAll('input[name="filter_op"]');
-        const allVals = hiddenContainer.querySelectorAll('input[name="filter_val"]');
+        const allCols = hiddenContainer.querySelectorAll('input[name="filter_cols"]');
+        const allOps = hiddenContainer.querySelectorAll('input[name="filter_ops"]');
+        const allVals = hiddenContainer.querySelectorAll('input[name="filter_vals"]');
 
         for (let i = 0; i < allCols.length; i++) {
             if (allCols[i].value === col && allOps[i].value === op && allVals[i].value === val) {
