@@ -109,12 +109,15 @@
                 <option value="name" {% if filter_by == 'name' %}selected{% endif %}>Name</option>
                 <option value="description" {% if filter_by == 'description' %}selected{% endif %}>Description</option>
             </select>
-            <label for="filter_value">Value:</label>
-            <input type="text" id="filter_value" name="filter_value" value="{{ filter_value or '' }}"><br><br>
+        <div class="form-field">
+            <label for="filter_value"></label>
+            <input type="text" id="filter_value" name="filter_value" value="{{ filter_value or '' }}" placeholder="Enter value">
         </div>
-
-        <button type="submit">Apply</button>
-        <a href="{{ url_for('equipment_type.list_equipment_types') }}">Clear</a>
+        </div>
+        <div class="button-container">
+            <button type="submit">Apply</button>
+            <a href="{{ url_for('equipment_type.list_equipment_types') }}">Clear</a>
+        </div>
     </form>
 
 {% endif %}

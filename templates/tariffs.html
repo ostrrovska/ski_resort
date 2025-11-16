@@ -6,9 +6,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('client.dashboard') }}" class="btn">← Back to Dashboard</a>
+        </div>
 
-<h1>Tariffs</h1>
+        <h1>Tariffs</h1>
 
 {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -123,8 +126,10 @@
                 <option value="price_per_day" {% if filter_by == 'price_per_day' %}selected{% endif %}>Price per day</option>
                 <option value="weekday_discount" {% if filter_by == 'weekday_discount' %}selected{% endif %}>Weekday discount</option>
             </select>
-            <label for="filter_value">Value:</label>
-            <input type="number" id="filter_value" name="filter_value" value="{{ filter_value or '' }}"><br><br>
+            <div class="form-field">
+                <label for="filter_value"></label>
+            <input type="number" id="filter_value" name="filter_value" value="{{ filter_value or '' }}" placeholder="Enter a number...">
+            </div>
         </div>
 
         <button type="submit">Apply</button>
@@ -191,6 +196,8 @@
 <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
     <button type="submit">Logout</button>
 </form>
+    </div>
+
 
 <script>
 (function() {

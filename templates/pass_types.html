@@ -6,9 +6,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
+<div class="glass-container">
+    <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('client.dashboard') }}" class="btn">← Back to Dashboard</a>
+    </div>
 
-<h1>Pass types</h1>
+    <h1>Pass types</h1>
 {% with messages = get_flashed_messages() %}
     {% if messages %}
         <ul>
@@ -122,8 +125,11 @@
                 <option value="limit_hours" {% if filter_by == 'limit_hours' %}selected{% endif %}>Limit hours</option>
                 <option value="price" {% if filter_by == 'price' %}selected{% endif %}>Price</option>
             </select>
-            <label for="filter_value">Value:</label>
-            <input type="text" id="filter_value" name="filter_value" value="{{ filter_value or '' }}"><br><br>
+            <div class="form-field">
+                <label for="filter_value"></label>
+            <input type="text" id="filter_value" name="filter_value" value="{{ filter_value or '' }}" placeholder="Enter value...">
+            </div>
+
         </div>
 
         <button type="submit">Apply</button>
@@ -190,7 +196,7 @@
 <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
     <button type="submit">Logout</button>
 </form>
-
+</div>
 
 <script>
 (function() {
