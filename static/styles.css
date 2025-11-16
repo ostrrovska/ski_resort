@@ -233,6 +233,12 @@ form > label {
     max-width: 1200px;
 }
 
+/* Specific override for welcome column to improve text contrast */
+.welcome-column .glass-container {
+    background: rgba(255, 255, 255, 0.60); /* Збільшено прозорість з 0.1 до 0.45 */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Також трохи світліша рамка */
+}
+
 /* Typography */
 h1 {
     color: var(--text-primary);
@@ -685,8 +691,8 @@ ul li::before {
 ul li a {
     display: inline-block;
     padding: 6px 10px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 90px;
     transition: all 0.3s ease;
     font-size: 0.9rem;
 }
@@ -694,7 +700,7 @@ ul li a {
 .compact ul li a {
     padding: 5px 8px;
     font-size: 0.85rem;
-    border-radius: 8px;
+    border-radius: 90px;
 }
 
 ul li a:hover {

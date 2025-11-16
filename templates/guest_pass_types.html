@@ -6,7 +6,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('index') }}">Back to Home</a>
+<div class="glass-container">
+    <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('index') }}" class="btn">← Back to main page</a>
+    </div>
     <h1>Pass Types and Prices</h1>
     <table>
         <thead>
@@ -28,5 +31,6 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
 </body>
 </html>

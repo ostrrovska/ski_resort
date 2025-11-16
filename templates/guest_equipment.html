@@ -6,8 +6,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('index') }}">Back to Home</a>
-    <h1>Our Equipment & Prices</h1>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('index') }}" class="btn">← Back to main page</a>
+        </div>
+        <h1>Our Equipment & Prices</h1>
     <p>Below is a list of all equipment types we offer, their rental prices, and available models.</p>
     <table>
         <thead>
@@ -43,5 +46,7 @@
             {% endfor %}
         </tbody>
     </table>
+    </div>
+
 </body>
 </html>
