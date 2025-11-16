@@ -92,7 +92,7 @@
 
         <div class="form-group" style="margin-top: 15px;">
             <button type="submit">Apply Filters & Sort</button>
-            <a href="{{ url_for('pass_type.list_pass_types') }}">Clear All</a>
+            <a href="{{ url_for('pass_type.list_pass_types') }}" class="btn">Clear All</a>
         </div>
     </form>
 
@@ -132,8 +132,11 @@
 
         </div>
 
-        <button type="submit">Apply</button>
-        <a href="{{ url_for('pass_type.list_pass_types') }}">Clear</a>
+        <div class="button-container">
+            <button type="submit">Apply</button>
+        <a href="{{ url_for('pass_type.list_pass_types') }}" class="btn">Clear</a>
+        </div>
+
     </form>
 
 {% endif %}
@@ -178,17 +181,29 @@
     {% if session.access_right in ['admin', 'moderator'] %}
 <h2> Add New Pass Type</h2>
 <form action="{{ url_for('pass_type.add') }}" method="POST">
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required><br><br>
 
-    <label for="limit_lifts">Limit lifts:</label>
-    <input type="number" id="limit_lifts" name="limit_lifts" required><br><br>
+<div class="form-group">
+    <div class="form-field">
+       <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+    </div>
+    <div class="form-field">
+       <label for="limit_lifts">Limit lifts:</label>
+    <input type="number" id="limit_lifts" name="limit_lifts" required>
+    </div>
+</div>
 
-    <label for="limit_hours">Limit hours:</label>
-    <input type="number" id="limit_hours" name="limit_hours" required><br><br>
+    <div class="form-group">
+        <div class="form-field">
+            <label for="limit_hours">Limit hours:</label>
+            <input type="number" id="limit_hours" name="limit_hours" required>
+        </div>
 
-    <label for="price">Price:</label>
-    <input type="number" id="price" name="price" required><br><br>
+        <div class="form-field">
+           <label for="price">Price:</label>
+            <input type="number" id="price" name="price" required>
+        </div>
+    </div>
 
     <button type="submit">Add Pass Type</button>
 </form>

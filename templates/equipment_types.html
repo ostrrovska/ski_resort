@@ -79,7 +79,7 @@
 
         <div class="form-group" style="margin-top: 15px;">
             <button type="submit">Apply Filters & Sort</button>
-            <a href="{{ url_for('equipment_type.list_equipment_types') }}">Clear All</a>
+            <a href="{{ url_for('equipment_type.list_equipment_types') }}" class="btn">Clear All</a>
         </div>
     </form>
 
@@ -116,7 +116,7 @@
         </div>
         <div class="button-container">
             <button type="submit">Apply</button>
-            <a href="{{ url_for('equipment_type.list_equipment_types') }}">Clear</a>
+            <a href="{{ url_for('equipment_type.list_equipment_types') }}" class="btn">Clear</a>
         </div>
     </form>
 
@@ -159,11 +159,17 @@
 {% if session.access_right in ['admin', 'moderator'] %}
     <h2>Add New Equipment Type</h2>
     <form action="{{ url_for('equipment_type.add') }}" method="POST">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
 
-        <label for="description">Description:</label>
-        <input type="text" id="description" name="description" required><br><br>
+        <div class="form-group">
+            <div class="form-field">
+                <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-field">
+                <label for="description">Description:</label>
+            <input type="text" id="description" name="description" required>
+            </div>
+        </div>
 
         <button type="submit">Add Equipment Type</button>
     </form>

@@ -6,9 +6,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
-
-<h1>Pass Lift Usage List</h1>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('client.dashboard') }}" class="btn">← Back to Dashboard</a>
+        </div>
+        <h1>Pass Lift Usage List</h1>
 
 {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -82,7 +84,7 @@
 
     <div class="form-group" style="margin-top: 15px;">
         <button type="submit">Apply Filters & Sort</button>
-        <a href="{{ url_for('pass_lift_usage.list_pass_lift_usages') }}">Clear All</a>
+        <a href="{{ url_for('pass_lift_usage.list_pass_lift_usages') }}" class="btn">Clear All</a>
     </div>
 </form>
 
@@ -115,18 +117,25 @@
 
 <h2>Add New Pass Lift Usage</h2>
 <form action="{{ url_for('pass_lift_usage.add') }}" method="POST">
-    <label for="pass_id">Pass ID:</label>
-    <input type="number" id="pass_id" name="pass_id" required><br><br>
 
-    <label for="lift_usage_id">Lift Usage ID:</label>
-    <input type="number" id="lift_usage_id" name="lift_usage_id" required><br><br>
+    <div class="form-group">
+        <div class="form-field">
+           <label for="pass_id">Pass ID:</label>
+    <input type="number" id="pass_id" name="pass_id" required>
 
+        </div>
+        <div class="form-field">
+            <label for="lift_usage_id">Lift Usage ID:</label>
+    <input type="number" id="lift_usage_id" name="lift_usage_id" required>
+        </div>
+    </div>
     <button type="submit">Add</button>
 </form>
 
 <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
     <button type="submit">Logout</button>
 </form>
+    </div>
 
 <script>
 (function() {

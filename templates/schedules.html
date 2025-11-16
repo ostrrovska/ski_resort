@@ -6,9 +6,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
-
-<h1>Schedules</h1>
+<div class="glass-container">
+    <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('client.dashboard') }}" class="btn">← Back to Dashboard</a>
+    </div>
+    <h1>Schedules</h1>
 
 {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -88,7 +90,7 @@
 
     <div class="form-group" style="margin-top: 15px;">
         <button type="submit">Apply Filters & Sort</button>
-        <a href="{{ url_for('schedule.list_schedules') }}">Clear All</a>
+        <a href="{{ url_for('schedule.list_schedules') }}" class="btn">Clear All</a>
     </div>
 </form>
 
@@ -127,17 +129,26 @@
 
 <h2>Add New Schedule</h2>
 <form action="{{ url_for('schedule.add') }}" method="POST">
-    <label for="employee_id">Employee's id:</label>
-    <input type="number" id="employee_id" name="employee_id" required><br><br>
-
-    <label for="work_date">Work date:</label>
-    <input type="date" id="work_date" name="work_date" required><br><br>
-
-    <label for="shift_start">Shift start:</label>
-    <input type="time" id="shift_start" name="shift_start" required><br><br>
-
-    <label for="shift_end">Shift end:</label>
-    <input type="time" id="shift_end" name="shift_end" required><br><br>
+    <div class="form-group">
+        <div class="form-field">
+            <label for="employee_id">Employee's id:</label>
+    <input type="number" id="employee_id" name="employee_id" required>
+        </div>
+        <div class="form-field">
+            <label for="work_date">Work date:</label>
+    <input type="date" id="work_date" name="work_date" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="form-field">
+            <label for="shift_start">Shift start:</label>
+    <input type="time" id="shift_start" name="shift_start" required>
+        </div>
+        <div class="form-field">
+           <label for="shift_end">Shift end:</label>
+    <input type="time" id="shift_end" name="shift_end" required>
+        </div>
+    </div>
 
     <button type="submit">Add Schedule</button>
 </form>
@@ -145,7 +156,7 @@
 <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
     <button type="submit">Logout</button>
 </form>
-
+</div>
 <script>
 (function() {
     // Оскільки ми знаємо, що це сторінка лише для модераторів,

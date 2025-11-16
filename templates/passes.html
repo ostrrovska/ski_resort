@@ -6,7 +6,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
+<div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('client.dashboard') }}" class="btn">← Back to Dashboard</a>
+        </div>
 
 <h1>Passes list</h1>
 
@@ -97,7 +100,6 @@
             <div class="button-container">
                 <button type="button" id="add-filter-btn">Add Filter</button>
             </div>
-        </div>
 
             <div class="button-container">
                 <button type="submit">Apply Filters & Sort</button>
@@ -152,20 +154,32 @@
 
 <h2>Add New Pass</h2>
 <form action="{{ url_for('pass.add') }}" method="POST">
-    <label for="client_id">Client id:</label>
-    <input type="number" id="client_id" name="client_id" required><br><br>
+    <div class="form-group">
+        <div class="form-field">
+            <label for="client_id">Client id:</label>
+    <input type="number" id="client_id" name="client_id" required>
 
-    <label for="pass_type_id">Pass type id:</label>
-    <input type="number" id="pass_type_id" name="pass_type_id" required><br><br>
+        </div>
+        <div class="form-field">
+            <label for="pass_type_id">Pass type id:</label>
+    <input type="number" id="pass_type_id" name="pass_type_id" required>
+        </div>
+    </div>
 
-    <label for="purchase_date">Purchase date:</label>
-    <input type="date" id="purchase_date" name="purchase_date" required><br><br>
-
-    <label for="valid_from">Valid from:</label>
-    <input type="date" id="valid_from" name="valid_from" required><br><br>
-
-    <label for="valid_to">Valid to:</label>
-    <input type="date" id="valid_to" name="valid_to" required><br><br>
+    <div class="form-group">
+        <div class="form-field">
+            <label for="purchase_date">Purchase date:</label>
+    <input type="date" id="purchase_date" name="purchase_date" required>
+        </div>
+        <div class="form-field">
+            <label for="valid_from">Valid from:</label>
+    <input type="date" id="valid_from" name="valid_from" required>
+        </div>
+        <div class="form-field">
+           <label for="valid_to">Valid to:</label>
+    <input type="date" id="valid_to" name="valid_to" required>
+        </div>
+    </div>
 
     <button type="submit">Add Pass</button>
 </form>
@@ -173,6 +187,7 @@
 <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
     <button type="submit">Logout</button>
 </form>
+</div>
 
 <script>
 (function() {

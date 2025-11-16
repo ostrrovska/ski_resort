@@ -6,9 +6,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
-
-<h1>Lift usage list</h1>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('client.dashboard') }}" class="btn">← Back to Dashboard</a>
+        </div>
+        <h1>Lift usage list</h1>
 
 {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -90,7 +92,7 @@
 
     <div class="form-group" style="margin-top: 15px;">
         <button type="submit">Apply Filters & Sort</button>
-        <a href="{{ url_for('lift_usage.list_lift_usages') }}">Clear All</a>
+        <a href="{{ url_for('lift_usage.list_lift_usages') }}" class="btn">Clear All</a>
     </div>
 </form>
 
@@ -132,26 +134,40 @@
 
 <h2>Add New Lift Usage</h2>
 <form action="{{ url_for('lift_usage.add') }}" method="POST">
-    <label for="client_id">Client id:</label>
-    <input type="number" id="client_id" name="client_id" required><br><br>
+    <div class="form-group">
+        <div class="form-field">
+            <label for="client_id">Client id:</label>
+    <input type="number" id="client_id" name="client_id" required>
+        </div>
 
-    <label for="lift_id">Lift id:</label>
-    <input type="number" id="lift_id" name="lift_id" required><br><br>
+        <div class="form-field">
+            <label for="lift_id">Lift id:</label>
+    <input type="number" id="lift_id" name="lift_id" required>
+        </div>
+    </div>
 
-    <label for="usage_date">Usage date:</label>
-    <input type="date" id="usage_date" name="usage_date" required><br><br>
-
-    <label for="usage_time_start">Usage time start:</label>
-    <input type="time" id="usage_time_start" name="usage_time_start" required><br><br>
-
-    <label for="usage_time_end">Usage time end:</label>
-    <input type="time" id="usage_time_end" name="usage_time_end" required><br><br>
+    <div class="form-group">
+        <div class="form-field">
+            <label for="usage_date">Usage date:</label>
+            <input type="date" id="usage_date" name="usage_date" required>
+        </div>
+        <div class="form-field">
+            <label for="usage_time_start">Usage time start:</label>
+            <input type="time" id="usage_time_start" name="usage_time_start" required>
+        </div>
+        <div class="form-field">
+            <label for="usage_time_end">Usage time end:</label>
+            <input type="time" id="usage_time_end" name="usage_time_end" required>
+        </div>
+    </div>
 
     <button type="submit">Add Lift Usage</button>
 </form>
 <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
     <button type="submit">Logout</button>
 </form>
+
+    </div>
 
 <script>
 (function() {

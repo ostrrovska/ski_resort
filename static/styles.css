@@ -370,7 +370,8 @@ p {
 .form-field input[type="password"],
 .form-field input[type="email"],
 .form-field input[type="tel"],
-.form-field input[type="date"] {
+.form-field input[type="date"],
+.form-field input[type="time"]{
     background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(10px);
     border: 1px solid var(--glass-border);
