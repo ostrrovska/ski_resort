@@ -2,77 +2,106 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reports</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('client.dashboard') }}" class="btn">← Back to Dashboard</a>
+        </div>
+        <h1>Ski Resort Reports</h1>
 
-    <h1>Ski Resort Reports</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="messages">
+                    <ul>
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul class="flashes">
-            {% for category, message in messages %}
-                <li class="{{ category }}">{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+        <div class="browse-grid">
+            <a href="{{ url_for('report.clients_and_passes') }}" class="browse-card">
+                <div>
+                    <strong>Query 1</strong>
+                    <p style="margin-top: 8px; font-size: 0.85rem; font-weight: normal;">View information about clients and the passes they have purchased.</p>
+                </div>
+            </a>
 
-    <div class="report-description">
-        <p><strong>Query 1:</strong> View information about clients and the passes they have purchased.</p>
-        <a href="{{ url_for('report.clients_and_passes') }}" class="report-link">Run Report 1</a>
+            <a href="{{ url_for('report.equipment_rental_stats') }}" class="browse-card">
+                <div>
+                    <strong>Query 2</strong>
+                    <p style="margin-top: 8px; font-size: 0.85rem; font-weight: normal;">Analyze equipment rental statistics (most rented weekly, count by type daily).</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('report.pass_sales_stats') }}" class="browse-card">
+                <div>
+                    <strong>Query 3</strong>
+                    <p style="margin-top: 8px; font-size: 0.85rem; font-weight: normal;">Analyze pass sales statistics (count by day, count by type) for a selected period.</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('report.most_used_lifts') }}" class="browse-card">
+                <div>
+                    <strong>Query 4</strong>
+                    <p style="margin-top: 8px; font-size: 0.85rem; font-weight: normal;">Determine the most used lifts for any selected period (day, week, or month).</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('report.rental_revenue_stats') }}" class="browse-card">
+                <div>
+                    <strong>Query 5</strong>
+                    <p style="margin-top: 8px; font-size: 0.85rem; font-weight: normal;">Calculate the total revenue from equipment rentals, grouped by month and by quarter.</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('report.client_pass_stats') }}" class="browse-card">
+                <div>
+                    <strong>Query 6</strong>
+                    <p style="margin-top: 8px; font-size: 0.85rem; font-weight: normal;">Get information about clients who have exhausted the number of lifts provided for in the subscription.</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('report.february_unlimited_clients') }}" class="browse-card">
+                <div>
+                    <strong>Query 7</strong>
+                    <p style="margin-top: 8px; font-size: 0.85rem; font-weight: normal;">Get information about customers who purchased an unlimited subscription in February.</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('report.equipment_tariffs_report') }}" class="browse-card">
+                <div>
+                    <strong>Query 8</strong>
+                    <p style="margin-top: 8px; font-size: 0.85rem; font-weight: normal;">Get information about tariffs for each type of equipment, valid on weekends; on weekdays.</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('report.client_visit_stats') }}" class="browse-card">
+                <div>
+                    <strong>Query 9</strong>
+                    <p style="margin-top: 8px; font-size: 0.85rem; font-weight: normal;">Get full information about clients who skied from January 2 to 12; who visited the resort more than three times.</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('report.employee_work_stats') }}" class="browse-card">
+                <div>
+                    <strong>Query 10</strong>
+                    <p style="margin-top: 8px; font-size: 0.85rem; font-weight: normal;">Get full information about rental workers and equipment they issued; information about workers who worked on a specified day.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="button-container" style="margin-top: 20px;">
+            <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
     </div>
-
-    <div class="report-description">
-        <p><strong>Query 2:</strong> Analyze equipment rental statistics (most rented weekly, count by type daily). Requires selecting dates.</p>
-        {# Link now goes to the form first #}
-        <a href="{{ url_for('report.equipment_rental_stats') }}" class="report-link">Configure & Run Report 2</a>
-    </div>
-
-    <div class="report-description">
-        <p><strong>Query 3:</strong> Analyze pass sales statistics (count by day, count by type) for a selected period.</p>
-        <a href="{{ url_for('report.pass_sales_stats') }}" class="report-link">Configure & Run Report 3</a>
-    </div>
-
-    <div class="report-description">
-        <p><strong>Query 4:</strong> Determine the most used lifts for any selected period (day, week, or month).</p>
-        <a href="{{ url_for('report.most_used_lifts') }}" class="report-link">Configure & Run Report 4</a>
-    </div>
-
-    <div class="report-description">
-        <p><strong>Query 5:</strong> Calculate the total revenue from equipment rentals, grouped by month and by quarter.</p>
-        <a href="{{ url_for('report.rental_revenue_stats') }}" class="report-link">Configure & Run Report 5</a>
-    </div>
-
-    <div class="report-description">
-        <p><strong>Query 6:</strong> Get information about clients who have exhausted the number of lifts provided for in the subscription; who have completed more than 15 lifts on a given day.</p>
-        <a href="{{ url_for('report.client_pass_stats') }}" class="report-link">Configure & Run Report 6</a>
-    </div>
-
-    <div class="report-description">
-        <p><strong>Query 7:</strong>Get information about customers who purchased an unlimited subscription in February (to provide a 10% discount).</p>
-        <a href="{{ url_for('report.february_unlimited_clients') }}" class="report-link">Configure & Run Report 7</a>
-    </div>
-
-    <div class="report-description">
-        <p><strong>Query 8:</strong> Get information about tariffs for each type of equipment, valid on weekends; on weekdays.</p>
-        <a href="{{ url_for('report.equipment_tariffs_report') }}" class="report-link">Run Report 8</a>
-    </div>
-
-    <div class="report-description">
-        <p><strong>Query 9:</strong> Get full information about clients who skied from January 2 to 12; who visited the resort more than three times.</p>
-        <a href="{{ url_for('report.client_visit_stats') }}" class="report-link">Configure & Run Report 9</a>
-    </div>
-
-    <div class="report-description">
-        <p><strong>Query 10:</strong> Get full information about rental workers and equipment they issued; information about workers who worked on a specified day.</p>
-        <a href="{{ url_for('report.employee_work_stats') }}" class="report-link">Configure & Run Report 10</a>
-    </div>
-
-    <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline; margin-top: 20px;">
-        <button type="submit">Logout</button>
-    </form>
 </body>
 </html>

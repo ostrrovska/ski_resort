@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report: Equipment Rental Stats</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
@@ -9,62 +10,57 @@
     </style>
 </head>
 <body>
-    <a href="{{ url_for('report.index') }}">Back to Reports</a>
-    <h1>Report: Equipment Rental Statistics</h1>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('report.index') }}" class="btn">← Back to Reports</a>
+        </div>
+        <h1>Report: Equipment Rental Statistics</h1>
 
-    {# Section for Most Rented Weekly #}
-    <div class="report-subsection">
-        <h2>Most Rented Equipment (Period: {{ start_date.strftime('%Y-%m-%d') }} to {{ end_date.strftime('%Y-%m-%d') }})</h2>
-        {% if most_rented_weekly %}
-            <table>
-                <thead>
+        {# Section for Most Rented Weekly #}
+        <div class="report-subsection">
+            <h2>Most Rented Equipment (Period: {{ start_date.strftime('%Y-%m-%d') }} to {{ end_date.strftime('%Y-%m-%d') }})</h2>
+            {% if most_rented_weekly %}
+                <table>
                     <tr>
                         <th>Equipment ID</th>
                         <th>Model</th>
                         <th>Type</th>
                         <th>Times Rented</th>
                     </tr>
-                </thead>
-                <tbody>
                     {% for item in most_rented_weekly %}
-                    <tr>
-                        <td>{{ item.id }}</td>
-                        <td>{{ item.model }}</td>
-                        <td>{{ item.type_name }}</td>
-                        <td>{{ item.rental_count }}</td>
-                    </tr>
+                        <tr>
+                            <td>{{ item.id }}</td>
+                            <td>{{ item.model }}</td>
+                            <td>{{ item.type_name }}</td>
+                            <td>{{ item.rental_count }}</td>
+                        </tr>
                     {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No equipment rental data found for the selected week.</p>
-        {% endif %}
-    </div>
+                </table>
+            {% else %}
+                <p>No equipment rental data found for the selected week.</p>
+            {% endif %}
+        </div>
 
-    {# Section for Count by Type Daily #}
-    <div class="report-subsection">
-        <h2>Equipment Rented by Type (Day: {{ specific_date.strftime('%Y-%m-%d') }})</h2>
-        {% if count_by_type_daily %}
-            <table>
-                <thead>
+        {# Section for Count by Type Daily #}
+        <div class="report-subsection">
+            <h2>Equipment Rented by Type (Day: {{ specific_date.strftime('%Y-%m-%d') }})</h2>
+            {% if count_by_type_daily %}
+                <table>
                     <tr>
                         <th>Equipment Type</th>
                         <th>Quantity Rented</th>
                     </tr>
-                </thead>
-                <tbody>
                     {% for item_type in count_by_type_daily %}
-                    <tr>
-                        <td>{{ item_type.type_name }}</td>
-                        <td>{{ item_type.rental_count }}</td>
-                    </tr>
+                        <tr>
+                            <td>{{ item_type.type_name }}</td>
+                            <td>{{ item_type.rental_count }}</td>
+                        </tr>
                     {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No equipment rental data found for the selected day.</p>
-        {% endif %}
+                </table>
+            {% else %}
+                <p>No equipment rental data found for the selected day.</p>
+            {% endif %}
+        </div>
     </div>
-
 </body>
 </html>

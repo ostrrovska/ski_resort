@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report: Rental Revenue Statistics</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
@@ -9,62 +10,57 @@
     </style>
 </head>
 <body>
-    <a href="{{ url_for('report.index') }}">Back to Reports</a>
-    <h1>Report: Rental Revenue ({{ start_date.strftime('%Y-%m-%d') }} to {{ end_date.strftime('%Y-%m-%d') }})</h1>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('report.index') }}" class="btn">← Back to Reports</a>
+        </div>
+        <h1>Report: Rental Revenue ({{ start_date.strftime('%Y-%m-%d') }} to {{ end_date.strftime('%Y-%m-%d') }})</h1>
 
-    {# Section for Revenue by Month #}
-    <div class="report-subsection">
-        <h2>Revenue by Month</h2>
-        {% if revenue_by_month %}
-            <table>
-                <thead>
+        {# Section for Revenue by Month #}
+        <div class="report-subsection">
+            <h2>Revenue by Month</h2>
+            {% if revenue_by_month %}
+                <table>
                     <tr>
                         <th>Year</th>
                         <th>Month</th>
                         <th>Total Revenue</th>
                     </tr>
-                </thead>
-                <tbody>
                     {% for item in revenue_by_month %}
-                    <tr>
-                        <td>{{ item.year }}</td>
-                        <td>{{ item.month }}</td>
-                        <td>{{ item.total_revenue }}</td>
-                    </tr>
+                        <tr>
+                            <td>{{ item.year }}</td>
+                            <td>{{ item.month }}</td>
+                            <td>{{ item.total_revenue }}</td>
+                        </tr>
                     {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No rental revenue data found for this period.</p>
-        {% endif %}
-    </div>
+                </table>
+            {% else %}
+                <p>No rental revenue data found for this period.</p>
+            {% endif %}
+        </div>
 
-    {# Section for Revenue by Quarter #}
-    <div class="report-subsection">
-        <h2>Revenue by Quarter</h2>
-        {% if revenue_by_quarter %}
-            <table>
-                <thead>
+        {# Section for Revenue by Quarter #}
+        <div class="report-subsection">
+            <h2>Revenue by Quarter</h2>
+            {% if revenue_by_quarter %}
+                <table>
                     <tr>
                         <th>Year</th>
                         <th>Quarter</th>
                         <th>Total Revenue</th>
                     </tr>
-                </thead>
-                <tbody>
                     {% for item in revenue_by_quarter %}
-                    <tr>
-                        <td>{{ item.year }}</td>
-                        <td>{{ item.quarter }}</td>
-                        <td>{{ item.total_revenue }}</td>
-                    </tr>
+                        <tr>
+                            <td>{{ item.year }}</td>
+                            <td>{{ item.quarter }}</td>
+                            <td>{{ item.total_revenue }}</td>
+                        </tr>
                     {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No rental revenue data found for this period.</p>
-        {% endif %}
+                </table>
+            {% else %}
+                <p>No rental revenue data found for this period.</p>
+            {% endif %}
+        </div>
     </div>
-
 </body>
 </html>

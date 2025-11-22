@@ -2,36 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Parameters: Most Used Lifts</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('report.index') }}">Back to Reports</a>
-    <h1>Configure Report: Most Used Lifts by Period</h1>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul class="flashes">
-            {% for category, message in messages %}
-                <li class="{{ category }}">{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
-
-    <form method="POST" action="{{ url_for('report.most_used_lifts') }}" class="report-form">
-        <div class="form-section">
-            <p>Select the date range for the report (e.g., one day, a week, or a month).</p>
-            <label for="start_date">Start Date:</label>
-            <input type="date" id="start_date" name="start_date" value="{{ start_date or '' }}" required>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('report.index') }}" class="btn">← Back to Reports</a>
         </div>
+        <h1>Configure Report: Most Used Lifts by Period</h1>
 
-        <div class="form-section">
-            <label for="end_date">End Date:</label>
-            <input type="date" id="end_date" name="end_date" value="{{ end_date or '' }}" required>
-        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="messages">
+                    <ul>
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
 
-        <button type="submit">Generate Report</button>
-    </form>
+        <form method="POST" action="{{ url_for('report.most_used_lifts') }}">
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="start_date">Start Date</label>
+                    <input type="date" id="start_date" name="start_date" value="{{ start_date or '' }}" required>
+                </div>
+                <div class="form-field">
+                    <label for="end_date">End Date</label>
+                    <input type="date" id="end_date" name="end_date" value="{{ end_date or '' }}" required>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <button type="submit">Generate Report</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>

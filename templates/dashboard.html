@@ -13,41 +13,34 @@
 
         <hr>
 
-        <h2>Reports</h2>
-        <ul>
-            <li><a href="{{ url_for('report.index') }}">View Predefined Reports</a></li>
-        </ul>
-
         <h2>Browse Data</h2>
-        <ul>
-            <li><a href="{{ url_for('employee.browse_employees') }}">Browse Employees</a></li>
-            <li><a href="{{ url_for('equipment.list_equipment') }}">Browse Equipment</a></li>
-            <li><a href="{{ url_for('equipment_type.list_equipment_types') }}">Browse equipment types </a> </li>
-            <li><a href="{{ url_for('lift.list_lifts') }}">Browse lifts</a></li>
-            <li><a href="{{ url_for('pass_type.list_pass_types') }}">Browse pass types </a> </li>
-            <li><a href="{{ url_for('tariff.list_tariffs') }}">Browse tariffs </a> </li>
+        <div class="browse-grid">
+            <a href="{{ url_for('employee.browse_employees') }}" class="browse-card">Browse Employees</a>
+            <a href="{{ url_for('equipment.list_equipment') }}" class="browse-card">Browse Equipment</a>
+            <a href="{{ url_for('equipment_type.list_equipment_types') }}" class="browse-card">Browse Equipment Types</a>
+            <a href="{{ url_for('lift.list_lifts') }}" class="browse-card">Browse Lifts</a>
+            <a href="{{ url_for('pass_type.list_pass_types') }}" class="browse-card">Browse Pass Types</a>
+            <a href="{{ url_for('tariff.list_tariffs') }}" class="browse-card">Browse Tariffs</a>
             {% if session.access_right in ['admin', 'moderator'] %}
-                <li><a href="{{ url_for('client.list_clients') }}">Browse clients </a> </li>
-                <li><a href="{{ url_for('pass.list_passes') }}">Browse passes </a> </li>
-                <li><a href="{{ url_for('lift_usage.list_lift_usages') }}">Browse lift usages </a> </li>
-                <li><a href="{{ url_for('pass_lift_usage.list_pass_lift_usages') }}">Browse pass lift usages </a> </li>
-                <li><a href="{{ url_for('pass_rental_usage.list_pass_rental_usages') }}">Browse pass rental usages </a> </li>
-                <li><a href="{{ url_for('rental.list_rentals') }}">Browse rentals </a> </li>
-                <li><a href="{{ url_for('rental_equipment.list_rental_equipments') }}">Browse rental equipment </a> </li>
-                <li><a href="{{ url_for('schedule.list_schedules') }}">Browse schedules </a> </li>
+                <a href="{{ url_for('client.list_clients') }}" class="browse-card">Browse Clients</a>
+                <a href="{{ url_for('pass.list_passes') }}" class="browse-card">Browse Passes</a>
+                <a href="{{ url_for('lift_usage.list_lift_usages') }}" class="browse-card">Browse Lift Usages</a>
+                <a href="{{ url_for('pass_lift_usage.list_pass_lift_usages') }}" class="browse-card">Browse Pass Lift Usages</a>
+                <a href="{{ url_for('pass_rental_usage.list_pass_rental_usages') }}" class="browse-card">Browse Pass Rental Usages</a>
+                <a href="{{ url_for('rental.list_rentals') }}" class="browse-card">Browse Rentals</a>
+                <a href="{{ url_for('rental_equipment.list_rental_equipments') }}" class="browse-card">Browse Rental Equipment</a>
+                <a href="{{ url_for('schedule.list_schedules') }}" class="browse-card">Browse Schedules</a>
             {% endif %}
-
-        {% if session.access_right == 'admin' %}
-                <li style="font-weight: bold; margin-top: 10px;">
-                    <a href="{{ url_for('client.pending_registrations') }}">View Pending Registrations</a>
-                </li>
+            {% if session.access_right == 'admin' %}
+                <a href="{{ url_for('client.pending_registrations') }}" class="browse-card browse-card-admin">View Pending Registrations</a>
             {% endif %}
-        </ul>
+        </div>
 
-        <h2>Your Reports</h2>
-        <ul>
-            <li><a href="{{ url_for('client.saved_views') }}">View Saved Reports</a></li>
-        </ul>
+        <h2>Reports</h2>
+        <div class="browse-grid">
+            <a href="{{ url_for('report.index') }}" class="browse-card">View Predefined Reports</a>
+            <a href="{{ url_for('client.saved_views') }}" class="browse-card">View Saved Reports</a>
+        </div>
 
         <div class="button-container" style="margin-top: 30px;">
             <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">

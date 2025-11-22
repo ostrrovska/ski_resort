@@ -2,32 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Parameters: Employee Work Statistics</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('report.index') }}">Back to Reports</a>
-    <h1>Configure Report: Employee Work Statistics</h1>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul class="flashes">
-            {% for category, message in messages %}
-                <li class="{{ category }}">{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
-
-    <form method="POST" action="{{ url_for('report.employee_work_stats') }}" class="report-form">
-        <div class="form-section">
-            <p>Select the <strong>day</strong> for the "Workers on shift" report:</p>
-            <p>(The "Employee Rental History" report shows all-time data and requires no parameters.)</p>
-            <label for="specific_date">Specific Day:</label>
-            <input type="date" id="specific_date" name="specific_date" value="{{ specific_date or '' }}" required>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('report.index') }}" class="btn">← Back to Reports</a>
         </div>
+        <h1>Configure Report: Employee Work Statistics</h1>
 
-        <button type="submit">Generate Report</button>
-    </form>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="messages">
+                    <ul>
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('report.employee_work_stats') }}">
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="specific_date">Specific Day (for "Workers on shift" report)</label>
+                    <input type="date" id="specific_date" name="specific_date" value="{{ specific_date or '' }}" required>
+                    <p style="margin-top: 8px; font-size: 0.85rem; color: var(--text-secondary);">Note: The "Employee Rental History" report shows all-time data and requires no parameters.</p>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <button type="submit">Generate Report</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>

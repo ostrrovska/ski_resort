@@ -2,31 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Parameters: Client Pass Stats</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('report.index') }}">Back to Reports</a>
-    <h1>Configure Report: Client Pass Statistics</h1>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul class="flashes">
-            {% for category, message in messages %}
-                <li class="{{ category }}">{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
-
-    <form method="POST" action="{{ url_for('report.client_pass_stats') }}" class="report-form">
-        <div class="form-section">
-            <p>Select the <strong>day</strong> for "Clients with over 15 lifts" report:</p>
-            <label for="specific_date">Specific Day:</label>
-            <input type="date" id="specific_date" name="specific_date" value="{{ specific_date or '' }}" required>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('report.index') }}" class="btn">← Back to Reports</a>
         </div>
+        <h1>Configure Report: Client Pass Statistics</h1>
 
-        <button type="submit">Generate Report</button>
-    </form>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="messages">
+                    <ul>
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('report.client_pass_stats') }}">
+            <div class="form-group">
+                <div class="form-field">
+                    <label for="specific_date">Specific Day (for "Clients with over 15 lifts" report)</label>
+                    <input type="date" id="specific_date" name="specific_date" value="{{ specific_date or '' }}" required>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <button type="submit">Generate Report</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>

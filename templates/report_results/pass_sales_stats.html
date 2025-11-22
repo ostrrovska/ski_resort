@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report: Pass Sales Statistics</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
@@ -9,58 +10,53 @@
     </style>
 </head>
 <body>
-    <a href="{{ url_for('report.index') }}">Back to Reports</a>
-    <h1>Report: Pass Sales Statistics ({{ start_date.strftime('%Y-%m-%d') }} to {{ end_date.strftime('%Y-%m-%d') }})</h1>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('report.index') }}" class="btn">← Back to Reports</a>
+        </div>
+        <h1>Report: Pass Sales Statistics ({{ start_date.strftime('%Y-%m-%d') }} to {{ end_date.strftime('%Y-%m-%d') }})</h1>
 
-    {# Section for Sales by Day #}
-    <div class="report-subsection">
-        <h2>Pass Sales by Day</h2>
-        {% if sales_by_day %}
-            <table>
-                <thead>
+        {# Section for Sales by Day #}
+        <div class="report-subsection">
+            <h2>Pass Sales by Day</h2>
+            {% if sales_by_day %}
+                <table>
                     <tr>
                         <th>Date</th>
                         <th>Passes Sold</th>
                     </tr>
-                </thead>
-                <tbody>
                     {% for item in sales_by_day %}
-                    <tr>
-                        <td>{{ item.purchase_date.strftime('%Y-%m-%d') }}</td>
-                        <td>{{ item.sales_count }}</td>
-                    </tr>
+                        <tr>
+                            <td>{{ item.purchase_date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ item.sales_count }}</td>
+                        </tr>
                     {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No pass sales data found for this period.</p>
-        {% endif %}
-    </div>
+                </table>
+            {% else %}
+                <p>No pass sales data found for this period.</p>
+            {% endif %}
+        </div>
 
-    {# Section for Sales by Type #}
-    <div class="report-subsection">
-        <h2>Pass Sales by Type</h2>
-        {% if sales_by_type %}
-            <table>
-                <thead>
+        {# Section for Sales by Type #}
+        <div class="report-subsection">
+            <h2>Pass Sales by Type</h2>
+            {% if sales_by_type %}
+                <table>
                     <tr>
                         <th>Pass Type</th>
                         <th>Passes Sold</th>
                     </tr>
-                </thead>
-                <tbody>
                     {% for item in sales_by_type %}
-                    <tr>
-                        <td>{{ item.pass_type_name }}</td>
-                        <td>{{ item.sales_count }}</td>
-                    </tr>
+                        <tr>
+                            <td>{{ item.pass_type_name }}</td>
+                            <td>{{ item.sales_count }}</td>
+                        </tr>
                     {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No pass sales data found for this period.</p>
-        {% endif %}
+                </table>
+            {% else %}
+                <p>No pass sales data found for this period.</p>
+            {% endif %}
+        </div>
     </div>
-
 </body>
 </html>

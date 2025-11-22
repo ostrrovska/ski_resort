@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report: Most Used Lifts</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
@@ -9,31 +10,30 @@
     </style>
 </head>
 <body>
-    <a href="{{ url_for('report.index') }}">Back to Reports</a>
-    <h1>Report: Most Used Lifts ({{ start_date.strftime('%Y-%m-%d') }} to {{ end_date.strftime('%Y-%m-%d') }})</h1>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('report.index') }}" class="btn">← Back to Reports</a>
+        </div>
+        <h1>Report: Most Used Lifts ({{ start_date.strftime('%Y-%m-%d') }} to {{ end_date.strftime('%Y-%m-%d') }})</h1>
 
-    <div class="report-subsection">
-        {% if data %}
-            <table>
-                <thead>
+        <div class="report-subsection">
+            {% if data %}
+                <table>
                     <tr>
                         <th>Lift Name</th>
                         <th>Times Used</th>
                     </tr>
-                </thead>
-                <tbody>
                     {% for item in data %}
-                    <tr>
-                        <td>{{ item.lift_name }}</td>
-                        <td>{{ item.usage_count }}</td>
-                    </tr>
+                        <tr>
+                            <td>{{ item.lift_name }}</td>
+                            <td>{{ item.usage_count }}</td>
+                        </tr>
                     {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No lift usage data found for this period.</p>
-        {% endif %}
+                </table>
+            {% else %}
+                <p>No lift usage data found for this period.</p>
+            {% endif %}
+        </div>
     </div>
-
 </body>
 </html>

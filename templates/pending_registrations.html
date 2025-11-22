@@ -2,59 +2,68 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Registrations</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <a href="{{ url_for('client.dashboard') }}">Back to Dashboard</a>
-    <h1>Pending Registration Applications</h1>
+    <div class="glass-container">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('client.dashboard') }}" class="btn">← Back to Dashboard</a>
+        </div>
+        <h1>Pending Registration Applications</h1>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul class="flashes">
-            {% for category, message in messages %}
-                <li class="{{ category }}">{{ message }}</li>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="messages">
+                    <ul>
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <table>
+            <tr>
+                <th>Full Name</th>
+                <th>Document ID</th>
+                <th>Date of Birth</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Login</th>
+                <th>Actions</th>
+            </tr>
+            {% for client, key in pending_list %}
+                <tr>
+                    <td>{{ client.full_name }}</td>
+                    <td>{{ client.document_id }}</td>
+                    <td>{{ client.date_of_birth }}</td>
+                    <td>{{ client.phone_number }}</td>
+                    <td>{{ client.email }}</td>
+                    <td>{{ key.login }}</td>
+                    <td>
+                        <form action="{{ url_for('client.approve_registration', key_id=key.id) }}" method="POST" style="display:inline;">
+                            <button type="submit">Approve</button>
+                        </form>
+                        <form action="{{ url_for('client.reject_registration', key_id=key.id) }}" method="POST" style="display:inline;">
+                            <button type="submit">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">No pending registrations found.</td>
+                </tr>
             {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+        </table>
 
-    <table>
-        <tr>
-            <th>Full Name</th>
-            <th>Document ID</th>
-            <th>Date of Birth</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Login</th>
-            <th>Actions</th>
-        </tr>
-        {% for client, key in pending_list %}
-            <tr>
-                <td>{{ client.full_name }}</td>
-                <td>{{ client.document_id }}</td>
-                <td>{{ client.date_of_birth }}</td>
-                <td>{{ client.phone_number }}</td>
-                <td>{{ client.email }}</td>
-                <td>{{ key.login }}</td>
-                <td>
-                    <form action="{{ url_for('client.approve_registration', key_id=key.id) }}" method="POST" style="display:inline;">
-                        <button type="submit" style="color: green;">Approve</button>
-                    </form>
-                    <form action="{{ url_for('client.reject_registration', key_id=key.id) }}" method="POST" style="display:inline;">
-                        <button type="submit" style="color: red;">Reject</button>
-                    </form>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="7">No pending registrations found.</td>
-            </tr>
-        {% endfor %}
-    </table>
-
-    <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline; margin-top: 20px;">
-        <button type="submit">Logout</button>
-    </form>
+        <div class="button-container" style="margin-top: 20px;">
+            <form action="{{ url_for('client.logout') }}" method="POST" style="display: inline;">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
